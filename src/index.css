@@ -1,0 +1,24 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+
+@layer components {
+    .text-color {
+        @apply text-slate-600
+    }
+
+    .active .text-color,
+    .active {
+        @apply bg-neutral-100 text-amber-700 active:bg-neutral-200
+    }
+
+    .no-scrollbar::-webkit-scrollbar {
+        display: none;
+    }
+
+    .no-scrollbar {
+        -ms-overflow-style: none;
+        scrollbar-width: none;
+    }
+}
