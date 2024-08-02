@@ -15,6 +15,7 @@
     "shell:allow-open",
     "sql:allow-load",
     "sql:default",
+    "sql:allow-execute",
     "window:allow-start-dragging"
   ]
 }

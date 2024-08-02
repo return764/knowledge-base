@@ -1,8 +1,11 @@
 "use client"
 import React, {MouseEventHandler, useState} from "react";
+import {KnowledgeBase} from "../../model/knowledge_base.ts";
+import {RiCloseLine} from "react-icons/ri";
+import Button from "../basic/button/button.tsx";
 
 type ExpandedCardProps = {
-    index: number
+    knowledgeBase: KnowledgeBase
 }
 
 export function ExpandedCard(props: ExpandedCardProps) {
@@ -15,12 +18,14 @@ export function ExpandedCard(props: ExpandedCardProps) {
 
     return (
         <div
-            className="h-28 w-36 snap-center -skew-y-6 hover:-translate-y-5 hover:-translate-x-2 hover:skew-x-6 transform-gpu duration-150"
+            className="h-28 w-full select-none transform-gpu duration-150 group"
             >
             <div className={`origin-center bg-zinc-50 hover:border-gray-300 rounded-lg border-solid border-2 h-full p-1`}
                  onClick={handleClickCard}
             >
-                <div className="text-zinc-600 text-sm font-medium">Salesforce 学习</div>
+                <div className="text-zinc-600 text-sm font-medium">{props.knowledgeBase.name}</div>
+                <Button className="hidden group-hover:visible group-hover:flex absolute right-0 top-0" type="text" onClick={() => {
+                }} icon={RiCloseLine}/>
             </div>
         </div>
     )

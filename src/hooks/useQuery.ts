@@ -10,5 +10,5 @@ const fetcher = async (key: string) => {
 }
 
 export const useQuery = <T = any, E = any, S = keyof typeof API> (scope: S, key: keyof API[S]): SWRResponse<T, E> => {
-    return useSWR<T, E>(`${scope}.${key}`, fetcher)
+    return useSWR<T, E>(`${scope}.${key}`, fetcher, { refreshInterval: 1000 })
 }

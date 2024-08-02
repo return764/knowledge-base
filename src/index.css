@@ -5,12 +5,12 @@
 
 @layer components {
     .text-color {
-        @apply text-slate-600
+        @apply text-slate-600 dark:text-white
     }
 
     .active .text-color,
     .active {
-        @apply bg-neutral-100 text-amber-700 active:bg-neutral-200
+        @apply bg-neutral-100 text-primary
     }
 
     .no-scrollbar::-webkit-scrollbar {
