@@ -3,6 +3,7 @@ import ReactDOM from "react-dom/client";
 import {createBrowserRouter, RouterProvider} from "react-router-dom";
 import Root from "./routes/root.tsx";
 import KnowledgeBasePage from "./routes/knowledge_base.tsx";
+import KnowledgeBaseDetail from "./routes/knowledge_base_detail.tsx";
 
 
 const router = createBrowserRouter([
@@ -13,6 +14,10 @@ const router = createBrowserRouter([
             {
                 path: "/knowledge-base",
                 element: <KnowledgeBasePage/>
+            },
+            {
+                path: "/knowledge-base/:id",
+                element: <KnowledgeBaseDetail/>
             }
         ]
     },
