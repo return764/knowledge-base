@@ -4,7 +4,7 @@ import Button from "../button/button.tsx";
 import {useControllableValue} from "ahooks";
 import {CSSTransition} from "react-transition-group";
 import "./modal.css";
-import Input from "../form/Input.tsx";
+import Input from "../form/components/Input.tsx";
 import Toast from "../toast";
 
 type ModalProps = {

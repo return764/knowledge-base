@@ -1,13 +1,12 @@
 import React, {ChangeEvent, useMemo} from 'react';
+import {OnChangeAndValue} from "../interface.ts";
 
 type InputProps = {
-    name: string,
+    name?: string,
     label?: string,
     type?: "inline" | "block",
     size?: "small" | "default" | "large",
-    value?: string,
-    onChange?: (value: string) => void
-}
+} & OnChangeAndValue
 
 function Input(props: InputProps) {
     const {size = "default"} = props
@@ -28,13 +27,10 @@ function Input(props: InputProps) {
     }
 
     return (
-        <div>
-            <label className="block mb-2 text-sm font-light leading-normal text-color" htmlFor={props.name}>{props.label ?? props.name}</label>
-            <input
-                value={props.value ?? ""}
-                onChange={handleChange}
-                className={`${inputClass} bg-gray-50 border border-[#CFD1E8] text-gray-900 rounded-lg focus:ring-0 focus:outline-0 focus:border-[#cfd0e8] block w-full dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500`} name={props.name}/>
-        </div>
+        <input
+            value={props.value ?? ""}
+            onChange={handleChange}
+            className={`${inputClass} bg-gray-50 border border-[#CFD1E8] text-gray-900 rounded-lg focus:ring-0 focus:outline-0 focus:border-[#cfd0e8] block w-full dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500`} name={props.name}/>
     );
 }
 

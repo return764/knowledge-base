@@ -1,10 +1,13 @@
 mod sql;
+mod command;
 use tauri::{WebviewUrl, WebviewWindowBuilder};
+use command::commands::import_text;
 
 #[cfg_attr(mobile, tauri::mobile_entry_point)]
 pub fn run() {
     tauri::Builder::default()
         .plugin(tauri_plugin_shell::init())
+        .invoke_handler(tauri::generate_handler![import_text])
         .plugin(tauri_plugin_sql::Builder::default().add_migrations("sqlite:knowledge_keeper.db", sql::migration::init()).build())
         .setup(|app| {
             let win_builder =

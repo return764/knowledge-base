@@ -5,18 +5,21 @@ import {KnowledgeBase} from "../model/knowledge_base.ts";
 import Button from "../components/basic/button/button.tsx";
 import {FaPlus} from "react-icons/fa6";
 import Modal from "../components/basic/modal/modal.tsx";
-import Input from "../components/basic/form/Input.tsx";
+import Input from "../components/basic/form/components/Input.tsx";
 import {API} from "../model";
 import toast from "react-hot-toast";
 import {useToggle} from "ahooks";
+import Form, {useForm} from "../components/basic/form/form.tsx";
+import FormItem from "../components/basic/form/form_item.tsx";
 
 function KnowledgeBasePage(props) {
     const {data, error} = useQuery<KnowledgeBase[]>('knowledgeBase', 'queryAll')
     const [visible, {toggle}] = useToggle(false)
     const [knowledgeBaseName, setKnowLedgeBaseName] = useState<string>(null);
+    const [form] = useForm();
 
     const handleSubmitNewKB = async () => {
-        await API.knowledgeBase.insert({name: knowledgeBaseName})
+        await API.knowledgeBase.insert({name: form.getFieldValue("name")})
         setKnowLedgeBaseName(null);
         toast.success("创建知识库成功!")
     }
@@ -41,7 +44,11 @@ function KnowledgeBasePage(props) {
                 </section>
             </div>
             <Modal title={"新建知识库"} onClose={toggle} open={visible} onConfirm={handleSubmitNewKB}>
-                <Input value={knowledgeBaseName} onChange={(value) => {setKnowLedgeBaseName(value)}} size={"small"} name={'add'} label={"知识库名"}/>
+                <Form form={form}>
+                    <FormItem name={"name"} label={"知识库名"}>
+                        <Input size={"small"}/>
+                    </FormItem>
+                </Form>
             </Modal>
         </div>
     )

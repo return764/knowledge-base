@@ -2,6 +2,9 @@
 @tailwind components;
 @tailwind utilities;
 
+:root {
+    @apply select-none cursor-default
+}
 
 @layer components {
     .text-color {
