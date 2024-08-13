@@ -4,11 +4,12 @@ import type {IconType} from "react-icons";
 type ButtonProps = {
     type?: "primary" | "link" | "light" | "text" | "icon",
     icon?: IconType,
+    size?: "large" | "small" | "default"
     onClick: () => void,
 } & Omit<ButtonHTMLAttributes<HTMLButtonElement>, 'type'>
 
 function Button(props: PropsWithChildren<ButtonProps>) {
-    const {type = "primary"} = props
+    const {type = "primary", size = "default"} = props
 
     const hasText = useMemo(() => {
         return !!props.children
@@ -27,16 +28,42 @@ function Button(props: PropsWithChildren<ButtonProps>) {
         }
     }, [type])
 
+    const cls = useMemo(() => {
+        switch(size) {
+            case "small":
+                return {
+                    icon: "p-0",
+                    iconSize: 12,
+                    text: "text-xs",
+                    wrap: "px-3 py-0.5",
+                }
+            case "default":
+                return {
+                    icon: "p-0.5",
+                    iconSize: 16,
+                    text: "text-base",
+                    wrap: "px-4 py-0.5",
+                }
+            case "large":
+                return {
+                    icon: "p-1",
+                    iconSize: 24,
+                    text: "text-lg",
+                    wrap: "px-6 py-1.5",
+                }
+        }
+    }, [size])
+
 
     return (
-        <button {...props} className={`${props.className} ${buttonStyleClass} ${hasText ? 'rounded-md px-5 py-1' : 'rounded-full p-1'} flex flex-nowrap select-none transition-colors duration-200 ease-in-out`}>
+        <button {...props} className={`${props.className} ${buttonStyleClass} ${hasText ? `rounded-md ${cls.wrap}` : 'rounded-full p-1'} flex flex-nowrap select-none transition-colors duration-200 ease-in-out`}>
             {
                 props.icon &&
-                <div className={`${hasText && 'mr-1.5 -ml-1.5'} my-auto`}>
-                    <props.icon size={hasText ? 16 : 24}/>
+                <div className={`${cls.icon} ${hasText && 'mr-1.5 -ml-1.5 p-0'} my-auto `}>
+                    <props.icon size={cls.iconSize}/>
                 </div>
             }
-            <span className="whitespace-nowrap">
+            <span className={`whitespace-nowrap ${cls.text}`}>
                 {props.children}
             </span>
         </button>

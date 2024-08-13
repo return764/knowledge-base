@@ -6,6 +6,7 @@ import KnowledgeBasePage from "./routes/knowledge_base.tsx";
 import KnowledgeBaseDetail from "./routes/knowledge_base_detail.tsx";
 import {API} from "./model";
 import KnowledgeBaseImport from "./routes/knowledge_base_import.tsx";
+import Datasets from "./routes/datasets.tsx";
 
 
 const router = createBrowserRouter([
@@ -28,6 +29,12 @@ const router = createBrowserRouter([
                 loader: async ({ params }) => {
                     return await API.knowledgeBase.queryById(params['id']!!)
                 },
+            }, {
+                path: "/knowledge-base/:id/dataset/:datasetId",
+                element: <Datasets/>,
+                loader: async ({params}) => {
+                    return await API.dataset.queryAllDocumentsByDatasetId(params['id']!!, params['datasetId']!!)
+                }
             }
         ]
     },

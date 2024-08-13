@@ -1,4 +1,3 @@
-"use client"
 import React, {MouseEventHandler, useState} from "react";
 import {KnowledgeBase} from "../../model/knowledge_base.ts";
 import {RiCloseLine} from "react-icons/ri";

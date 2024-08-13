@@ -1,13 +1,31 @@
 mod sql;
 mod command;
+mod langchian;
+
 use tauri::{WebviewUrl, WebviewWindowBuilder};
-use command::commands::import_text;
+use command::commands::{import_text, uuid};
 
 #[cfg_attr(mobile, tauri::mobile_entry_point)]
 pub fn run() {
+    // {
+    //     use sqlite_vec::sqlite3_vec_init;
+    //     use libsqlite3_sys::{sqlite3_api_routines, sqlite3_auto_extension, sqlite3};
+    //     use std::os::raw::c_char;
+    //
+    //     unsafe {
+    //         let vec_vector_init = sqlite3_vec_init as *const ();
+    //         let vec_vector_init_correct: extern "C" fn(
+    //             db: *mut sqlite3,
+    //             pzErrMsg: *mut *const c_char,
+    //             pThunk: *const sqlite3_api_routines,
+    //         ) -> i32 = std::mem::transmute(vec_vector_init);
+    //         sqlite3_auto_extension(Some(vec_vector_init_correct));
+    //     }
+    // }
+
     tauri::Builder::default()
         .plugin(tauri_plugin_shell::init())
-        .invoke_handler(tauri::generate_handler![import_text])
+        .invoke_handler(tauri::generate_handler![import_text, uuid])
         .plugin(tauri_plugin_sql::Builder::default().add_migrations("sqlite:knowledge_keeper.db", sql::migration::init()).build())
         .setup(|app| {
             let win_builder =

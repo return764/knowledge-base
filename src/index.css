@@ -24,4 +24,8 @@
         -ms-overflow-style: none;
         scrollbar-width: none;
     }
+
+    .text-ellipsis-c {
+        @apply whitespace-nowrap text-ellipsis overflow-hidden
+    }
 }

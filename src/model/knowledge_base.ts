@@ -1,8 +1,12 @@
 import {APIAbc} from "./api.ts";
+import {invoke} from "@tauri-apps/api/core";
 
 export type KnowledgeBase = {
     id: string,
     name: string,
+    description: string,
+    embedder_model_id: string,
+    language_model_id: string,
     created_at: Date
 }
 
@@ -16,6 +20,6 @@ export class KnowledgeBaseAPI extends APIAbc {
     }
 
     async insert(params: {name: string}) {
-        await this.execute("INSERT INTO knowledge_base (NAME) VALUES (?)", [params.name])
+        await this.execute("INSERT INTO knowledge_base (id, name) VALUES (?, ?)", [await invoke('uuid'), params.name])
     }
 }

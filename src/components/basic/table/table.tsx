@@ -8,10 +8,16 @@ type Column<T> = {
 
 type TableProps<DataType> = {
     columns: Column<DataType>[],
-    data?: DataType[]
+    data?: DataType[],
+    onRowClick?: (DataType) => void
 }
 
-const Table = <DataType extends Record<string, any>> ({ columns, data }: TableProps<DataType>) => {
+const Table = <DataType extends Record<string, any>> ({ columns, data, onRowClick }: TableProps<DataType>) => {
+
+    const handleRowClick = (row: DataType) => {
+        onRowClick && onRowClick(row)
+    }
+
     return (
         <div className="overflow-x-auto">
             <table className="min-w-full bg-white border border-gray-200">
@@ -29,7 +35,7 @@ const Table = <DataType extends Record<string, any>> ({ columns, data }: TablePr
                 </thead>
                 <tbody>
                 {data?.map((row, rowIndex) => (
-                    <tr key={rowIndex} className="even:bg-gray-50">
+                    <tr key={rowIndex} className="even:bg-gray-50" onClick={() => handleRowClick(row)}>
                         {columns.map((column) => (
                             <td
                                 key={column.name}

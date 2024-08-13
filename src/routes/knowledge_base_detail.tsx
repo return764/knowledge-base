@@ -1,17 +1,31 @@
-import React, {useState} from 'react';
+import React from 'react';
 import Button from "../components/basic/button/button.tsx";
 import {BiImport} from "react-icons/bi";
 import {MdOutlineArrowBackIosNew} from "react-icons/md";
 import {useLoaderData, useNavigate} from "react-router-dom";
 import {KnowledgeBase} from "../model/knowledge_base.ts";
+import {useQuery} from "../hooks/useQuery.ts";
+import {Dataset} from "../model/dataset.ts";
+import Table from "../components/basic/table/table.tsx";
+
+
+const columns = [
+    {header: '名称', name: 'name'},
+    {header: '数据总量', name: 'count'},
+    {header: '启用', name: 'active'}
+]
 
 function KnowledgeBaseDetail(props) {
     const navigate = useNavigate();
     const knowledgeBase = useLoaderData() as KnowledgeBase
-
+    const {data, error} = useQuery<Dataset[]>('dataset', 'queryAllByKbId', {kb_id: knowledgeBase.id})
 
     const handleImport = async () => {
         navigate("import")
+    }
+
+    const handleRowClick = (row: Dataset) => {
+        navigate(`dataset/${row.id}`)
     }
 
     return (
@@ -26,7 +40,7 @@ function KnowledgeBaseDetail(props) {
                 </div>
             </div>
             <div>
-
+                <Table<Dataset> columns={columns} data={data} onRowClick={handleRowClick}/>
             </div>
         </div>
     );

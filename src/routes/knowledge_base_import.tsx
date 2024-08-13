@@ -1,7 +1,7 @@
 import React, {useEffect, useState} from 'react';
 import Button from "../components/basic/button/button.tsx";
 import {MdOutlineArrowBackIosNew} from "react-icons/md";
-import {useNavigate} from "react-router-dom";
+import {useLoaderData, useNavigate} from "react-router-dom";
 import Stepper from "../components/basic/stepper/stepper.tsx";
 import {useCounter} from "ahooks";
 import Input from "../components/basic/form/components/Input.tsx";
@@ -9,6 +9,11 @@ import Form, {useForm} from "../components/basic/form/form.tsx";
 import FormItem from "../components/basic/form/form_item.tsx";
 import Textarea from "../components/basic/form/components/textarea.tsx";
 import Table from "../components/basic/table/table.tsx";
+import {Channel, invoke} from "@tauri-apps/api/core";
+import {KnowledgeBase} from "../model/knowledge_base.ts";
+import {API} from "../model";
+import {ProgressEvent} from "../model/dataset.ts";
+import toast from "react-hot-toast";
 
 type UploadTable = {
     name: string,
@@ -22,12 +27,37 @@ const columns = [
 
 function KnowledgeBaseImport(props) {
     const navigate = useNavigate()
+    const knowledgeBase = useLoaderData() as KnowledgeBase
     const [current, { inc, dec }] = useCounter(0, { min: 0, max: 2 })
     const [data, setData] = useState<UploadTable[]>();
     const [form] = useForm()
 
-    const handleComplete = () => {
-        console.log(form.getFieldValues())
+    const handleComplete = async () => {
+        const onEvent = new Channel<ProgressEvent>()
+        const datasetId = await API.dataset.insert({name: form.getFieldValue("name"), kb_id: knowledgeBase.id})
+
+        onEvent.onmessage = (message: ProgressEvent) => {
+            if (message.event === 'started') {
+                changeProgressStatus(form.getFieldValue('name'), 'Processing')
+            } else if (message.event === 'finished') {
+                changeProgressStatus(form.getFieldValue('name'), 'Finished')
+            }
+        }
+
+        try {
+            await invoke('import_text', {datasetId, kbId: knowledgeBase.id, text: form.getFieldValue("value"), onEvent: onEvent})
+        } catch (e) {
+            toast.error("导入失败")
+            await API.dataset.deleteById(datasetId)
+            return
+        }
+        toast.success("导入成功")
+    }
+
+    const changeProgressStatus = (name: string, status: string) => {
+        const dataCloned: UploadTable[] = JSON.parse(JSON.stringify(data))
+        dataCloned.find(it => it.name === name).status = status
+        setData(dataCloned)
     }
 
     useEffect(() => {

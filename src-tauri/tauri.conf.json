@@ -20,6 +20,11 @@
     }
   },
   "bundle": {
+    "macOS": {
+      "frameworks": [
+        "./libs/vec0.dylib"
+      ]
+    },
     "active": true,
     "targets": "all",
     "icon": [
