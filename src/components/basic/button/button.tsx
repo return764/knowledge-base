@@ -5,7 +5,6 @@ type ButtonProps = {
     type?: "primary" | "link" | "light" | "text" | "icon",
     icon?: IconType,
     size?: "large" | "small" | "default"
-    onClick: () => void,
 } & Omit<ButtonHTMLAttributes<HTMLButtonElement>, 'type'>
 
 function Button(props: PropsWithChildren<ButtonProps>) {

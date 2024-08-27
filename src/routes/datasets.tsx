@@ -21,7 +21,9 @@ function Datasets(props) {
                         <Button onClick={() => {
                             navigate(-1)
                         }} icon={MdOutlineArrowBackIosNew} type="text"/>
-                        <div className="text-primary text-xl leading-none my-auto">{ dataset?.name }</div>
+                        <div className="text-primary text-xl leading-none my-auto">
+                            { dataset?.name }
+                        </div>
                     </div>
                     <div><Button onClick={() => {}} icon={BiImport}>插入</Button></div>
                 </div>

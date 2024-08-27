@@ -48,7 +48,7 @@ export class DatasetAPI extends APIAbc {
     }
 
     async queryAllByKbId(params: {kb_id: string}) {
-        return await this.query<KnowledgeBase[]>(`SELECT d.* FROM dataset d WHERE d.kb_id = ?`, [params.kb_id])
+        return await this.query<Dataset[]>(`SELECT d.* FROM dataset d WHERE d.kb_id = ?`, [params.kb_id])
     }
 
     async queryById(params: {id: string}) {
@@ -61,5 +61,9 @@ export class DatasetAPI extends APIAbc {
 
     async queryAllDocumentsByDatasetId(kbId: string, datasetId: string) {
         return await this.query<DocumentData[]>(`SELECT json_extract(metadata, '$.id') as id, text, json_extract(metadata, '$.dataset_id') as dataset_id FROM kb_${kbId.replace(/-/g,'')} WHERE json_extract(metadata, '$.dataset_id') = ?`, [datasetId]);
+    }
+
+    async deleteDocumentsByDatasetId(kbId: string, datasetId: string) {
+        return await this.execute(`DELETE FROM kb_${kbId.replace(/-/g,'')} WHERE json_extract(metadata, '$.dataset_id') = ?`, [datasetId])
     }
 }
