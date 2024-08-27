@@ -54,10 +54,15 @@ pub async fn import_text(app: tauri::AppHandle,
         .await.map_err(|e| e.to_string())?;
     store.initialize().await.map_err(|e| e.to_string())?;
     let document_contents = split_text(&text, 512);
+    let count = document_contents.len();
+
+    sqlx::query(&format!("UPDATE dataset SET count = {count} WHERE id = '{dataset_id}'"))
+        .execute(&store.pool)
+        .await.map_err(|e| e.to_string())?;
 
     on_event.send(ProgressEvent::Started {
         progress_id: 1,
-        content_length: document_contents.len(),
+        content_length: count,
     }).unwrap();
 
     let docs: Vec<Document> = document_contents.iter().map(|item| {

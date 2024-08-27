@@ -52,6 +52,7 @@ function KnowledgeBaseImport(props) {
             return
         }
         toast.success("导入成功")
+        navigate(-1)
     }
 
     const changeProgressStatus = (name: string, status: string) => {
