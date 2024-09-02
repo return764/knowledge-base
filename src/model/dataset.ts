@@ -1,6 +1,5 @@
 import {APIAbc} from "./api.ts";
 import {invoke} from "@tauri-apps/api/core";
-import {KnowledgeBase} from "./knowledge_base.ts";
 
 export type Dataset = {
     id: string,
@@ -42,7 +41,7 @@ export type ProgressEvent =
 
 export class DatasetAPI extends APIAbc {
     async insert(params: {name: string, kb_id: string}): Promise<string> {
-        const datasetId = await invoke('uuid')
+        const datasetId: string = await invoke('uuid')
         await this.execute("INSERT INTO dataset (id, name, kb_id) VALUES (?, ?, ?)", [datasetId, params.name, params.kb_id])
         return Promise.resolve(datasetId)
     }
@@ -52,7 +51,7 @@ export class DatasetAPI extends APIAbc {
     }
 
     async queryById(params: {id: string}) {
-        return (await this.query<Dataset>("SELECT * FROM dataset WHERE id = ?", [params.id]))[0]
+        return (await this.query<Dataset[]>("SELECT * FROM dataset WHERE id = ?", [params.id]))[0]
     }
 
     async deleteById(id: string) {

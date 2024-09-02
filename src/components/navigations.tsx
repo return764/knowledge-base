@@ -1,8 +1,7 @@
-import {RiHome3Line} from "react-icons/ri";
-import {LuFiles} from "react-icons/lu";
+import {RiDatabase2Line, RiHome3Line} from "react-icons/ri";
 import {Link, useLocation, useResolvedPath} from "react-router-dom";
-import React from "react";
 import {IconType} from "react-icons";
+import {HiOutlineChat} from "react-icons/hi";
 
 function useRouteMatch(link: string | undefined) {
     let location = useLocation();
@@ -44,17 +43,14 @@ const NavItem = (props: NavItemProps) => {
 
 function Navigations() {
 
-    const handleNavigate = (path) => {
-
-    }
-
     return (
         <section className="flex flex-col min-h-screen bg-zinc-50">
             <div className="h-6"></div>
             <nav className="flex flex-col flex-1 justify-between w-44 p-2 select-none">
                 <div className="flex flex-col gap-1">
                     <NavItem link={"/"} icon={RiHome3Line} name="首页"/>
-                    <NavItem link={"/knowledge-base"} icon={LuFiles} name="知识库"/>
+                    <NavItem link={"/knowledge-base"} icon={RiDatabase2Line} name="知识库"/>
+                    <NavItem link={"/chats"} icon={HiOutlineChat} name="聊天"/>
                 </div>
                 <div>设置</div>
             </nav>

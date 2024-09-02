@@ -1,7 +1,7 @@
 use tauri_plugin_sql::{Migration, MigrationKind};
 
 pub fn init() -> Vec<Migration> {
-    return vec![
+    vec![
         Migration {
             version: 1,
             description: "create_initial_tables",
@@ -27,6 +27,29 @@ pub fn init() -> Vec<Migration> {
                 created_at DATETIME DEFAULT current_timestamp\
               );",
             kind: MigrationKind::Up,
+        },
+        Migration {
+            version: 3,
+            description: "create_chat_table",
+            sql: "CREATE TABLE chat (\
+                id TEXT PRIMARY KEY,\
+                name TEXT NOT NULL,\
+                prompts TEXT,\
+                created_at DATETIME DEFAULT current_timestamp\
+              );",
+            kind: MigrationKind::Up,
+        },
+        Migration {
+            version: 4,
+            description: "create_chat_history_table",
+            sql: "CREATE TABLE chat_history (\
+                id TEXT PRIMARY KEY,\
+                chat_id TEXT NOT NULL,\
+                content TEXT,\
+                role TEXT NOT NULL,\
+                created_at DATETIME DEFAULT current_timestamp\
+              );",
+            kind: MigrationKind::Up,
         }
-    ];
+    ]
 }

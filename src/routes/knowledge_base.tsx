@@ -1,4 +1,3 @@
-import React, {useState} from 'react';
 import {ExpandedCard} from "../components/expanded-card/ExpandedCard.tsx";
 import {useQuery} from "../hooks/useQuery.ts";
 import {KnowledgeBase} from "../model/knowledge_base.ts";
@@ -12,15 +11,13 @@ import {useToggle} from "ahooks";
 import Form, {useForm} from "../components/basic/form/form.tsx";
 import FormItem from "../components/basic/form/form_item.tsx";
 
-function KnowledgeBasePage(props) {
-    const {data, error} = useQuery<KnowledgeBase[]>('knowledgeBase', 'queryAll')
+function KnowledgeBasePage() {
+    const {data} = useQuery<KnowledgeBase[]>('knowledgeBase', 'queryAll')
     const [visible, {toggle}] = useToggle(false)
-    const [knowledgeBaseName, setKnowLedgeBaseName] = useState<string>(null);
     const [form] = useForm();
 
     const handleSubmitNewKB = async () => {
         await API.knowledgeBase.insert({name: form.getFieldValue("name")})
-        setKnowLedgeBaseName(null);
         toast.success("创建知识库成功!")
     }
 

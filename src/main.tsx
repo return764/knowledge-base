@@ -7,6 +7,8 @@ import KnowledgeBaseDetail from "./routes/knowledge_base_detail.tsx";
 import {API} from "./model";
 import KnowledgeBaseImport from "./routes/knowledge_base_import.tsx";
 import Datasets from "./routes/datasets.tsx";
+import Chats from "./routes/chats.tsx";
+import ChatPage from "./routes/chat_page.tsx";
 
 
 const router = createBrowserRouter([
@@ -34,6 +36,15 @@ const router = createBrowserRouter([
                 element: <Datasets/>,
                 loader: async ({params}) => {
                     return await API.dataset.queryAllDocumentsByDatasetId(params['id']!!, params['datasetId']!!)
+                }
+            }, {
+                path: "/chats",
+                element: <Chats/>,
+            }, {
+                path: "/chats/:id",
+                element: <ChatPage/>,
+                loader: async ({params}) => {
+                    return await API.chat.queryById(params['id']!!)
                 }
             }
         ]

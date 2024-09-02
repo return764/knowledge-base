@@ -1,7 +1,7 @@
 import Database from '@tauri-apps/plugin-sql';
 
 export class APIAbc {
-    protected conn: Database;
+    protected conn: Database | undefined;
 
     private async getConn() {
         if (this.conn) {
@@ -15,7 +15,7 @@ export class APIAbc {
         return await (await this.getConn()).select<T>(sql, bindValues)
     }
 
-    async execute<T>(sql: string, bindValues?: unknown[]) {
-        return await (await this.getConn()).execute<T>(sql, bindValues)
+    async execute(sql: string, bindValues?: unknown[]) {
+        return await (await this.getConn()).execute(sql, bindValues)
     }
 }

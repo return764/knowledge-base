@@ -1,4 +1,4 @@
-import React, {useState} from 'react';
+import {useState} from 'react';
 import Button from "../components/basic/button/button.tsx";
 import {BiImport} from "react-icons/bi";
 import {MdOutlineArrowBackIosNew} from "react-icons/md";
@@ -8,16 +8,16 @@ import {useQuery} from "../hooks/useQuery.ts";
 import {Dataset} from "../model/dataset.ts";
 import Table, {Column} from "../components/basic/table/table.tsx";
 import Modal from "../components/basic/modal/modal.tsx";
-import {useClickAway, useToggle} from "ahooks";
+import {useToggle} from "ahooks";
 import {deleteDataset} from "../service/dataset.ts";
 
 
-function KnowledgeBaseDetail(props) {
+function KnowledgeBaseDetail() {
     const navigate = useNavigate()
     const [visible, {toggle}] = useToggle(false)
     const [current, setCurrent] = useState<Dataset>()
     const knowledgeBase = useLoaderData() as KnowledgeBase
-    const {data, error} = useQuery<Dataset[]>('dataset', 'queryAllByKbId', {kb_id: knowledgeBase.id})
+    const {data} = useQuery<Dataset[]>('dataset', 'queryAllByKbId', {kb_id: knowledgeBase.id})
 
     const columns: Column<Dataset>[] = [
         {
@@ -41,7 +41,7 @@ function KnowledgeBaseDetail(props) {
         }
     ]
 
-    const handleOpenDeleteConfirmModal = (e) => {
+    const handleOpenDeleteConfirmModal = (e: any) => {
         e.stopPropagation();
         toggle()
     }
@@ -54,7 +54,7 @@ function KnowledgeBaseDetail(props) {
         navigate("import")
     }
 
-    const handleRowClick = (e, row: Dataset) => {
+    const handleRowClick = (_: any, row: Dataset) => {
         navigate(`dataset/${row.id}`)
     }
 

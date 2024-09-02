@@ -16,7 +16,7 @@ export class KnowledgeBaseAPI extends APIAbc {
     }
 
     async queryById(id: string) {
-        return (await this.query<KnowledgeBase>("SELECT * FROM knowledge_base WHERE id = ?", [id]))[0]
+        return (await this.query<KnowledgeBase[]>("SELECT * FROM knowledge_base WHERE id = ?", [id]))[0]
     }
 
     async insert(params: {name: string}) {

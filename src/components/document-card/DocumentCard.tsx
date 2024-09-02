@@ -1,4 +1,4 @@
-import React, {MouseEventHandler} from 'react';
+import {MouseEventHandler} from 'react';
 import Button from "../basic/button/button.tsx";
 import {RiDeleteBin6Line} from "react-icons/ri";
 import {DocumentData} from "../../model/dataset.ts";
