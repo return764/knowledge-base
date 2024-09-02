@@ -4,7 +4,7 @@ export interface FormInstance<V = any> {
     getFieldValue: (name: string) => V,
     setFieldValue: (name: string, value: V) => void,
     getFieldValues: (names?: string[]) => Store,
-    registerFormItem: (formItem) => Function,
+    registerFormItem: (formItem: any) => Function,
     validate: () => FormError[],
     registeredItemNames: () => string[]
 }

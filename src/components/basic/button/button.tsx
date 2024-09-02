@@ -1,4 +1,4 @@
-import React, {ButtonHTMLAttributes, PropsWithChildren, useMemo} from 'react';
+import {ButtonHTMLAttributes, PropsWithChildren, useMemo} from 'react';
 import type {IconType} from "react-icons";
 
 type ButtonProps = {
@@ -8,7 +8,7 @@ type ButtonProps = {
 } & Omit<ButtonHTMLAttributes<HTMLButtonElement>, 'type'>
 
 function Button(props: PropsWithChildren<ButtonProps>) {
-    const {type = "primary", size = "default"} = props
+    const {type = "primary", size = "default", disabled} = props
 
     const hasText = useMemo(() => {
         return !!props.children
@@ -19,13 +19,13 @@ function Button(props: PropsWithChildren<ButtonProps>) {
             case "link":
                 return ""
             case "primary":
-                return "bg-primary text-white hover:bg-primary-hover active:bg-primary-active shadow"
+                return `bg-primary text-white shadow ${disabled ? "brightness-150" : "bg-primary hover:bg-primary-hover active:bg-primary-active"}`
             case "light":
-                return "border border-gray-300 text-gray-700 active:text-primary-active active:border-primary-active hover:text-primary-hover hover:border-primary-hover shadow"
+                return `border border-gray-300 text-gray-700 shadow ${disabled ? "brightness-150" : "active:text-primary-active active:border-primary-active hover:text-primary-hover hover:border-primary-hover"}`
             case "text":
-                return "text-gray-700 hover:bg-gray-100/50 active:bg-gray-200/75"
+                return `text-gray-700 ${disabled ? "brightness-150" : "hover:bg-gray-100/50 active:bg-gray-200/75"}`
         }
-    }, [type])
+    }, [type, disabled])
 
     const cls = useMemo(() => {
         switch(size) {
@@ -55,7 +55,8 @@ function Button(props: PropsWithChildren<ButtonProps>) {
 
 
     return (
-        <button {...props} className={`${props.className} ${buttonStyleClass} ${hasText ? `rounded-md ${cls.wrap}` : 'rounded-full p-1'} flex flex-nowrap select-none transition-colors duration-200 ease-in-out`}>
+        // @ts-ignore
+        <button {...props} className={`${props.className} ${buttonStyleClass} ${hasText ? `rounded-md ${cls.wrap}` : 'rounded-full p-1'} flex flex-nowrap select-none transition-colors duration-200 ease-in-out ${disabled && "cursor-not-allowed"}`}>
             {
                 props.icon &&
                 <div className={`${cls.icon} ${hasText && 'mr-1.5 -ml-1.5 p-0'} my-auto `}>
