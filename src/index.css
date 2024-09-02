@@ -11,6 +11,10 @@
         @apply text-slate-600 dark:text-white
     }
 
+    .flex-flow {
+        flex-flow: row;
+    }
+
     .active .text-color,
     .active {
         @apply bg-neutral-100 text-primary

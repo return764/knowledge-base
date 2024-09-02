@@ -18,8 +18,29 @@ function ChatPage() {
                     <div className="text-primary text-xl leading-none my-auto">{chat.name}</div>
                 </div>
             </div>
-            <div className="border flex flex-grow">
-                content
+            <div className="border flex flex-grow overflow-y-scroll flex-flow h-0">
+                   asldkaldaksjdlkajdalksdaskldmaslkdmaklsmdklasmdklasmdklasmdlkasmdklmaslkdmaklsdmalksmdlkasmdlkamskld
+                    asldkaldaksjdlkajdalksdaskldmaslkdmaklsmdklasmdklasmdklasmdlkasmdklmaslkdmaklsdmalksmdlkasmdlkamskld
+                    asldkaldaksjdlkajdalksdaskldmaslkdmaklsmdklasmdklasmdklasmdlkasmdklmaslkdmaklsdmalksmdlkasmdlkamskld
+                    asldkaldaksjdlkajdalksdaskldmaslkdmaklsmdklasmdklasmdklasmdlkasmdklmaslkdmaklsdmalksmdlkasmdlkamskld
+                    asldkaldaksjdlkajdalksdaskldmaslkdmaklsmdklasmdklasmdklasmdlkasmdklmaslkdmaklsdmalksmdlkasmdlkamskld
+                    asldkaldaksjdlkajdalksdaskldmaslkdmaklsmdklasmdklasmdklasmdlkasmdklmaslkdmaklsdmalksmdlkasmdlkamskld
+                    asldkaldaksjdlkajdalksdaskldmaslkdmaklsmdklasmdklasmdklasmdlkasmdklmaslkdmaklsdmalksmdlkasmdlkamskld
+                    asldkaldaksjdlkajdalksdaskldmaslkdmaklsmdklasmdklasmdklasmdlkasmdklmaslkdmaklsdmalksmdlkasmdlkamskld
+                    asldkaldaksjdlkajdalksdaskldmaslkdmaklsmdklasmdklasmdklasmdlkasmdklmaslkdmaklsdmalksmdlkasmdlkamskld
+                    asldkaldaksjdlkajdalksdaskldmaslkdmaklsmdklasmdklasmdklasmdlkasmdklmaslkdmaklsdmalksmdlkasmdlkamskld
+                    asldkaldaksjdlkajdalksdaskldmaslkdmaklsmdklasmdklasmdklasmdlkasmdklmaslkdmaklsdmalksmdlkasmdlkamskld
+                    asldkaldaksjdlkajdalksdaskldmaslkdmaklsmdklasmdklasmdklasmdlkasmdklmaslkdmaklsdmalksmdlkasmdlkamskld
+                    asldkaldaksjdlkajdalksdaskldmaslkdmaklsmdklasmdklasmdklasmdlkasmdklmaslkdmaklsdmalksmdlkasmdlkamskld
+                    asldkaldaksjdlkajdalksdaskldmaslkdmaklsmdklasmdklasmdklasmdlkasmdklmaslkdmaklsdmalksmdlkasmdlkamskld
+                    asldkaldaksjdlkajdalksdaskldmaslkdmaklsmdklasmdklasmdklasmdlkasmdklmaslkdmaklsdmalksmdlkasmdlkamskld
+                    asldkaldaksjdlkajdalksdaskldmaslkdmaklsmdklasmdklasmdklasmdlkasmdklmaslkdmaklsdmalksmdlkasmdlkamskld
+                    asldkaldaksjdlkajdalksdaskldmaslkdmaklsmdklasmdklasmdklasmdlkasmdklmaslkdmaklsdmalksmdlkasmdlkamskld
+                    asldkaldaksjdlkajdalksdaskldmaslkdmaklsmdklasmdklasmdklasmdlkasmdklmaslkdmaklsdmalksmdlkasmdlkamskld
+                    asldkaldaksjdlkajdalksdaskldmaslkdmaklsmdklasmdklasmdklasmdlkasmdklmaslkdmaklsdmalksmdlkasmdlkamskld
+                    asldkaldaksjdlkajdalksdaskldmaslkdmaklsmdklasmdklasmdklasmdlkasmdklmaslkdmaklsdmalksmdlkasmdlkamskld
+                    asldkaldaksjdlkajdalksdaskldmaslkdmaklsmdklasmdklasmdklasmdlkasmdklmaslkdmaklsdmalksmdlkasmdlkamskld
+                    asldkaldaksjdlkajdalksdaskldmaslkdmaklsmdklasmdklasmdklasmdlkasmdklmaslkdmaklsdmalksmdlkasmdlkamskld
             </div>
             <ChatInput/>
         </div>

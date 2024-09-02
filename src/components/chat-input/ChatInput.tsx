@@ -19,7 +19,7 @@ function ChatInput(props: ChatInputProps) {
 
     return (
         <div className={`${props.className} min-h-32 rounded shadow p-2`}>
-            <Textarea value={text} onChange={handleChange} className="outline-none h-24" resize={false}/>
+            <Textarea placeholder="输入问题" value={text} onChange={handleChange} className="outline-none h-24 w-full" resize={false}/>
             <div className="flex justify-end">
                 <Button onClick={handleSendMessage}>发送</Button>
             </div>
