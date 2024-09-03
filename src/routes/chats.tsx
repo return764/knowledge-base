@@ -1,6 +1,6 @@
 import Button from "../components/basic/button/button.tsx";
 import {FaPlus} from "react-icons/fa6";
-import ChatCard from "../components/chat-card/ChatCard.tsx";
+import ChatCard from "../components/chat/ChatCard.tsx";
 import {useQuery} from "../hooks/useQuery.ts";
 import {Chat} from "../model/chat.ts";
 import {API} from "../model";

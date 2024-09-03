@@ -2,7 +2,8 @@ import Button from "../components/basic/button/button.tsx";
 import {MdOutlineArrowBackIosNew} from "react-icons/md";
 import {useLoaderData, useNavigate} from "react-router-dom";
 import {Chat} from "../model/chat.ts";
-import ChatInput from "../components/chat-input/ChatInput.tsx";
+import ChatInput from "../components/chat/ChatInput.tsx";
+import {ChatSegment} from "../components/chat/ChatSegment.tsx";
 
 function ChatPage() {
     const navigate = useNavigate()
@@ -18,29 +19,9 @@ function ChatPage() {
                     <div className="text-primary text-xl leading-none my-auto">{chat.name}</div>
                 </div>
             </div>
-            <div className="border flex flex-grow overflow-y-scroll flex-flow h-0">
-                   asldkaldaksjdlkajdalksdaskldmaslkdmaklsmdklasmdklasmdklasmdlkasmdklmaslkdmaklsdmalksmdlkasmdlkamskld
-                    asldkaldaksjdlkajdalksdaskldmaslkdmaklsmdklasmdklasmdklasmdlkasmdklmaslkdmaklsdmalksmdlkasmdlkamskld
-                    asldkaldaksjdlkajdalksdaskldmaslkdmaklsmdklasmdklasmdklasmdlkasmdklmaslkdmaklsdmalksmdlkasmdlkamskld
-                    asldkaldaksjdlkajdalksdaskldmaslkdmaklsmdklasmdklasmdklasmdlkasmdklmaslkdmaklsdmalksmdlkasmdlkamskld
-                    asldkaldaksjdlkajdalksdaskldmaslkdmaklsmdklasmdklasmdklasmdlkasmdklmaslkdmaklsdmalksmdlkasmdlkamskld
-                    asldkaldaksjdlkajdalksdaskldmaslkdmaklsmdklasmdklasmdklasmdlkasmdklmaslkdmaklsdmalksmdlkasmdlkamskld
-                    asldkaldaksjdlkajdalksdaskldmaslkdmaklsmdklasmdklasmdklasmdlkasmdklmaslkdmaklsdmalksmdlkasmdlkamskld
-                    asldkaldaksjdlkajdalksdaskldmaslkdmaklsmdklasmdklasmdklasmdlkasmdklmaslkdmaklsdmalksmdlkasmdlkamskld
-                    asldkaldaksjdlkajdalksdaskldmaslkdmaklsmdklasmdklasmdklasmdlkasmdklmaslkdmaklsdmalksmdlkasmdlkamskld
-                    asldkaldaksjdlkajdalksdaskldmaslkdmaklsmdklasmdklasmdklasmdlkasmdklmaslkdmaklsdmalksmdlkasmdlkamskld
-                    asldkaldaksjdlkajdalksdaskldmaslkdmaklsmdklasmdklasmdklasmdlkasmdklmaslkdmaklsdmalksmdlkasmdlkamskld
-                    asldkaldaksjdlkajdalksdaskldmaslkdmaklsmdklasmdklasmdklasmdlkasmdklmaslkdmaklsdmalksmdlkasmdlkamskld
-                    asldkaldaksjdlkajdalksdaskldmaslkdmaklsmdklasmdklasmdklasmdlkasmdklmaslkdmaklsdmalksmdlkasmdlkamskld
-                    asldkaldaksjdlkajdalksdaskldmaslkdmaklsmdklasmdklasmdklasmdlkasmdklmaslkdmaklsdmalksmdlkasmdlkamskld
-                    asldkaldaksjdlkajdalksdaskldmaslkdmaklsmdklasmdklasmdklasmdlkasmdklmaslkdmaklsdmalksmdlkasmdlkamskld
-                    asldkaldaksjdlkajdalksdaskldmaslkdmaklsmdklasmdklasmdklasmdlkasmdklmaslkdmaklsdmalksmdlkasmdlkamskld
-                    asldkaldaksjdlkajdalksdaskldmaslkdmaklsmdklasmdklasmdklasmdlkasmdklmaslkdmaklsdmalksmdlkasmdlkamskld
-                    asldkaldaksjdlkajdalksdaskldmaslkdmaklsmdklasmdklasmdklasmdlkasmdklmaslkdmaklsdmalksmdlkasmdlkamskld
-                    asldkaldaksjdlkajdalksdaskldmaslkdmaklsmdklasmdklasmdklasmdlkasmdklmaslkdmaklsdmalksmdlkasmdlkamskld
-                    asldkaldaksjdlkajdalksdaskldmaslkdmaklsmdklasmdklasmdklasmdlkasmdklmaslkdmaklsdmalksmdlkasmdlkamskld
-                    asldkaldaksjdlkajdalksdaskldmaslkdmaklsmdklasmdklasmdklasmdlkasmdklmaslkdmaklsdmalksmdlkasmdlkamskld
-                    asldkaldaksjdlkajdalksdaskldmaslkdmaklsmdklasmdklasmdklasmdlkasmdklmaslkdmaklsdmalksmdlkasmdlkamskld
+            <div className="flex flex-grow flex-col overflow-y-scroll flex-flow h-0 -mx-2 gap-4">
+                <ChatSegment/>
+                <ChatSegment role="user"/>
             </div>
             <ChatInput/>
         </div>
