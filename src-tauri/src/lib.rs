@@ -1,9 +1,10 @@
 mod sql;
 mod command;
 mod langchian;
+mod model;
 
 use tauri::{WebviewUrl, WebviewWindowBuilder};
-use command::commands::{import_text, uuid};
+use command::commands::{import_text, uuid, send_chat_message};
 
 #[cfg_attr(mobile, tauri::mobile_entry_point)]
 pub fn run() {
@@ -25,7 +26,7 @@ pub fn run() {
 
     tauri::Builder::default()
         .plugin(tauri_plugin_shell::init())
-        .invoke_handler(tauri::generate_handler![import_text, uuid])
+        .invoke_handler(tauri::generate_handler![import_text, uuid, send_chat_message])
         .plugin(tauri_plugin_sql::Builder::default().add_migrations("sqlite:knowledge_keeper.db", sql::migration::init()).build())
         .setup(|app| {
             let win_builder =

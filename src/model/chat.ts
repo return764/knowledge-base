@@ -1,5 +1,6 @@
 import {APIAbc} from "./api.ts";
 import {invoke} from "@tauri-apps/api/core";
+import {ChatMessage} from "../components/chat/ChatContext.tsx";
 
 export type Chat = {
     id: string,
@@ -9,7 +10,11 @@ export type Chat = {
 }
 
 export type ChatHistory = {
-
+    id: string
+    chatId: string
+    content: string
+    role: 'ai' | 'human' | 'system'
+    createdAt: string
 }
 
 
@@ -25,5 +30,13 @@ export class ChatAPI extends APIAbc {
 
     async insert() {
         await this.execute("INSERT INTO chat (id, name) VALUES (?, ?)", [await invoke('uuid'), "未命名聊天"])
+    }
+
+    async insertHistory(chatId: string, message: ChatMessage) {
+        await this.execute("INSERT INTO chat_history (id, chat_id, content, role) VALUES (?, ?, ?, ?)", [await invoke('uuid'), chatId, message.content, message.role])
+    }
+
+    async queryHistoryByChatId(params: {chatId: string}) {
+        return await this.query<ChatHistory[]>("SELECT * FROM chat_history WHERE chat_id = ? ORDER BY created_at", [params.chatId])
     }
 }

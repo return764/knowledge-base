@@ -1,4 +1,4 @@
-import React, {useEffect, useState} from 'react';
+import {useEffect, useState} from 'react';
 import Button from "../components/basic/button/button.tsx";
 import {MdOutlineArrowBackIosNew} from "react-icons/md";
 import {useLoaderData, useNavigate} from "react-router-dom";
@@ -25,7 +25,7 @@ const columns = [
     {header: '状态', name: 'status'}
 ]
 
-function KnowledgeBaseImport(props) {
+function KnowledgeBaseImport() {
     const navigate = useNavigate()
     const knowledgeBase = useLoaderData() as KnowledgeBase
     const [current, { inc, dec }] = useCounter(0, { min: 0, max: 2 })
@@ -34,7 +34,7 @@ function KnowledgeBaseImport(props) {
 
     const handleComplete = async () => {
         const onEvent = new Channel<ProgressEvent>()
-        const datasetId = await API.dataset.insert({name: form.getFieldValue("name"), kb_id: knowledgeBase.id})
+        const datasetId = await API.dataset.insert({name: form.getFieldValue("name"), kbId: knowledgeBase.id})
 
         onEvent.onmessage = (message: ProgressEvent) => {
             if (message.event === 'started') {
@@ -57,7 +57,7 @@ function KnowledgeBaseImport(props) {
 
     const changeProgressStatus = (name: string, status: string) => {
         const dataCloned: UploadTable[] = JSON.parse(JSON.stringify(data))
-        dataCloned.find(it => it.name === name).status = status
+        dataCloned.find(it => it.name === name)!!.status = status
         setData(dataCloned)
     }
 

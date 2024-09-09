@@ -2159,6 +2159,7 @@ name = "knowledge-keeper"
 version = "0.0.0"
 dependencies = [
  "cocoa",
+ "futures",
  "langchain-rust",
  "libsqlite3-sys",
  "serde",

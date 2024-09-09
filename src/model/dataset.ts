@@ -40,14 +40,14 @@ export type ProgressEvent =
 
 
 export class DatasetAPI extends APIAbc {
-    async insert(params: {name: string, kb_id: string}): Promise<string> {
+    async insert(params: {name: string, kbId: string}): Promise<string> {
         const datasetId: string = await invoke('uuid')
-        await this.execute("INSERT INTO dataset (id, name, kb_id) VALUES (?, ?, ?)", [datasetId, params.name, params.kb_id])
+        await this.execute("INSERT INTO dataset (id, name, kb_id) VALUES (?, ?, ?)", [datasetId, params.name, params.kbId])
         return Promise.resolve(datasetId)
     }
 
-    async queryAllByKbId(params: {kb_id: string}) {
-        return await this.query<Dataset[]>(`SELECT d.* FROM dataset d WHERE d.kb_id = ?`, [params.kb_id])
+    async queryAllByKbId(params: {kbId: string}) {
+        return await this.query<Dataset[]>(`SELECT d.* FROM dataset d WHERE d.kb_id = ?`, [params.kbId])
     }
 
     async queryById(params: {id: string}) {

@@ -17,7 +17,7 @@ function KnowledgeBaseDetail() {
     const [visible, {toggle}] = useToggle(false)
     const [current, setCurrent] = useState<Dataset>()
     const knowledgeBase = useLoaderData() as KnowledgeBase
-    const {data} = useQuery<Dataset[]>('dataset', 'queryAllByKbId', {kb_id: knowledgeBase.id})
+    const {data} = useQuery<Dataset[]>('dataset', 'queryAllByKbId', {kbId: knowledgeBase.id})
 
     const columns: Column<Dataset>[] = [
         {
