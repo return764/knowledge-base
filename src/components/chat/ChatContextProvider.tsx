@@ -12,8 +12,17 @@ type StreamMessageResponse = {
 
 export const ChatContextProvider = (props: PropsWithChildren<{chat: Chat}>) => {
     const {chat} = props
-    const {data} = useQuery<ChatHistory[]>('chat', 'queryHistoryByChatId', {chatId: chat.id}, {refreshInterval: 0})
+    const {data, isLoading, error} = useQuery<ChatHistory[]>('chat', 'queryHistoryByChatId', {chatId: chat.id}, {refreshInterval: 0})
     const [messages, setMessages] = useState<ChatMessage[]>([]);
+    const [isReady, setIsReady] = useState<boolean>(false)
+
+    useEffect(() => {
+        if (isLoading || error) {
+            setIsReady(false)
+            return
+        }
+        setIsReady(true)
+    }, [isLoading, error]);
 
     useEffect(() => {
         if (data) {
@@ -25,7 +34,6 @@ export const ChatContextProvider = (props: PropsWithChildren<{chat: Chat}>) => {
                 result.push(buildMessage(it.content, it.role))
             })
             setMessages(result)
-            console.log(data)
         }
     }, [data]);
 
@@ -60,7 +68,8 @@ export const ChatContextProvider = (props: PropsWithChildren<{chat: Chat}>) => {
         <ChatContext.Provider value={{
             chat,
             messages,
-            sendMessage
+            sendMessage,
+            isReady
         }}>
             {props.children}
         </ChatContext.Provider>

@@ -4,7 +4,7 @@ import {useContext, useState} from "react";
 import {ChatContext} from "./ChatContext.tsx";
 
 type ChatInputProps = {
-    className?: string
+    className?: string,
 }
 
 function ChatInput(props: ChatInputProps) {
@@ -17,8 +17,11 @@ function ChatInput(props: ChatInputProps) {
 
     const handleSendMessage = async () => {
         if (text) {
-            await sendMessage(text)
             setText('')
+            await sendMessage(text)
+            // todo 优先渲染机器人的回复框
+            // todo 添加机器人回复的[...]
+            // todo 支持渲染机器人回复的markdown格式
         }
     }
 

@@ -12,11 +12,13 @@ export type ChatRole = 'human' | 'ai' | 'system'
 type ChatContextProps = {
     chat?: Chat,
     messages: ChatMessage[],
-    sendMessage: (message: string) => Promise<void>
+    sendMessage: (message: string) => Promise<void>,
+    isReady: boolean,
 }
 
 export const ChatContext = createContext<ChatContextProps>({
     chat: undefined,
     messages: [],
-    sendMessage: async () => {}
+    sendMessage: async () => {},
+    isReady: false
 });
