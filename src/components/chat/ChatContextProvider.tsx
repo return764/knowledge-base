@@ -1,19 +1,18 @@
-import {PropsWithChildren, useEffect, useState} from "react";
+import {PropsWithChildren, useEffect, useMemo, useState} from "react";
 import {Chat, ChatHistory} from "../../model/chat.ts";
 import {useQuery} from "../../hooks/useQuery.ts";
-import {Channel, invoke} from "@tauri-apps/api/core";
-// import {API} from "../../model";
-import {ChatContext, ChatMessage, ChatRole} from "./ChatContext.tsx";
+import {ChatContext, ChatMessage} from "./ChatContext.tsx";
+import {buildMessage, buildOkBlocks} from "../../utils/chat.ts";
 
-type StreamMessageResponse = {
-    done?: boolean,
-    appendMessage: string
+export type ChatBlock = {
+    message: ChatMessage,
+    status: 'processing' | 'failed' | 'ok'
 }
 
 export const ChatContextProvider = (props: PropsWithChildren<{chat: Chat}>) => {
     const {chat} = props
     const {data, isLoading, error} = useQuery<ChatHistory[]>('chat', 'queryHistoryByChatId', {chatId: chat.id}, {refreshInterval: 0})
-    const [messages, setMessages] = useState<ChatMessage[]>([]);
+    const [chatBlocks, setChatBlocks] = useState<ChatBlock[]>([]);
     const [isReady, setIsReady] = useState<boolean>(false)
 
     useEffect(() => {
@@ -33,42 +32,20 @@ export const ChatContextProvider = (props: PropsWithChildren<{chat: Chat}>) => {
             data?.forEach(it => {
                 result.push(buildMessage(it.content, it.role))
             })
-            setMessages(result)
+            setChatBlocks(buildOkBlocks(result))
         }
     }, [data]);
 
-    const buildMessage = (content: string, role: ChatRole): ChatMessage => {
-        return {content, role}
-    }
-
-    const sendMessage = async (content: string) => {
-        const message = buildMessage(content, 'human')
-        const chatMessages = [...messages, message]
-        setMessages(chatMessages)
-
-        const onEvent = new Channel<StreamMessageResponse>()
-        onEvent.onmessage = handleMessage(chatMessages)
-        await invoke("send_chat_message", {messages: chatMessages, onEvent, chatId: chat.id})
-        // await API.chat.insertHistory(chat.id, message)
-    }
-
-    const handleMessage = (chatMessages: ChatMessage[]) => {
-        let cacheMessages = chatMessages
-        let msg = ""
-        return (message: StreamMessageResponse) => {
-            msg = msg.concat(message.appendMessage)
-            setMessages([...cacheMessages, buildMessage(msg, 'ai')])
-            if (message.done) {
-                msg = ""
-            }
-        }
-    }
+    const messages: ChatMessage[] = useMemo(() => {
+        return chatBlocks.map(it => it.message)
+    }, [chatBlocks])
 
     return (
         <ChatContext.Provider value={{
             chat,
             messages,
-            sendMessage,
+            chatBlocks,
+            setChatBlocks,
             isReady
         }}>
             {props.children}

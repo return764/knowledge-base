@@ -1,7 +1,7 @@
 import Textarea from "../basic/form/components/textarea.tsx";
 import Button from "../basic/button/button.tsx";
-import {useContext, useState} from "react";
-import {ChatContext} from "./ChatContext.tsx";
+import {useState} from "react";
+import {useChatHelper} from "../../hooks/useChatHelper.ts";
 
 type ChatInputProps = {
     className?: string,
@@ -9,7 +9,7 @@ type ChatInputProps = {
 
 function ChatInput(props: ChatInputProps) {
     const [text, setText] = useState<string>()
-    const {sendMessage} = useContext(ChatContext)
+    const {sendMessage} = useChatHelper()
 
     const handleChange = (v: string) => {
         setText(v)
@@ -19,8 +19,6 @@ function ChatInput(props: ChatInputProps) {
         if (text) {
             setText('')
             await sendMessage(text)
-            // todo 优先渲染机器人的回复框
-            // todo 添加机器人回复的[...]
             // todo 支持渲染机器人回复的markdown格式
         }
     }

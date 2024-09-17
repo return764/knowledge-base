@@ -1,15 +1,15 @@
 import {RiRobot2Line, RiUser3Line} from "react-icons/ri";
 import {useMemo} from "react";
-import {ChatMessage} from "./ChatContext.tsx";
+import {ChatBlock} from "./ChatContextProvider.tsx";
 
 type ChatSegmentProps = {
-    message: ChatMessage
+    blockMessage: ChatBlock
 }
 
 export function ChatSegment(props: ChatSegmentProps) {
-    const {message} = props;
+    const {blockMessage} = props
 
-    const isAI = useMemo(() => message.role === 'ai', [message.role])
+    const isAI = useMemo(() => blockMessage.message.role === 'ai', [blockMessage.message.role])
 
     return (
         <div className="mx-2">
@@ -21,7 +21,10 @@ export function ChatSegment(props: ChatSegmentProps) {
                 }
             </div>
             <div className="select-auto rounded-md shadow p-2">
-                {message.content}
+                {blockMessage.message.content}
+                {
+                    blockMessage.status === "processing" && <span>...</span>
+                }
             </div>
         </div>
     )

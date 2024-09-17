@@ -64,7 +64,7 @@ pub async fn send_chat_message(app: tauri::AppHandle,
         .llm(ollama.clone())
         .prompt(
             message_formatter![
-                fmt_message!(Message::new_human_message("你是知识库助手，请用中文回复问题")),
+                fmt_message!(Message::new_human_message("你是知识库助手，请用中文回复问题，不要使用emoji")),
                 fmt_placeholder!("chat_history"),
                 fmt_template!(HumanMessagePromptTemplate::new(template_fstring!(
                 "{input}", "input"
