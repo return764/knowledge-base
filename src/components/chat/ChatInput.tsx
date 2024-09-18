@@ -19,7 +19,6 @@ function ChatInput(props: ChatInputProps) {
         if (text) {
             setText('')
             await sendMessage(text)
-            // todo 支持渲染机器人回复的markdown格式
         }
     }
 

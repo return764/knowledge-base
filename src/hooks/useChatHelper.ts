@@ -27,7 +27,7 @@ export const useChatHelper = () => {
 
         const onEvent = new Channel<StreamMessageResponse>()
         onEvent.onmessage = handleMessage(blocks)
-        await invoke("send_chat_message", {messages: blocks.map(it => it.message), onEvent, chatId: chat!!.id})
+        await invoke("send_chat_message", {messages: blocks.slice(0, -1).map(it => it.message), onEvent, chatId: chat!!.id})
     }
 
     const handleMessage = (chatBlocks: ChatBlock[]) => {

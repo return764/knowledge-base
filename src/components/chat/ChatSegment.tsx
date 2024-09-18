@@ -1,6 +1,7 @@
 import {RiRobot2Line, RiUser3Line} from "react-icons/ri";
 import {useMemo} from "react";
 import {ChatBlock} from "./ChatContextProvider.tsx";
+import MessageMarkdown from "./message/MessageMarkdown.tsx";
 
 type ChatSegmentProps = {
     blockMessage: ChatBlock
@@ -21,8 +22,9 @@ export function ChatSegment(props: ChatSegmentProps) {
                 }
             </div>
             <div className="select-auto rounded-md shadow p-2">
-                {blockMessage.message.content}
+                <MessageMarkdown content={blockMessage.message.content}/>
                 {
+                    // todo 优化
                     blockMessage.status === "processing" && <span>...</span>
                 }
             </div>
