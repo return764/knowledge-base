@@ -2,7 +2,7 @@ import Button from "../../basic/button/button.tsx";
 import {FC, memo} from "react";
 import {MdCheck, MdContentCopy, MdOutlineFileDownload} from "react-icons/md";
 import SyntaxHighlighter from "react-syntax-highlighter";
-import { oneDark } from "react-syntax-highlighter/dist/cjs/styles/prism"
+import { darcula } from "react-syntax-highlighter/dist/cjs/styles/hljs"
 import {useCopyToClipboard} from "../../../hooks/useCopyToClipboard.ts";
 
 interface MessageCodeBlockProps {
@@ -86,8 +86,8 @@ export const MessageCodeBlock: FC<MessageCodeBlockProps> = memo(
         }
 
         return (
-            <div className="codeblock relative w-full bg-zinc-950 font-sans">
-                <div className="flex w-full items-center justify-between bg-zinc-700 px-4 text-white">
+            <div className="codeblock relative rounded-md w-full font-sans bg-zinc-950">
+                <div className="sticky left-0 top-0 flex rounded-t-md w-full items-center justify-between bg-zinc-700 px-4 text-white">
                     <span className="text-xs lowercase">{language}</span>
                     <div className="flex items-center space-x-1">
                         <Button
@@ -108,7 +108,7 @@ export const MessageCodeBlock: FC<MessageCodeBlockProps> = memo(
                 </div>
                 <SyntaxHighlighter
                     language={language}
-                    style={oneDark}
+                    style={darcula}
                     // showLineNumbers
                     customStyle={{
                         margin: 0,

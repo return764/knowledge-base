@@ -11,6 +11,8 @@ export function ChatSegment(props: ChatSegmentProps) {
     const {blockMessage} = props
 
     const isAI = useMemo(() => blockMessage.message.role === 'ai', [blockMessage.message.role])
+    const isProcessing = useMemo(() => blockMessage.status === 'processing', [blockMessage.status])
+    const isFailed = useMemo(() => blockMessage.status === 'failed', [blockMessage.status])
 
     return (
         <div className="mx-2">
@@ -21,11 +23,10 @@ export function ChatSegment(props: ChatSegmentProps) {
                         <RiUser3Line size={32} className="text-zinc-600 rounded-full border p-1"/>
                 }
             </div>
-            <div className="select-auto rounded-md shadow p-2">
+            <div className={`select-auto rounded-md shadow p-2 ${isProcessing && 'border border-primary'} ${isFailed && 'border border-red-500'}`}>
                 <MessageMarkdown content={blockMessage.message.content}/>
                 {
-                    // todo 优化
-                    blockMessage.status === "processing" && <span>...</span>
+                    isProcessing && <span>...</span>
                 }
             </div>
         </div>
