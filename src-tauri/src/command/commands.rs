@@ -9,7 +9,6 @@ use langchain_rust::prompt::HumanMessagePromptTemplate;
 use langchain_rust::schemas::{Document, Message, MessageType};
 use langchain_rust::vectorstore::sqlite_vec::StoreBuilder;
 use langchain_rust::vectorstore::{VecStoreOptions, VectorStore};
-use serde::{Serialize};
 use serde_json::json;
 use tauri::ipc::Channel;
 use tauri::Manager;
@@ -18,33 +17,8 @@ use crate::langchian::langchian::split_text;
 use futures::StreamExt;
 use sqlx::{Pool, Sqlite};
 use sqlx::sqlite::{SqliteConnectOptions, SqlitePoolOptions};
-use crate::model::model::ChatMessage;
-
-#[derive(Clone, Serialize)]
-#[serde(rename_all = "camelCase", tag = "event", content = "data")]
-pub enum ProgressEvent {
-    #[serde(rename_all = "camelCase")]
-    Started {
-        progress_id: usize,
-        content_length: usize,
-    },
-    #[serde(rename_all = "camelCase")]
-    Progress {
-        progress_id: usize,
-        chunk_length: usize,
-    },
-    #[serde(rename_all = "camelCase")]
-    Finished {
-        progress_id: usize,
-    },
-}
-
-#[derive(Clone, Serialize)]
-#[serde(rename_all = "camelCase")]
-pub struct StreamMessageResponse {
-    append_message: String,
-    done: bool
-}
+use crate::command::event::{ProgressEvent, StreamMessageResponse};
+use crate::model::chat::ChatMessage;
 
 #[tauri::command]
 pub async fn send_chat_message(app: tauri::AppHandle,
@@ -74,10 +48,18 @@ pub async fn send_chat_message(app: tauri::AppHandle,
         .unwrap();
     let (input, chat_history) = messages_normalize.split_last().unwrap();
 
-    let mut stream = chain.stream(prompt_args! {
+    let mut stream = match chain.stream(prompt_args! {
         "chat_history" => chat_history,
-        "input" => input
-    }).await.unwrap();
+        "input" => input.content.clone()
+    }).await {
+        Ok(stream) => stream,
+        Err(e) => {
+            on_event.send(StreamMessageResponse::Error {
+                message: format!("Error: {}", e),
+            }).unwrap();
+            return;
+        }
+    };
 
     let complete_ai_message = Arc::new(Mutex::new(String::new()));
     let complete_ai_message_clone = complete_ai_message.clone();
@@ -87,18 +69,19 @@ pub async fn send_chat_message(app: tauri::AppHandle,
                 let mut complete_ai_message_clone =
                     complete_ai_message_clone.lock().unwrap();
                 complete_ai_message_clone.push_str(&value.content);
-                on_event.send(StreamMessageResponse {
-                    append_message: value.content,
-                    done: false,
+                on_event.send(StreamMessageResponse::AppendMessage {
+                    content: value.content,
                 }).unwrap();
             },
-            Err(e) => panic!("Error invoking LLMChain: {:?}", e),
+            Err(e) => {
+                on_event.send(StreamMessageResponse::Error {
+                    message: format!("Error invoking LLMChain: {:?}", e),
+                }).unwrap();
+                panic!("Error invoking LLMChain: {:?}", e)
+            },
         }
     }
-    on_event.send(StreamMessageResponse {
-        append_message: String::new(),
-        done: true,
-    }).unwrap();
+    on_event.send(StreamMessageResponse::Done).unwrap();
 
     sqlx::query(&format!("INSERT INTO chat_history (id, chat_id, content, role) VALUES ('{}', '{}', '{}', '{}')",
                          Uuid::new_v4().to_string(),

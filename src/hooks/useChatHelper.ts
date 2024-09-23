@@ -1,27 +1,25 @@
 import {useContext} from "react";
 import {ChatContext} from "../components/chat/ChatContext.tsx";
 import {Channel, invoke} from "@tauri-apps/api/core";
-import {buildMessage} from "../utils/chat.ts";
+import {buildAiMessage, buildChatBlock, buildHumanMessage} from "../utils/chat.ts";
 import {ChatBlock} from "../components/chat/ChatContextProvider.tsx";
 
-type StreamMessageResponse = {
-    done?: boolean,
-    appendMessage: string
-}
-
-// sendMessage: (message: string) => Promise<void>,
-
+type StreamMessageResponse = 
+    | { event: "appendMessage", data: { content: string } }
+    | { event: "error", data: { message: string } }
+    | { event: "done" }
 
 export const useChatHelper = () => {
     const {chatBlocks, setChatBlocks, chat} = useContext(ChatContext)
 
 
     const sendMessage = async (content: string) => {
-        const message = buildMessage(content, 'human')
+        const message = buildHumanMessage(content)
+        const currentAiResultMessage = buildAiMessage('')
         const blocks = [
             ...chatBlocks,
-            {message, status: 'ok'},
-            {message: buildMessage('', 'ai'), status: 'processing'}
+            buildChatBlock(message),
+            buildChatBlock(currentAiResultMessage, 'processing')
         ] as ChatBlock[]
         setChatBlocks(blocks)
 
@@ -34,11 +32,22 @@ export const useChatHelper = () => {
         let cacheBlocks = chatBlocks.slice(0, -1)
         let msg = ""
         return (message: StreamMessageResponse) => {
-            msg = msg.concat(message.appendMessage)
-            setChatBlocks([...cacheBlocks, {message: buildMessage(msg, 'ai'), status: 'processing'}])
-            if (message.done) {
-                setChatBlocks([...cacheBlocks, {message: buildMessage(msg, 'ai'), status: 'ok'}])
-                msg = ""
+            switch (message.event) {
+                case "appendMessage":
+                    msg = msg.concat(message.data.content)
+                    const chatMessageProcessing = buildAiMessage(msg)
+                    setChatBlocks([...cacheBlocks, {message: chatMessageProcessing, status: 'processing'}])
+                    break
+                case "error":
+                    //const chatMessageError = buildAiMessage(`Error: ${message.data.message}`)
+                    setChatBlocks([...cacheBlocks, {message: buildAiMessage(msg), status: 'failed'}])
+                    msg = ""
+                    break
+                case "done":
+                    const chatMessageDone = buildAiMessage(msg)
+                    setChatBlocks([...cacheBlocks, {message: chatMessageDone, status: 'ok'}])
+                    msg = ""
+                    break
             }
         }
     }

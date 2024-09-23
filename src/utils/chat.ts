@@ -13,3 +13,15 @@ export const buildOkBlocks = (messages: ChatMessage[]): ChatBlock[] => {
 export const buildMessage = (content: string, role: ChatRole): ChatMessage => {
     return {content, role}
 }
+
+export const buildHumanMessage = (content: string): ChatMessage => {
+    return buildMessage(content, "human")
+}
+
+export const buildAiMessage = (content: string): ChatMessage => {
+    return buildMessage(content, "ai")
+}
+
+export const buildChatBlock = (message: ChatMessage, status: ChatBlock['status'] = 'ok') => {
+    return {message, status}
+}
