@@ -1,9 +1,7 @@
 use std::collections::HashMap;
-use std::str::FromStr;
-use std::sync::{Arc, Mutex};
 use langchain_rust::chain::{Chain, LLMChainBuilder};
 use langchain_rust::embedding::OllamaEmbedder;
-use langchain_rust::llm::client::{Ollama};
+use langchain_rust::llm::client::Ollama;
 use langchain_rust::{fmt_message, fmt_placeholder, fmt_template, message_formatter, prompt_args, template_fstring};
 use langchain_rust::prompt::HumanMessagePromptTemplate;
 use langchain_rust::schemas::{Document, Message, MessageType};
@@ -11,27 +9,21 @@ use langchain_rust::vectorstore::sqlite_vec::StoreBuilder;
 use langchain_rust::vectorstore::{VecStoreOptions, VectorStore};
 use serde_json::json;
 use tauri::ipc::Channel;
-use tauri::Manager;
-use uuid::{Uuid};
+use tauri::{Manager, State};
+use uuid::Uuid;
 use crate::langchian::langchian::split_text;
+use crate::states::SqlPoolContext;
 use futures::StreamExt;
-use sqlx::{Pool, Sqlite};
-use sqlx::sqlite::{SqliteConnectOptions, SqlitePoolOptions};
 use crate::command::event::{ProgressEvent, StreamMessageResponse};
 use crate::model::chat::ChatMessage;
+use crate::service::chat;
 
 #[tauri::command]
-pub async fn send_chat_message(app: tauri::AppHandle,
+pub async fn send_chat_message(state: State<'_, SqlPoolContext>,
                                chat_id: String,
                                messages: Vec<ChatMessage>,
-                               on_event: Channel<StreamMessageResponse>) {
+                               on_event: Channel<StreamMessageResponse>) -> Result<(), ()> {
     let ollama = Ollama::default().with_model("llama3");
-    let pool: Pool<Sqlite> = SqlitePoolOptions::new()
-        .connect_with(
-            SqliteConnectOptions::from_str(&format!("sqlite:{}/knowledge_keeper.db", app.path().app_config_dir().unwrap().to_str().unwrap())).unwrap()
-                .create_if_missing(true)
-                .extension("vec0"),
-        ).await.unwrap();
 
     let messages_normalize: Vec<Message> = messages.iter().map(|m| m.into()).collect();
     let chain = LLMChainBuilder::new()
@@ -57,18 +49,15 @@ pub async fn send_chat_message(app: tauri::AppHandle,
             on_event.send(StreamMessageResponse::Error {
                 message: format!("Error: {}", e),
             }).unwrap();
-            return;
+            return Ok(());
         }
     };
 
-    let complete_ai_message = Arc::new(Mutex::new(String::new()));
-    let complete_ai_message_clone = complete_ai_message.clone();
+    let mut complete_ai_message = String::new();
     while let Some(result) = stream.next().await {
         match result {
             Ok(value) => {
-                let mut complete_ai_message_clone =
-                    complete_ai_message_clone.lock().unwrap();
-                complete_ai_message_clone.push_str(&value.content);
+                complete_ai_message.push_str(&value.content);
                 on_event.send(StreamMessageResponse::AppendMessage {
                     content: value.content,
                 }).unwrap();
@@ -82,21 +71,9 @@ pub async fn send_chat_message(app: tauri::AppHandle,
         }
     }
     on_event.send(StreamMessageResponse::Done).unwrap();
-
-    sqlx::query(&format!("INSERT INTO chat_history (id, chat_id, content, role) VALUES ('{}', '{}', '{}', '{}')",
-                         Uuid::new_v4().to_string(),
-                         chat_id,
-                         input.content,
-                         MessageType::HumanMessage.to_string()))
-        .execute(&pool)
-        .await.unwrap();
-    sqlx::query(&format!("INSERT INTO chat_history (id, chat_id, content, role) VALUES ('{}', '{}', '{}', '{}')",
-                         Uuid::new_v4().to_string(),
-                         chat_id,
-                         &complete_ai_message.lock().unwrap(),
-                         MessageType::AIMessage.to_string()))
-        .execute(&pool)
-        .await.unwrap();
+    chat::add_chat_history(&state.pool, &chat_id, input.content.clone(), MessageType::HumanMessage).await;
+    chat::add_chat_history(&state.pool, &chat_id, complete_ai_message.clone(), MessageType::AIMessage).await;
+    Ok(())
 }
 
 #[tauri::command]
