@@ -17,7 +17,7 @@ function ChatPanel() {
     }, [chatBlocks.length])
 
     return (
-        <div ref={panelRef} className="flex flex-grow flex-col overflow-y-scroll flex-flow h-0 -mx-2 gap-4">
+        <div ref={panelRef} className="flex flex-grow flex-col overflow-y-scroll flex-flow h-0 -mx-2 gap-4 mb-2">
             {
                 chatBlocks.map((it, index) => {
                     return <ChatSegment key={index} blockMessage={it}/>

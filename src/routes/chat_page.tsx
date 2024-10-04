@@ -23,7 +23,7 @@ function ChatPage() {
                 </div>
             </div>
             <ChatPanel/>
-            <ChatInput />
+            <ChatInput/>
         </div>
     )
 }
