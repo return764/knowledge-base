@@ -1,7 +1,9 @@
 use std::collections::HashMap;
 use langchain_rust::chain::{Chain, LLMChainBuilder};
+use langchain_rust::document_loaders::{Loader, TextLoader};
 use langchain_rust::embedding::OllamaEmbedder;
 use langchain_rust::llm::client::Ollama;
+use langchain_rust::text_splitter::{SplitterOptions, TokenSplitter};
 use langchain_rust::{fmt_message, fmt_placeholder, fmt_template, message_formatter, prompt_args, template_fstring};
 use langchain_rust::prompt::HumanMessagePromptTemplate;
 use langchain_rust::schemas::{Document, Message, MessageType};
@@ -11,7 +13,6 @@ use serde_json::json;
 use tauri::ipc::Channel;
 use tauri::{Manager, State};
 use uuid::Uuid;
-use crate::langchian::langchian::split_text;
 use crate::states::SqlPoolContext;
 use futures::StreamExt;
 use crate::command::event::{ProgressEvent, StreamMessageResponse};
@@ -100,8 +101,23 @@ pub async fn import_text(app: tauri::AppHandle,
         .build()
         .await.map_err(|e| e.to_string())?;
     store.initialize().await.map_err(|e| e.to_string())?;
-    let document_contents = split_text(&text, 512);
-    let count = document_contents.len();
+
+    let text_loader = TextLoader::new(&text);
+    let splitter = TokenSplitter::new(SplitterOptions::default());
+    let mut doc_stream = text_loader.load_and_split(splitter).await.unwrap();
+    let mut documents: Vec<Document> = vec![];
+    while let Some(doc) = doc_stream.next().await {
+        match doc {
+            Ok(value) => {
+                documents.push(value);
+            },
+            Err(e) => {
+                println!("Error when split documents: {:?}", e)
+            },
+        }
+    }
+
+    let count = documents.len();
 
     sqlx::query(&format!("UPDATE dataset SET count = {count} WHERE id = '{dataset_id}'"))
         .execute(&store.pool)
@@ -112,17 +128,15 @@ pub async fn import_text(app: tauri::AppHandle,
         content_length: count,
     }).unwrap();
 
-    let docs: Vec<Document> = document_contents.iter().map(|item| {
-        return Document::new(
-            item,
-        ).with_metadata(HashMap::from([
+    let final_docs: Vec<Document> = documents.iter().map(|item| {
+        return item.clone().with_metadata(HashMap::from([
             ("dataset_id".to_string(), json!(dataset_id)),
             ("id".to_string(), json!(uuid())),
         ]));
     }).collect();
 
     store
-        .add_documents(&docs, &VecStoreOptions::default())
+        .add_documents(&final_docs, &VecStoreOptions::default())
         .await.map_err(|e| e.to_string())?;
 
     on_event.send(ProgressEvent::Finished {
