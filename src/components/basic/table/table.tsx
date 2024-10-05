@@ -1,4 +1,4 @@
-import React, {Key, MouseEvent} from "react";
+import React, {Key, MouseEvent, useEffect, useState} from "react";
 
 export type Column<T> = {
     header: string;
@@ -14,6 +14,30 @@ type TableProps<DataType> = {
 }
 
 const Table = <DataType extends Record<string, any>> ({ columns, data, onRowClick }: TableProps<DataType>) => {
+    const tableRef = React.useRef<HTMLTableElement>(null);
+    const [columnWidth, setColumnWidth] = useState<number>(0);
+
+    const calculateColumnWidth = () => {
+        if (tableRef.current) {
+            const tableWidth = tableRef.current.offsetWidth;
+            const averageColumnWidth = tableWidth / columns.length;
+            setColumnWidth(averageColumnWidth);
+        }
+    };
+
+    useEffect(() => {
+        calculateColumnWidth();
+
+        const handleResize = () => {
+            calculateColumnWidth();
+        };
+
+        window.addEventListener('resize', handleResize);
+
+        return () => {
+            window.removeEventListener('resize', handleResize);
+        };
+    }, [columns.length]);
 
     const handleRowClick = (e: MouseEvent<HTMLTableRowElement>, row: DataType) => {
         onRowClick && onRowClick(e, row)
@@ -23,18 +47,19 @@ const Table = <DataType extends Record<string, any>> ({ columns, data, onRowClic
         if (column?.render) {
             return column.render(row, rowIndex)
         }
-        return row[column.name]
+        return row[column.name as keyof DataType]
     }
 
     return (
         <div className="overflow-x-auto">
-            <table className="min-w-full bg-white border border-gray-200">
+            <table ref={tableRef} className="min-w-full bg-white border border-gray-200">
                 <thead className="bg-gray-200">
                 <tr>
                     {columns.map((column) => (
                         <th
                             key={column.name}
                             className="py-2 px-4 border-b border-gray-200 text-left text-gray-600"
+                            style={{ width: `${columnWidth}px` }}
                         >
                             {column.header}
                         </th>
