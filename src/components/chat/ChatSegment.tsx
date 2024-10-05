@@ -23,7 +23,7 @@ export function ChatSegment(props: ChatSegmentProps) {
                         <RiUser3Line size={32} className="text-zinc-600 rounded-full border p-1"/>
                 }
             </div>
-            <div className={`select-auto rounded-md shadow p-2 ${isProcessing && 'border border-primary'} ${isFailed && 'border border-red-500'}`}>
+            <div className={`select-auto rounded-md shadow p-2 ${isAI ? '' : 'w-fit float-right bg-primary text-white'} ${isProcessing && 'border border-primary'} ${isFailed && 'border border-red-500'}`}>
                 <MessageMarkdown content={blockMessage.message.content}/>
                 {
                     isProcessing && <span>...</span>
