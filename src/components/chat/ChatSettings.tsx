@@ -1,16 +1,15 @@
-import { useMemo } from "react";
+import { useContext, useMemo } from "react";
 import { useQuery } from "../../hooks/useQuery";
 import { KnowledgeBase } from "../../model/knowledge_base";
 import Select from "../basic/form/components/select";
-import { ChatSettings as ChatSettingsModel } from "../../model/chat";
+import { ChatContext } from "./ChatContext";
+import { useChatHelper } from "../../hooks/useChatHelper";
 
-type ChatSettingsProps = {
-    settings?: ChatSettingsModel,
-    onChange: (settings: ChatSettingsModel) => void
-}
+type ChatSettingsProps = {}
 
 function ChatSettings(props: ChatSettingsProps) {
-    const {settings, onChange} = props;
+    const {settings} = useContext(ChatContext)
+    const {updateSettings} = useChatHelper();
     const {data} = useQuery<KnowledgeBase[]>('knowledgeBase', 'queryAll')
 
     const options = useMemo(() => {
@@ -21,7 +20,7 @@ function ChatSettings(props: ChatSettingsProps) {
     }, [data])
 
     const handleKnowledgeBaseChange = (value: string) => {
-        onChange({
+        updateSettings({
             ...settings,
             knowledgeBase: [value],
         })

@@ -1,5 +1,5 @@
 import {PropsWithChildren, useEffect, useMemo, useState} from "react";
-import {Chat, ChatHistory} from "../../model/chat.ts";
+import {Chat, ChatHistory, ChatSettings} from "../../model/chat.ts";
 import {useQuery} from "../../hooks/useQuery.ts";
 import {ChatContext, ChatMessage} from "./ChatContext.tsx";
 import {buildMessage, buildOkBlocks} from "../../utils/chat.ts";
@@ -12,6 +12,7 @@ export type ChatBlock = {
 export const ChatContextProvider = (props: PropsWithChildren<{chat: Chat}>) => {
     const {chat} = props
     const {data, isLoading, error} = useQuery<ChatHistory[]>('chat', 'queryHistoryByChatId', {chatId: chat.id}, {refreshInterval: 0})
+    const [settings, setSettings] = useState<ChatSettings>(JSON.parse(chat?.settings ?? "{}"));
     const [chatBlocks, setChatBlocks] = useState<ChatBlock[]>([]);
     const [isReady, setIsReady] = useState<boolean>(false)
 
@@ -46,6 +47,8 @@ export const ChatContextProvider = (props: PropsWithChildren<{chat: Chat}>) => {
             messages,
             chatBlocks,
             setChatBlocks,
+            settings,
+            setSettings,
             isReady
         }}>
             {props.children}

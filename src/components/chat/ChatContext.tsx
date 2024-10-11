@@ -1,5 +1,5 @@
 import {createContext, Dispatch, SetStateAction} from "react";
-import {Chat} from "../../model/chat.ts";
+import {Chat, ChatSettings} from "../../model/chat.ts";
 import {ChatBlock} from "./ChatContextProvider.tsx";
 
 
@@ -15,6 +15,8 @@ type ChatContextProps = {
     messages: ChatMessage[],
     chatBlocks: ChatBlock[],
     setChatBlocks: Dispatch<SetStateAction<ChatBlock[]>>
+    settings: ChatSettings,
+    setSettings: Dispatch<SetStateAction<ChatSettings>>,
     isReady: boolean,
 }
 
@@ -23,5 +25,7 @@ export const ChatContext = createContext<ChatContextProps>({
     messages: [],
     chatBlocks: [],
     setChatBlocks: () => {},
+    settings: {},
+    setSettings: () => {},
     isReady: false
 });
