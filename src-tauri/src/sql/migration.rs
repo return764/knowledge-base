@@ -35,6 +35,7 @@ pub fn init() -> Vec<Migration> {
                 id TEXT PRIMARY KEY,\
                 name TEXT NOT NULL,\
                 prompts TEXT,\
+                settings BLOB,\
                 created_at DATETIME DEFAULT current_timestamp\
               );",
             kind: MigrationKind::Up,

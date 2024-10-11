@@ -6,6 +6,7 @@ export type Chat = {
     id: string,
     name: string,
     prompts?: string,
+    settings?: string,
     createdAt: string
 }
 
@@ -17,8 +18,14 @@ export type ChatHistory = {
     createdAt: string
 }
 
+export type ChatSettings = {
+    knowledgeBase: string[]
+}
 
 export class ChatAPI extends APIAbc {
+    async saveSettings(id: string, settings: ChatSettings) {
+        await this.execute("UPDATE chat SET settings = ? WHERE id = ?", [settings, id])
+    }
 
     async queryAll() {
         return await this.query<Chat[]>("SELECT * FROM chat ORDER BY created_at DESC")
