@@ -1,17 +1,15 @@
 use std::collections::HashMap;
 use langchain_rust::chain::{Chain, LLMChainBuilder};
 use langchain_rust::document_loaders::{Loader, TextLoader};
-use langchain_rust::embedding::OllamaEmbedder;
 use langchain_rust::llm::client::Ollama;
 use langchain_rust::text_splitter::{SplitterOptions, TokenSplitter};
 use langchain_rust::{fmt_message, fmt_placeholder, fmt_template, message_formatter, prompt_args, template_fstring};
-use langchain_rust::prompt::HumanMessagePromptTemplate;
+use langchain_rust::prompt::{HumanMessagePromptTemplate, SystemMessagePromptTemplate};
 use langchain_rust::schemas::{Document, Message, MessageType};
-use langchain_rust::vectorstore::sqlite_vec::StoreBuilder;
 use langchain_rust::vectorstore::{VecStoreOptions, VectorStore};
 use serde_json::json;
 use tauri::ipc::Channel;
-use tauri::{Manager, State};
+use tauri::{State};
 use uuid::Uuid;
 use crate::states::SqlPoolContext;
 use futures::StreamExt;
@@ -25,25 +23,40 @@ pub async fn send_chat_message(state: State<'_, SqlPoolContext>,
                                messages: Vec<ChatMessage>,
                                on_event: Channel<StreamMessageResponse>) -> Result<(), ()> {
     let ollama = Ollama::default().with_model("llama3");
+    let chat = chat::get_chat_settings(&state.pool, &chat_id).await;
 
     let messages_normalize: Vec<Message> = messages.iter().map(|m| m.into()).collect();
     let chain = LLMChainBuilder::new()
         .llm(ollama.clone())
         .prompt(
             message_formatter![
-                fmt_message!(Message::new_system_message("你是知识库助手，请用中文回复问题，不要使用emoji")),
-                fmt_placeholder!("chat_history"),
+                fmt_message!(Message::new_system_message("
+                    你是知识库问答助手,请根据用户输入的知识库和历史问答进行回答,请用[中文]回复问题,不要使用emoji,以下内容不需要告知用户.
+
+                    如果用户没有输入知识库,那么根据你自己的知识进行回答,但是请在结果之前带上[以下答案是自动生成]
+                    如果用户输入了知识库,那么使用知识库的内容进行回答,如果你认为问题和知识库没有关联，那么可以回复[未找到相关信息]
+                ")),
+                fmt_template!(SystemMessagePromptTemplate::new(template_fstring!(
+                    "知识库: {documents}, 历史回答: {chat_history}", "documents", "chat_history"
+                ))),
                 fmt_template!(HumanMessagePromptTemplate::new(template_fstring!(
-                "{input}", "input"
+                "问题：{input}", "input"
             ))),
         ])
         .build()
         .unwrap();
     let (input, chat_history) = messages_normalize.split_last().unwrap();
 
+    let mut documents: Vec<String> = vec![];
+    if let Some(knowledge_base) = chat.settings.knowledge_base {
+        let result = state.store.similarity_search(&input.content, 2, &VecStoreOptions::default()).await.unwrap();
+        documents = result.iter().map(|doc| doc.page_content.clone()).collect();
+    }
+
     let mut stream = match chain.stream(prompt_args! {
         "chat_history" => chat_history,
-        "input" => input.content.clone()
+        "input" => input.content.clone(),
+        "documents" => documents
     }).await {
         Ok(stream) => stream,
         Err(e) => {
@@ -83,7 +96,8 @@ pub fn uuid() -> String {
 }
 
 #[tauri::command]
-pub async fn import_text(app: tauri::AppHandle,
+pub async fn import_text(state: State<'_, SqlPoolContext>,
+                         app: tauri::AppHandle,
                          text: String,
                          kb_id: String,
                          dataset_id: String,
@@ -92,15 +106,7 @@ pub async fn import_text(app: tauri::AppHandle,
     // 创建数据集
     // 对大文本进行分词，512个字符为一个单元，分批进入embed模型进行训练
     // 将训练之后的vec保存到数据库中，其中包括文本/文件，数据集的id，向量，
-    let ollama = OllamaEmbedder::default().with_model("nomic-embed-text");
-    let store = StoreBuilder::new()
-        .embedder(ollama)
-        .connection_url(format!("sqlite:{}/knowledge_keeper.db", app.path().app_config_dir().unwrap().to_str().unwrap()))
-        .table(format!("kb_{}", kb_id.replace('-',"").to_string()).as_str())
-        .vector_dimensions(768)
-        .build()
-        .await.map_err(|e| e.to_string())?;
-    store.initialize().await.map_err(|e| e.to_string())?;
+    let store = &state.store;
 
     let text_loader = TextLoader::new(&text);
     let splitter = TokenSplitter::new(SplitterOptions::default());
@@ -130,6 +136,7 @@ pub async fn import_text(app: tauri::AppHandle,
 
     let final_docs: Vec<Document> = documents.iter().map(|item| {
         return item.clone().with_metadata(HashMap::from([
+            ("kb_id".to_string(), json!(kb_id)),
             ("dataset_id".to_string(), json!(dataset_id)),
             ("id".to_string(), json!(uuid())),
         ]));

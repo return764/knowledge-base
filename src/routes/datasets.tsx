@@ -1,4 +1,3 @@
-import React from 'react';
 import {useLoaderData, useNavigate, useParams} from "react-router-dom";
 import {Dataset, DocumentData} from "../model/dataset.ts";
 import Button from "../components/basic/button/button.tsx";

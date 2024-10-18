@@ -22,7 +22,7 @@ function ChatSettings(props: ChatSettingsProps) {
     const handleKnowledgeBaseChange = (value: string) => {
         updateSettings({
             ...settings,
-            knowledgeBase: [value],
+            knowledge_base: [value],
         })
     }
 
@@ -35,7 +35,7 @@ function ChatSettings(props: ChatSettingsProps) {
         <>
             <Select
                 options={options}
-                value={settings?.knowledgeBase?.[0]}
+                value={settings?.knowledge_base?.[0]}
                 onChange={handleKnowledgeBaseChange}
             />
         </>

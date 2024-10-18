@@ -19,7 +19,7 @@ export type ChatHistory = {
 }
 
 export type ChatSettings = {
-    knowledgeBase?: string[]
+    knowledge_base?: string[]
 }
 
 export class ChatAPI extends APIAbc {
