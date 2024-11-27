@@ -22,7 +22,7 @@ pub async fn send_chat_message(state: State<'_, SqlPoolContext>,
                                chat_id: String,
                                messages: Vec<ChatMessage>,
                                on_event: Channel<StreamMessageResponse>) -> Result<(), ()> {
-    let ollama = Ollama::default().with_model("llama3");
+    let ollama = Ollama::default().with_model("qwen2.5:7b");
     let chat = chat::get_chat_settings(&state.pool, &chat_id).await;
 
     let messages_normalize: Vec<Message> = messages.iter().map(|m| m.into()).collect();
@@ -30,17 +30,25 @@ pub async fn send_chat_message(state: State<'_, SqlPoolContext>,
         .llm(ollama.clone())
         .prompt(
             message_formatter![
-                fmt_message!(Message::new_system_message("
-                    你是知识库问答助手,请根据用户输入的知识库和历史问答进行回答,请用[中文]回复问题,不要使用emoji,以下内容不需要告知用户.
-
-                    如果用户没有输入知识库,那么根据你自己的知识进行回答,但是请在结果之前带上[以下答案是自动生成]
-                    如果用户输入了知识库,那么使用知识库的内容进行回答,如果你认为问题和知识库没有关联，那么可以回复[未找到相关信息]
-                ")),
                 fmt_template!(SystemMessagePromptTemplate::new(template_fstring!(
-                    "知识库: {documents}, 历史回答: {chat_history}", "documents", "chat_history"
+                    "
+                    你是知识库问答助手, 使用 <Reference></Reference> 标记中的内容作为本次对话的参考:
+
+                    <Reference>
+                    {documents}
+                    {chat_history}
+                    </Reference>
+
+                    回答要求：
+                    - 如果你不清楚答案，你需要澄清。
+                    - 避免提及你是从 <Reference></Reference> 获取的知识。
+                    - 保持答案与 <Reference></Reference> 中描述的一致。
+                    - 使用 Markdown 语法优化回答格式。
+                    - 使用与问题相同的语言回答。
+                    ", "documents", "chat_history"
                 ))),
                 fmt_template!(HumanMessagePromptTemplate::new(template_fstring!(
-                "问题：{input}", "input"
+                "{input}", "input"
             ))),
         ])
         .build()
