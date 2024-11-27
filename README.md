@@ -1,7 +1,7 @@
-# Tauri + React + Typescript
+# 知识库软件
+通过tauri + React进行构建，实现方式是通过langchain-rust创建的RAG Agent，将上传的文件保存到sqlite中，当用户提问时，在数据库中进行搜索，然后询问LLM
 
-This template should help get you started developing with Tauri, React and Typescript in Vite.
-
-## Recommended IDE Setup
-
-- [VS Code](https://code.visualstudio.com/) + [Tauri](https://marketplace.visualstudio.com/items?itemName=tauri-apps.tauri-vscode) + [rust-analyzer](https://marketplace.visualstudio.com/items?itemName=rust-lang.rust-analyzer)
+## 开发
+```shell
+npx tauri dev
+```
