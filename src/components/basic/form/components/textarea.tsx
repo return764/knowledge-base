@@ -1,6 +1,7 @@
 import {ChangeEvent, useMemo} from 'react';
 import {OnChangeAndValue} from "../interface.ts";
 import {useControllableValue} from "ahooks";
+import { Textarea as HeadlessTextarea } from '@headlessui/react'
 
 type TextareaProps = {
     rows?: number,
@@ -27,7 +28,7 @@ function Textarea(props: TextareaProps) {
     }, [className])
 
     return (
-        <textarea
+        <HeadlessTextarea
             value={text}
             onChange={handleChange}
             rows={rows}

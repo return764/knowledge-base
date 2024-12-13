@@ -1,5 +1,6 @@
 import {ButtonHTMLAttributes, PropsWithChildren, useMemo} from 'react';
 import type {IconType} from "react-icons";
+import {Button as HeadlessButton} from "@headlessui/react";
 
 type ButtonProps = {
     type?: "primary" | "link" | "light" | "text" | "icon",
@@ -56,7 +57,7 @@ function Button(props: PropsWithChildren<ButtonProps>) {
 
     return (
         // @ts-ignore
-        <button {...props} className={`${props.className} ${buttonStyleClass} ${hasText ? `rounded-md ${cls.wrap}` : 'rounded-full p-1'} flex flex-nowrap select-none transition-colors duration-200 ease-in-out ${disabled && "cursor-not-allowed"}`}>
+        <HeadlessButton {...props} className={`${props.className} ${buttonStyleClass} ${hasText ? `rounded-md ${cls.wrap}` : 'rounded-full p-1'} flex flex-nowrap select-none transition-colors duration-200 ease-in-out ${disabled && "cursor-not-allowed"}`}>
             {
                 props.icon &&
                 <div className={`${cls.icon} ${hasText && 'mr-1.5 -ml-1.5 p-0'} my-auto `}>
@@ -66,7 +67,7 @@ function Button(props: PropsWithChildren<ButtonProps>) {
             <span className={`whitespace-nowrap ${cls.text}`}>
                 {props.children}
             </span>
-        </button>
+        </HeadlessButton>
     );
 }
 
