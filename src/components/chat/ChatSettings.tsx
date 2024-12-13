@@ -5,9 +5,8 @@ import Select from "../basic/form/components/select";
 import { ChatContext } from "./ChatContext";
 import { useChatHelper } from "../../hooks/useChatHelper";
 
-type ChatSettingsProps = {}
 
-function ChatSettings(props: ChatSettingsProps) {
+function ChatSettings() {
     const {settings} = useContext(ChatContext)
     const {updateSettings} = useChatHelper();
     const {data} = useQuery<KnowledgeBase[]>('knowledgeBase', 'queryAll')

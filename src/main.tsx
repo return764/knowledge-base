@@ -9,6 +9,7 @@ import KnowledgeBaseImport from "./routes/knowledge_base_import.tsx";
 import Datasets from "./routes/datasets.tsx";
 import Chats from "./routes/chats.tsx";
 import ChatPage from "./routes/chat_page.tsx";
+import Preferences from "./routes/preferences.tsx";
 
 
 const router = createBrowserRouter([
@@ -46,6 +47,9 @@ const router = createBrowserRouter([
                 loader: async ({params}) => {
                     return await API.chat.queryById(params['id']!!)
                 }
+            }, {
+                path: "/preferences",
+                element: <Preferences/>,
             }
         ]
     },
