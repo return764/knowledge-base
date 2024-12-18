@@ -52,7 +52,7 @@ function Navigations() {
                     <NavItem link={"/knowledge-base"} icon={RiDatabase2Line} name="知识库"/>
                     <NavItem link={"/chats"} icon={HiOutlineChat} name="聊天"/>
                 </div>
-                <Link to={"/preferences"}>设置</Link>
+                <Link to={"/settings"}>设置</Link>
             </nav>
         </section>
     );

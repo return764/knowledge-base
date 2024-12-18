@@ -9,8 +9,8 @@ import KnowledgeBaseImport from "./routes/knowledge_base_import.tsx";
 import Datasets from "./routes/datasets.tsx";
 import Chats from "./routes/chats.tsx";
 import ChatPage from "./routes/chat_page.tsx";
-import Preferences from "./routes/preferences.tsx";
-
+import Settings from "./routes/settings.tsx";
+import BasicPageWrapper from "./components/basicPageWrapper.tsx";
 
 const router = createBrowserRouter([
     {
@@ -18,45 +18,51 @@ const router = createBrowserRouter([
         element: <Root />,
         children: [
             {
-                path: "/knowledge-base",
-                element: <KnowledgeBasePage/>
+                path: "/",
+                element: <BasicPageWrapper/>,
+                children: [
+                    {
+                        path: "/knowledge-base",
+                        element: <KnowledgeBasePage/>
+                    }, {
+                        path: "/knowledge-base/:id",
+                        element: <KnowledgeBaseDetail/>,
+                        loader: async ({ params }) => {
+                            return await API.knowledgeBase.queryById(params['id']!!)
+                        },
+                    }, {
+                        path: "/knowledge-base/:id/import",
+                        element: <KnowledgeBaseImport/>,
+                        loader: async ({ params }) => {
+                            return await API.knowledgeBase.queryById(params['id']!!)
+                        },
+                    }, {
+                        path: "/knowledge-base/:id/dataset/:datasetId",
+                        element: <Datasets/>,
+                        loader: async ({params}) => {
+                            return await API.dataset.queryAllDocumentsByDatasetId(params['id']!!, params['datasetId']!!)
+                        }
+                    }, {
+                        path: "/chats",
+                        element: <Chats/>,
+                    }, {
+                        path: "/chats/:id",
+                        element: <ChatPage/>,
+                        loader: async ({params}) => {
+                            return await API.chat.queryById(params['id']!!)
+                        }
+                    }
+                ]
             }, {
-                path: "/knowledge-base/:id",
-                element: <KnowledgeBaseDetail/>,
-                loader: async ({ params }) => {
-                    return await API.knowledgeBase.queryById(params['id']!!)
-                },
-            }, {
-                path: "/knowledge-base/:id/import",
-                element: <KnowledgeBaseImport/>,
-                loader: async ({ params }) => {
-                    return await API.knowledgeBase.queryById(params['id']!!)
-                },
-            }, {
-                path: "/knowledge-base/:id/dataset/:datasetId",
-                element: <Datasets/>,
-                loader: async ({params}) => {
-                    return await API.dataset.queryAllDocumentsByDatasetId(params['id']!!, params['datasetId']!!)
-                }
-            }, {
-                path: "/chats",
-                element: <Chats/>,
-            }, {
-                path: "/chats/:id",
-                element: <ChatPage/>,
-                loader: async ({params}) => {
-                    return await API.chat.queryById(params['id']!!)
-                }
-            }, {
-                path: "/preferences",
-                element: <Preferences/>,
+                path: "/settings",
+                element: <Settings/>,
             }
-        ]
-    },
+        ],
+    }
 ]);
 
 ReactDOM.createRoot(document.getElementById("root") as HTMLElement).render(
-  <React.StrictMode>
-      <RouterProvider router={router} />
-  </React.StrictMode>,
+    <React.StrictMode>
+        <RouterProvider router={router} />
+    </React.StrictMode>,
 );

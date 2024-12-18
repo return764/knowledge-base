@@ -10,10 +10,7 @@ function Root() {
             <div className="fixed h-6 w-full z-50" data-tauri-drag-region={true}></div>
             <Navigations/>
             <section className="flex flex-col flex-1 overflow-scroll">
-                <div className="h-6 shrink-0"></div>
-                <div className="flex flex-col flex-1 p-4">
-                    <Outlet/>
-                </div>
+                <Outlet/>
             </section>
         </main>
     );
