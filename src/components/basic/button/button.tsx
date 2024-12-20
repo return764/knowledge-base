@@ -5,11 +5,13 @@ import {Button as HeadlessButton} from "@headlessui/react";
 type ButtonProps = {
     type?: "primary" | "link" | "light" | "text" | "icon",
     icon?: IconType,
-    size?: "large" | "small" | "default"
+    size?: "large" | "small" | "default",
+    loading?: boolean
 } & Omit<ButtonHTMLAttributes<HTMLButtonElement>, 'type'>
 
 function Button(props: PropsWithChildren<ButtonProps>) {
-    const {type = "primary", size = "default", disabled} = props
+    // todo 实现loading
+    const {type = "primary", size = "default", disabled, loading = false} = props
 
     const hasText = useMemo(() => {
         return !!props.children
