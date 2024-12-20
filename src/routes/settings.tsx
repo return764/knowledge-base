@@ -1,19 +1,19 @@
 import { Tab, TabGroup, TabList, TabPanel, TabPanels } from '@headlessui/react'
-import { Fragment } from 'react'
+import { Fragment, useState } from 'react'
 
 const menuItems = [
-  { name: '个人信息', component: () => <div>个人信息设置</div> },
-  { name: '账号安全', component: () => <div>账号安全设置</div> },
-  { name: '通知设置', component: () => <div>通知设置内容</div> },
+  { name: '模型设置', component: () => <div>个人信息设置</div> },
 ]
 
 const Settings = () => {
+  const [selectedIndex, setSelectedIndex] = useState(0)
+
   return (
-    <div className="container mx-auto py-6">
-      <TabGroup vertical>
+    <div className="container mx-auto py-6 px-1">
+      <TabGroup selectedIndex={selectedIndex} onChange={setSelectedIndex} vertical>
         <div className="flex gap-2">
           {/* 左侧菜单 */}
-          <TabList className="w-48 space-y-2">
+          <TabList className="w-24 space-y-2">
             {menuItems.map((item) => (
               <Tab as={Fragment} key={item.name}>
                 {({ selected }) => (
