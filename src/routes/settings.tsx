@@ -1,9 +1,10 @@
-import { Tab, TabGroup, TabList, TabPanel, TabPanels } from '@headlessui/react'
+import {Tab, TabGroup, TabList, TabPanel, TabPanels} from '@headlessui/react'
 import { Fragment, useState } from 'react'
 import ModelSettings from "../components/settings/ModelSettings.tsx";
 
 const menuItems = [
   { name: '模型设置', component: () => <ModelSettings/> },
+  { name: '模型设置2', component: () => <ModelSettings/> },
 ]
 
 const Settings = () => {
@@ -11,18 +12,18 @@ const Settings = () => {
 
   return (
     <div className="container mx-auto py-6 px-1">
-      <TabGroup selectedIndex={selectedIndex} onChange={setSelectedIndex} vertical>
-        <div className="flex gap-1">
-          {/* 左侧菜单 */}
-          <TabList className="w-24 space-y-2">
+      <TabGroup selectedIndex={selectedIndex} onChange={setSelectedIndex}>
+        <div className="flex flex-col gap-4">
+          {/* 顶部菜单 */}
+          <TabList className="flex border-b border-gray-200">
             {menuItems.map((item) => (
               <Tab as={Fragment} key={item.name}>
                 {({ selected }) => (
                   <button
-                    className={`w-full rounded-lg py-1.5 px-4 text-left text-sm font-medium focus:outline-none ${
+                    className={`py-2 px-4 text-sm font-medium border-b-2 focus:outline-none ${
                       selected
-                        ? 'bg-primary-active text-white'
-                        : 'text-gray-700 hover:bg-gray-100'
+                        ? 'border-primary text-primary'
+                        : 'border-transparent text-gray-500 hover:text-gray-700 hover:border-gray-300'
                     }`}
                   >
                     {item.name}
@@ -32,12 +33,12 @@ const Settings = () => {
             ))}
           </TabList>
 
-          {/* 右侧内容区域 */}
-          <TabPanels className="flex-1">
+          {/* 下方内容区域 */}
+          <TabPanels>
             {menuItems.map((item) => (
               <TabPanel
                 key={item.name}
-                className="rounded-lg bg-white p-6 shadow"
+                className="shadow"
               >
                 <item.component />
               </TabPanel>
