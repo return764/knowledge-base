@@ -21,7 +21,7 @@ function Chats() {
                 </div>
                 <div className="flex flex-col gap-y-1.5">
                     {
-                        data?.map(it => <ChatCard chat={it}/>)
+                        data?.map(it => <ChatCard key={it.id} chat={it}/>)
                     }
                 </div>
             </div>
