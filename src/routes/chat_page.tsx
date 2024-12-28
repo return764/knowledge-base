@@ -45,8 +45,7 @@ function ChatPage() {
 const WrapCmp = (Cmp: () => React.ReactElement) => {
     return () => {
         const chat = useLoaderData() as Chat
-        console.log(chat);
-        
+
         return (
             <ChatContextProvider chat={chat}>
                 <Cmp/>

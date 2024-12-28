@@ -1,9 +1,12 @@
 import {useOutlet, useLocation} from "react-router-dom";
 import {SwitchTransition, CSSTransition} from "react-transition-group";
+import {useRef} from "react";
 
 function BasicPageWrapper() {
     const location = useLocation()
     const currentOutlet = useOutlet()
+    const itemRef = useRef()
+
     return (
         <>
             <div className="h-6 shrink-0"></div>
@@ -11,11 +14,12 @@ function BasicPageWrapper() {
                 <SwitchTransition mode="out-in">
                     <CSSTransition
                         key={location.pathname}
-                        appear={true}
                         timeout={100}
                         classNames="fade"
+                        nodeRef={itemRef}
+                        unmountOnExit
                     >
-                        {currentOutlet ?? <div></div>}
+                        <div ref={itemRef}>{currentOutlet}</div>
                     </CSSTransition>
                 </SwitchTransition>
             </div>

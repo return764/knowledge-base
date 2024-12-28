@@ -2,7 +2,7 @@ import {useState} from 'react';
 import Button from "../components/basic/button/button.tsx";
 import {BiImport} from "react-icons/bi";
 import {MdOutlineArrowBackIosNew} from "react-icons/md";
-import {useLoaderData, useNavigate} from "react-router-dom";
+import {useLoaderData, useNavigate, useParams} from "react-router-dom";
 import {KnowledgeBase} from "../model/knowledge_base.ts";
 import {useQuery} from "../hooks/useQuery.ts";
 import {Dataset} from "../model/dataset.ts";
@@ -17,7 +17,8 @@ function KnowledgeBaseDetail() {
     const [visible, {toggle}] = useToggle(false)
     const [current, setCurrent] = useState<Dataset>()
     const knowledgeBase = useLoaderData() as KnowledgeBase
-    const {data} = useQuery<Dataset[]>('dataset', 'queryAllByKbId', {kbId: knowledgeBase.id})
+    const {id} = useParams()
+    const {data} = useQuery<Dataset[]>('dataset', 'queryAllByKbId', {kbId: id})
 
     const columns: Column<Dataset>[] = [
         {
@@ -64,7 +65,7 @@ function KnowledgeBaseDetail() {
                 <div className="flex justify-between mb-2">
                     <div className="flex">
                         <Button onClick={() => {navigate(-1)}} icon={MdOutlineArrowBackIosNew} type="text"/>
-                        <div className="text-primary text-xl leading-none my-auto">{knowledgeBase.name}</div>
+                        <div className="text-primary text-xl leading-none my-auto">{knowledgeBase?.name}</div>
                     </div>
                     <div><Button onClick={handleImport} icon={BiImport}>导入文本</Button></div>
                 </div>
