@@ -25,8 +25,8 @@ const Table = <DataType extends object>({
     })
 
     return (
-        <div className="max-w-full overflow-x-auto">
-            <table className="w-full table table-auto text-sm text-left rounded-lg border border-gray-10">
+        <div className="max-w-full overflow-hidden rounded-lg shadow-sm">
+            <table className="w-full m-0 table table-auto border-separate text-sm text-left">
                 <thead className="text-xs uppercase bg-gray-50/50">
                     {table.getHeaderGroups().map(headerGroup => (
                         <tr key={headerGroup.id}>
@@ -34,7 +34,7 @@ const Table = <DataType extends object>({
                                 <th
                                     key={header.id}
                                     colSpan={header.colSpan}
-                                    className="px-6 py-4 font-medium text-gray-500 whitespace-nowrap"
+                                    className="px-6 py-3 font-medium text-white whitespace-nowrap bg-indigo-400"
                                 >
                                     {header.isPlaceholder
                                         ? null
@@ -51,11 +51,12 @@ const Table = <DataType extends object>({
                     {table.getRowModel().rows.map(row => (
                         <tr
                             key={row.id}
-                            className="border-t border-gray-100 transition-colors hover:bg-gray-50/50 cursor-pointer"
+                            className="border-t border-gray-100 transition-colors hover:bg-indigo-50/50 cursor-pointer"
                             onClick={() => onRowClick?.(row.original)}
                         >
                             {row.getVisibleCells().map(cell => (
                                 <td
+                                    className="pl-6"
                                     key={cell.id}
                                 >
                                     {flexRender(

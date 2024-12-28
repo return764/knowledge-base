@@ -22,27 +22,27 @@ function KnowledgeBaseDetail() {
     const columns: Column<Dataset>[] = [
         {
             header: '名称',
-            name: 'name'
+            accessorKey: 'name'
         },
         {
             header: '数据总量',
-            name: 'count'
+            accessorKey: 'count'
         },
         {
             header: '启用',
-            name: 'active'
+            accessorKey: 'active'
         },
         {
             header: '动作',
-            render: (record) => {
-                setCurrent(record)
-                return <Button onClick={handleOpenDeleteConfirmModal} type="light">删除</Button>
+            cell: (record) => {
+                return <Button onClick={(e) => handleOpenDeleteConfirmModal(record.row.original, e)} type="light">删除</Button>
             }
         }
     ]
 
-    const handleOpenDeleteConfirmModal = (e: any) => {
+    const handleOpenDeleteConfirmModal = (record: Dataset, e: any) => {
         e.stopPropagation();
+        setCurrent(record)
         toggle()
     }
 
@@ -54,7 +54,7 @@ function KnowledgeBaseDetail() {
         navigate("import")
     }
 
-    const handleRowClick = (_: any, row: Dataset) => {
+    const handleRowClick = (row: Dataset) => {
         navigate(`dataset/${row.id}`)
     }
 

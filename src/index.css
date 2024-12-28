@@ -6,6 +6,11 @@
     @apply select-none cursor-default
 }
 
+table th,td {
+    border-width: 0 !important;
+}
+
+
 @layer components {
     .text-color {
         @apply text-slate-600 dark:text-white

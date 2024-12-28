@@ -8,7 +8,7 @@ import Input from "../components/basic/form/components/Input.tsx";
 import Form, {useForm} from "../components/basic/form/form.tsx";
 import FormItem from "../components/basic/form/form_item.tsx";
 import Textarea from "../components/basic/form/components/textarea.tsx";
-import Table from "../components/basic/table/table.tsx";
+import Table, {Column} from "../components/basic/table/table.tsx";
 import {Channel, invoke} from "@tauri-apps/api/core";
 import {KnowledgeBase} from "../model/knowledge_base.ts";
 import {API} from "../model";
@@ -20,9 +20,15 @@ type UploadTable = {
     status: string
 }
 
-const columns = [
-    {header: '来源名', name: 'name'},
-    {header: '状态', name: 'status'}
+const columns: Column<UploadTable>[] = [
+    {
+        header: '来源名',
+        accessorKey: 'name'
+    },
+    {
+        header: '状态',
+        accessorKey: 'status'
+    }
 ]
 
 function KnowledgeBaseImport() {

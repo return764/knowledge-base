@@ -12,7 +12,7 @@ type ButtonProps = {
 function Button(props: PropsWithChildren<ButtonProps>) {
     // todo 实现loading
     const {type = "primary", size = "default", disabled, loading = false} = props
-
+    const {icon, ...innerProps} = props;
     const hasText = useMemo(() => {
         return !!props.children
     }, [props.children])
@@ -59,7 +59,7 @@ function Button(props: PropsWithChildren<ButtonProps>) {
 
     return (
         // @ts-ignore
-        <HeadlessButton {...props} className={`${props.className} ${buttonStyleClass} ${hasText ? `rounded-md ${cls.wrap}` : 'rounded-full p-1'} flex flex-nowrap select-none transition-colors duration-200 ease-in-out ${disabled && "cursor-not-allowed"}`}>
+        <HeadlessButton {...innerProps} className={`${props.className} ${buttonStyleClass} ${hasText ? `rounded-md ${cls.wrap}` : 'rounded-full p-1'} flex flex-nowrap select-none transition-colors duration-200 ease-in-out ${disabled && "cursor-not-allowed"}`}>
             {
                 props.icon &&
                 <div className={`${cls.icon} ${hasText && 'mr-1.5 -ml-1.5 p-0'} my-auto `}>
