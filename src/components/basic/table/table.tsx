@@ -22,6 +22,9 @@ const Table = <DataType extends object>({
         data,
         columns,
         getCoreRowModel: getCoreRowModel(),
+        defaultColumn: {
+            size: 0
+        }
     })
 
     return (
@@ -34,6 +37,10 @@ const Table = <DataType extends object>({
                                 <th
                                     key={header.id}
                                     colSpan={header.colSpan}
+                                    style={{
+                                        width: header.column.columnDef.meta?.width ?
+                                            header.column.columnDef.meta?.width : 'auto'
+                                    }}
                                     className="px-6 py-3 font-medium text-white whitespace-nowrap bg-indigo-400"
                                 >
                                     {header.isPlaceholder

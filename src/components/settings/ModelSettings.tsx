@@ -1,8 +1,7 @@
 import {useState} from "react";
 import Input from "../basic/form/components/Input.tsx";
 import Button from "../basic/button/button.tsx";
-import Table from "../basic/table/table.tsx";
-import {BiImport} from "react-icons/bi";
+import Table, {Column} from "../basic/table/table.tsx";
 
 type SegmentProps = {
     title: string;
@@ -30,7 +29,7 @@ type ModelColumn = {
 function ModelSettings() {
     const [apiKey, setApiKey] = useState("")
     const [apiUrl, setApiUrl] = useState("")
-    const [isValidating, setIsValidating] = useState(false)
+    const [isValidating, setIsValidating] = useState<boolean>(false)
 
     const handleValidate = async () => {
         setIsValidating(true)
@@ -43,14 +42,17 @@ function ModelSettings() {
         }
     }
 
-    const columns = [
+    const columns: Column<ModelColumn>[] = [
         {
             header: '模型名称',
-            accessorKey: 'name'
+            accessorKey: 'name',
         },
         {
             header: '启用',
-            accessorKey: 'active'
+            accessorKey: 'active',
+            meta: {
+                width: '15%'
+            }
         },
     ]
 
@@ -83,7 +85,6 @@ function ModelSettings() {
                     <div className="flex justify-end">
                         <Button
                             onClick={handleValidate}
-                            icon={BiImport}
                             loading={isValidating}
                         >
                             验证

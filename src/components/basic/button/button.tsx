@@ -13,8 +13,7 @@ type ButtonProps = {
 } & Omit<ButtonHTMLAttributes<HTMLButtonElement>, 'type'>
 
 function Button(props: PropsWithChildren<ButtonProps>) {
-    const {type = "primary", size = "default", disabled, loading = false} = props
-    const {icon, ...innerProps} = props;
+    const {type = "primary", size = "default", disabled, loading = false, icon, ...innerProps} = props
     const hasText = useMemo(() => {
         return !!props.children
     }, [props.children])
@@ -77,7 +76,7 @@ function Button(props: PropsWithChildren<ButtonProps>) {
                           {
                               [cls.icon]: props.icon || loading,
                               "opacity-100": loading,
-                              "w-0 opacity-0": !props.icon,
+                              "w-0 opacity-0": !props.icon && !loading,
                               "mr-1.5 -ml-1.5 p-0": (props.icon || loading) && hasText
                           }
                       )}
