@@ -1,6 +1,8 @@
 import {useState} from "react";
 import Input from "../basic/form/components/Input.tsx";
 import Button from "../basic/button/button.tsx";
+import Table from "../basic/table/table.tsx";
+import {BiImport} from "react-icons/bi";
 
 type SegmentProps = {
     title: string;
@@ -20,6 +22,11 @@ const Segment = ({title, children}: SegmentProps) => {
     )
 }
 
+type ModelColumn = {
+    name: string,
+    active: boolean
+}
+
 function ModelSettings() {
     const [apiKey, setApiKey] = useState("")
     const [apiUrl, setApiUrl] = useState("")
@@ -36,8 +43,23 @@ function ModelSettings() {
         }
     }
 
+    const columns = [
+        {
+            header: '模型名称',
+            accessorKey: 'name'
+        },
+        {
+            header: '启用',
+            accessorKey: 'active'
+        },
+    ]
+
     return (
         <div className="flex flex-col gap-6">
+            <Table<ModelColumn>
+                columns={columns}
+                data={[]}
+            />
             <Segment title="OpenAI API">
                 <div className="flex flex-col gap-4">
                     <div className="flex flex-col gap-1.5">
@@ -61,6 +83,7 @@ function ModelSettings() {
                     <div className="flex justify-end">
                         <Button
                             onClick={handleValidate}
+                            icon={BiImport}
                             loading={isValidating}
                         >
                             验证

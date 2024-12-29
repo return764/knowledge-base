@@ -1,6 +1,9 @@
 import {ButtonHTMLAttributes, PropsWithChildren, useMemo} from 'react';
 import type {IconType} from "react-icons";
 import {Button as HeadlessButton} from "@headlessui/react";
+import clsx from "clsx";
+import {AiOutlineLoading} from "react-icons/ai";
+import {SwitchTransition, CSSTransition} from "react-transition-group";
 
 type ButtonProps = {
     type?: "primary" | "link" | "light" | "text" | "icon",
@@ -10,7 +13,6 @@ type ButtonProps = {
 } & Omit<ButtonHTMLAttributes<HTMLButtonElement>, 'type'>
 
 function Button(props: PropsWithChildren<ButtonProps>) {
-    // todo 实现loading
     const {type = "primary", size = "default", disabled, loading = false} = props
     const {icon, ...innerProps} = props;
     const hasText = useMemo(() => {
@@ -59,13 +61,46 @@ function Button(props: PropsWithChildren<ButtonProps>) {
 
     return (
         // @ts-ignore
-        <HeadlessButton {...innerProps} className={`${props.className} ${buttonStyleClass} ${hasText ? `rounded-md ${cls.wrap}` : 'rounded-full p-1'} flex flex-nowrap select-none transition-colors duration-200 ease-in-out ${disabled && "cursor-not-allowed"}`}>
-            {
-                props.icon &&
-                <div className={`${cls.icon} ${hasText && 'mr-1.5 -ml-1.5 p-0'} my-auto `}>
-                    <props.icon size={cls.iconSize}/>
-                </div>
-            }
+        <HeadlessButton
+            {...innerProps}
+            className={clsx(
+                props.className,
+                buttonStyleClass,
+                {"cursor-not-allowed": disabled},
+                hasText ? `rounded-md ${cls.wrap}` : 'rounded-full p-1',
+                "flex flex-nowrap select-none duration-200 ease-in-out transition-colors"
+            )}>
+              {
+                  <div
+                      className={clsx(
+                          "my-auto transition-all duration-200 ease-in-out overflow-hidden",
+                          {
+                              [cls.icon]: props.icon || loading,
+                              "opacity-100": loading,
+                              "w-0 opacity-0": !props.icon,
+                              "mr-1.5 -ml-1.5 p-0": (props.icon || loading) && hasText
+                          }
+                      )}
+                  >
+                      <SwitchTransition>
+                          <CSSTransition
+                              key={loading ? "loading" : "icon"}
+                              timeout={0}
+                              classNames="fade"
+                          >
+                              {loading ? (
+                                  <div className="animate-spin">
+                                      <AiOutlineLoading/>
+                                  </div>
+                              ) : (
+                                  <div>
+                                      {props.icon && <props.icon size={cls.iconSize}/>}
+                                  </div>
+                              )}
+                          </CSSTransition>
+                      </SwitchTransition>
+                  </div>
+              }
             <span className={`whitespace-nowrap ${cls.text}`}>
                 {props.children}
             </span>

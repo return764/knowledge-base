@@ -51,4 +51,8 @@ table th,td {
     .text-ellipsis-c {
         @apply whitespace-nowrap text-ellipsis overflow-hidden
     }
+
+    .transition-ml {
+        transition-property: margin-left;
+    }
 }
