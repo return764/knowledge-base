@@ -51,6 +51,18 @@ pub fn init() -> Vec<Migration> {
                 created_at DATETIME DEFAULT (strftime('%Y-%m-%d %H:%M:%S.%f', 'now'))\
               );",
             kind: MigrationKind::Up,
+        },
+        Migration {
+            version: 5,
+            description: "create_preferences_table",
+            sql: "CREATE TABLE preferences (\
+                id TEXT PRIMARY KEY,\
+                key TEXT UNIQUE NOT NULL,\
+                type TEXT CHECK(type IN ('select', 'input', 'checkbox')) NOT NULL DEFAULT 'input',\
+                value BLOB,\
+                created_at DATETIME DEFAULT current_timestamp\
+              );",
+            kind: MigrationKind::Up,
         }
     ]
 }
