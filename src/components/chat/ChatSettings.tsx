@@ -1,6 +1,6 @@
 import { useContext, useMemo } from "react";
 import { useQuery } from "../../hooks/useQuery";
-import { KnowledgeBase } from "../../model/knowledge_base";
+import { KnowledgeBase } from "../../api/knowledge_base";
 import Select from "../basic/form/components/select";
 import { ChatContext } from "./ChatContext";
 import { useChatHelper } from "../../hooks/useChatHelper";

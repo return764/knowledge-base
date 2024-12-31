@@ -1,5 +1,5 @@
 // use std::sync::{Arc, Mutex};
-// use crate::model::model::{ChatMessage};
+// use crate::api::api::{ChatMessage};
 // use langchain_rust::schemas::{BaseMemory, Message};
 // use langchain_rust::vectorstore::sqlite_vec::Store;
 //

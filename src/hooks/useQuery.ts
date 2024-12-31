@@ -1,5 +1,5 @@
 import useSWR, {SWRConfiguration, SWRResponse} from "swr";
-import {API} from "../model";
+import {API} from "../api";
 
 const fetcher = async ([key, args]: [string, Record<string, any>?]) => {
     const keys = key.split(".")

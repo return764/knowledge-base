@@ -1,11 +1,11 @@
 import React from "react";
 import ReactDOM from "react-dom/client";
 import {createBrowserRouter, RouterProvider} from "react-router-dom";
-import Root from "./routes/root.tsx";
-import Settings from "./routes/settings.tsx";
-import BasicPageWrapper from "./routes/basic_page_wrapper.tsx";
+import Root from "./pages/root.tsx";
+import Settings from "./pages/settings.tsx";
+import BasicPageWrapper from "./pages/basic_page_wrapper.tsx";
 import routes from "./routes/routes.tsx";
-import {API} from "./model";
+import {API} from "./api";
 
 // 初始化 preferences
 const initPreferences = async () => {
@@ -17,11 +17,11 @@ const initPreferences = async () => {
             await API.preference.batchInsert([{
                 key: 'OPENAI_API_URL',
                 type: 'input',
-                value: JSON.stringify({ value: "" })
+                value: { value: "" }
             }, {
                 key: 'OPENAI_API_KEY',
                 type: 'input',
-                value: JSON.stringify({ value: "" })
+                value: { value: "" }
             }])
         }
     } catch (e) {

@@ -1,7 +1,7 @@
 import Button from "../components/basic/button/button.tsx";
 import {MdOutlineArrowBackIosNew, MdOutlineSettings} from "react-icons/md";
 import {useLoaderData, useNavigate} from "react-router-dom";
-import {Chat} from "../model/chat.ts";
+import {Chat} from "../api/chat.ts";
 import ChatInput from "../components/chat/ChatInput.tsx";
 import ChatPanel from "../components/chat/ChatPanel.tsx";
 import {ChatContextProvider} from "../components/chat/ChatContextProvider.tsx";

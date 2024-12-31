@@ -1,7 +1,7 @@
 import {MouseEventHandler} from 'react';
 import Button from "../basic/button/button.tsx";
 import {RiDeleteBin6Line} from "react-icons/ri";
-import {DocumentData} from "../../model/dataset.ts";
+import {DocumentData} from "../../api/dataset.ts";
 import Badge from "../basic/badge/badge.tsx";
 import {PiTextTFill} from "react-icons/pi";
 

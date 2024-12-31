@@ -10,9 +10,9 @@ import FormItem from "../components/basic/form/form_item.tsx";
 import Textarea from "../components/basic/form/components/textarea.tsx";
 import Table, {Column} from "../components/basic/table/table.tsx";
 import {Channel, invoke} from "@tauri-apps/api/core";
-import {KnowledgeBase} from "../model/knowledge_base.ts";
-import {API} from "../model";
-import {ProgressEvent} from "../model/dataset.ts";
+import {KnowledgeBase} from "../api/knowledge_base.ts";
+import {API} from "../api";
+import {ProgressEvent} from "../api/dataset.ts";
 import toast from "react-hot-toast";
 
 type UploadTable = {

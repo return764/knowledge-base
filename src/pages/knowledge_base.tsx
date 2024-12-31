@@ -1,11 +1,11 @@
 import {ExpandedCard} from "../components/expanded-card/ExpandedCard.tsx";
 import {useQuery} from "../hooks/useQuery.ts";
-import {KnowledgeBase} from "../model/knowledge_base.ts";
+import {KnowledgeBase} from "../api/knowledge_base.ts";
 import Button from "../components/basic/button/button.tsx";
 import {FaPlus} from "react-icons/fa6";
 import Modal from "../components/basic/modal/modal.tsx";
 import Input from "../components/basic/form/components/Input.tsx";
-import {API} from "../model";
+import {API} from "../api";
 import toast from "react-hot-toast";
 import {useToggle} from "ahooks";
 import Form, {useForm} from "../components/basic/form/form.tsx";

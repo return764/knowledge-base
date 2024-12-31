@@ -1,7 +1,7 @@
 import {useQuery} from "./useQuery.ts";
-import {PreferenceModel} from "../model/preference.ts";
+import {PreferenceModel} from "../api/preference.ts";
 import {useMemo} from "react";
-import {API} from "../model";
+import {API} from "../api";
 import {PreferenceEnum} from "../utils/constant.ts";
 
 type PreferenceData = {

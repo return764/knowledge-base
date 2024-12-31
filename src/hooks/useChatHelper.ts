@@ -3,10 +3,10 @@ import {ChatContext} from "../components/chat/ChatContext.tsx";
 import {Channel, invoke} from "@tauri-apps/api/core";
 import {buildAiMessage, buildChatBlock, buildHumanMessage} from "../utils/chat.ts";
 import {ChatBlock} from "../components/chat/ChatContextProvider.tsx";
-import { ChatSettings } from "../model/chat.ts";
-import { API } from "../model/index.ts";
+import { ChatSettings } from "../api/chat.ts";
+import { API } from "../api/index.ts";
 
-type StreamMessageResponse = 
+type StreamMessageResponse =
     | { event: "appendMessage", data: { content: string } }
     | { event: "error", data: { message: string } }
     | { event: "done" }

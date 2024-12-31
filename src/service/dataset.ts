@@ -1,5 +1,5 @@
-import {API} from "../model";
-import {Dataset} from "../model/dataset.ts";
+import {API} from "../api";
+import {Dataset} from "../api/dataset.ts";
 
 export async function deleteDataset(id: string) {
     const dataset: Dataset = await API.dataset.queryById({id: id})

@@ -1,10 +1,10 @@
-import KnowledgeBasePage from "./knowledge_base.tsx";
-import KnowledgeBaseDetail from "./knowledge_base_detail.tsx";
-import {API} from "../model";
-import KnowledgeBaseImport from "./knowledge_base_import.tsx";
-import Datasets from "./datasets.tsx";
-import Chats from "./chats.tsx";
-import ChatPage from "./chat_page.tsx";
+import KnowledgeBasePage from "../pages/knowledge_base.tsx";
+import KnowledgeBaseDetail from "../pages/knowledge_base_detail.tsx";
+import {API} from "../api";
+import KnowledgeBaseImport from "../pages/knowledge_base_import.tsx";
+import Datasets from "../pages/datasets.tsx";
+import Chats from "../pages/chats.tsx";
+import ChatPage from "../pages/chat_page.tsx";
 
 export default [
     {

@@ -1,5 +1,5 @@
 import {PropsWithChildren, useEffect, useMemo, useState} from "react";
-import {Chat, ChatHistory, ChatSettings} from "../../model/chat.ts";
+import {Chat, ChatHistory, ChatSettings} from "../../api/chat.ts";
 import {useQuery} from "../../hooks/useQuery.ts";
 import {ChatContext, ChatMessage} from "./ChatContext.tsx";
 import {buildMessage, buildOkBlocks} from "../../utils/chat.ts";
