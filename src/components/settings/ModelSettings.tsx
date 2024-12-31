@@ -1,8 +1,9 @@
-import {useState} from "react";
+import {useContext, useState} from "react";
 import Button from "../basic/button/button.tsx";
 import Table, {Column} from "../basic/table/table.tsx";
 import Preference from "../preference/Preference.tsx";
 import {PreferenceEnum} from "../../utils/constant.ts";
+import PreferenceContext from "../preference/context/PreferenceContext.ts";
 
 type SegmentProps = {
     title: string;
@@ -29,13 +30,13 @@ type ModelColumn = {
 
 function ModelSettings() {
     const [isValidating, setIsValidating] = useState<boolean>(false)
+    const {onSave} = useContext(PreferenceContext)
 
     const handleValidate = async () => {
         setIsValidating(true)
         try {
-            // TODO: 实现API验证逻辑
             await new Promise(resolve => setTimeout(resolve, 1000))
-            // TODO: 处理验证结果
+            onSave([PreferenceEnum.OPENAI_API_URL, PreferenceEnum.OPENAI_API_KEY])
         } finally {
             setIsValidating(false)
         }

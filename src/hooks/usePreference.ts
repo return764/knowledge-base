@@ -1,30 +1,29 @@
-import {useQuery} from "./useQuery.ts";
-import {PreferenceModel} from "../api/preference.ts";
-import {useMemo} from "react";
-import {API} from "../api";
+import {useContext, useEffect, useState} from "react";
 import {PreferenceEnum} from "../utils/constant.ts";
+import PreferenceContext from "../components/preference/context/PreferenceContext.ts";
 
 type PreferenceData = {
     value: string
-    onUpdate: (value: any) => void,
-    preference: PreferenceModel
+    handleUpdate: (value: any) => void
 }
 
 export const usePreference = (key: PreferenceEnum): PreferenceData => {
-    const {data} = useQuery<PreferenceModel>('preference', 'queryByKey', {key})
+    const {getPrefValue, updatePrefs} = useContext(PreferenceContext);
+    const [localValue, setLocalValue] = useState('');
 
-    const value = useMemo(() => {
-        switch (data?.type) {
-            case 'input':
-                return data.value.value.toString()
-            default:
-                return data?.value.value.toString()!!
-        }
-    }, [key, data])
+    // 同步 context 中的值到本地状态
+    useEffect(() => {
+        const value = getPrefValue(key);
+        setLocalValue(value || '');
+    }, [key, getPrefValue]);
 
-    const onUpdate = (value: any) => {
-        API.preference.update(key, value)
+    const handleUpdate = (value: any) => {
+        setLocalValue(value);
+        updatePrefs(key, value);
     }
 
-    return {value, onUpdate, preference: data!!}
-}
+    return {
+        value: localValue,
+        handleUpdate,
+    };
+};
