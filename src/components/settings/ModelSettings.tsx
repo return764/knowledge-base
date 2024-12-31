@@ -1,7 +1,8 @@
 import {useState} from "react";
-import Input from "../basic/form/components/Input.tsx";
 import Button from "../basic/button/button.tsx";
 import Table, {Column} from "../basic/table/table.tsx";
+import Preference from "../preference/Preference.tsx";
+import {PreferenceEnum} from "../../utils/constant.ts";
 
 type SegmentProps = {
     title: string;
@@ -27,8 +28,6 @@ type ModelColumn = {
 }
 
 function ModelSettings() {
-    const [apiKey, setApiKey] = useState("")
-    const [apiUrl, setApiUrl] = useState("")
     const [isValidating, setIsValidating] = useState<boolean>(false)
 
     const handleValidate = async () => {
@@ -64,24 +63,12 @@ function ModelSettings() {
             />
             <Segment title="OpenAI API">
                 <div className="flex flex-col gap-4">
-                    <div className="flex flex-col gap-1.5">
-                        <label className="text-sm text-gray-700">API Key</label>
-                        <Input
-                            type="block"
-                            value={apiKey}
-                            onChange={setApiKey}
-                            placeholder="sk-..."
-                        />
-                    </div>
-                    <div className="flex flex-col gap-1.5">
-                        <label className="text-sm text-gray-700">API URL</label>
-                        <Input
-                            type="block"
-                            value={apiUrl}
-                            onChange={setApiUrl}
-                            placeholder="https://api.openai.com/v1"
-                        />
-                    </div>
+                    <Preference
+                        label="API Key"
+                        keyword={PreferenceEnum.OPENAI_API_KEY}/>
+                    <Preference
+                        label="API URL"
+                        keyword={PreferenceEnum.OPENAI_API_URL}/>
                     <div className="flex justify-end">
                         <Button
                             onClick={handleValidate}
