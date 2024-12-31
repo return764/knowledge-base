@@ -1,4 +1,4 @@
-import {ButtonHTMLAttributes, PropsWithChildren, useMemo} from 'react';
+import {ButtonHTMLAttributes, PropsWithChildren, useMemo, useRef} from 'react';
 import type {IconType} from "react-icons";
 import {Button as HeadlessButton} from "@headlessui/react";
 import clsx from "clsx";
@@ -13,6 +13,7 @@ type ButtonProps = {
 } & Omit<ButtonHTMLAttributes<HTMLButtonElement>, 'type'>
 
 function Button(props: PropsWithChildren<ButtonProps>) {
+    const nodeRef = useRef(null)
     const {type = "primary", size = "default", disabled, loading = false, icon, ...innerProps} = props
     const hasText = useMemo(() => {
         return !!props.children
@@ -85,14 +86,15 @@ function Button(props: PropsWithChildren<ButtonProps>) {
                           <CSSTransition
                               key={loading ? "loading" : "icon"}
                               timeout={0}
+                              nodeRef={nodeRef}
                               classNames="fade"
                           >
                               {loading ? (
-                                  <div className="animate-spin">
+                                  <div className="animate-spin" ref={nodeRef}>
                                       <AiOutlineLoading/>
                                   </div>
                               ) : (
-                                  <div>
+                                  <div ref={nodeRef}>
                                       {props.icon && <props.icon size={cls.iconSize}/>}
                                   </div>
                               )}

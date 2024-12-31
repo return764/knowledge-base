@@ -1,11 +1,9 @@
-import React, {PropsWithChildren, useRef} from 'react';
+import {PropsWithChildren, useRef} from 'react';
 import {createPortal} from "react-dom";
 import Button from "../button/button.tsx";
 import {useControllableValue} from "ahooks";
 import {CSSTransition} from "react-transition-group";
 import "./modal.css";
-import Input from "../form/components/Input.tsx";
-import Toast from "../toast";
 
 type ModalProps = {
     open: boolean,
