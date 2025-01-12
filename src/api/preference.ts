@@ -40,16 +40,12 @@ export class PreferenceAPI extends APIAbc {
     }
 
     async batchInsert(preferences: Omit<PreferenceModel, "id">[]) {
-        const paramsPlaceholder = '(?, ?, ?, ?),'.repeat(preferences.length).slice(0, -1);
         const params = await Promise.all(
             preferences.map(async (pref) => {
                 const id = await invoke('uuid');
                 return [id, pref.key, pref.type, JSON.stringify(pref.value)];
             })
         );
-        await this.execute(
-            `INSERT INTO preferences (id, key, type, value) VALUES ${paramsPlaceholder}`,
-            params.flat()
-        );
+        await this.bulkInsert('preferences', ["id", "key", "type", "value"], params)
     }
 }

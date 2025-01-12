@@ -1,5 +1,7 @@
 use std::str::FromStr;
 use langchain_rust::embedding::OllamaEmbedder;
+use langchain_rust::embedding::openai::OpenAiEmbedder;
+use langchain_rust::llm::OpenAIConfig;
 use langchain_rust::vectorstore::sqlite_vec::{Store, StoreBuilder};
 use sqlx::{Pool, Sqlite};
 use sqlx::sqlite::{SqliteConnectOptions, SqlitePoolOptions};
@@ -21,9 +23,12 @@ impl SqlPoolContext {
             .extension("vec0")
         ).await.unwrap();
 
-        let ollama = OllamaEmbedder::default().with_model("nomic-embed-text");
+        let embedder = OpenAiEmbedder::default()
+            .with_model("nomic-embed-text")
+            .with_config(OpenAIConfig::new()
+                .with_api_base("http://localhost:11434/v1"));
         let store = StoreBuilder::new()
-            .embedder(ollama)
+            .embedder(embedder)
             .connection_url(db_path)
             .vector_dimensions(768)
             .build()

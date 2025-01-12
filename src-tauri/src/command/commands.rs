@@ -13,6 +13,7 @@ use tauri::{State};
 use uuid::Uuid;
 use crate::states::SqlPoolContext;
 use futures::StreamExt;
+use langchain_rust::llm::{OpenAI, OpenAIConfig};
 use crate::command::event::{ProgressEvent, StreamMessageResponse};
 use crate::model::chat::ChatMessage;
 use crate::service::chat;
@@ -22,12 +23,13 @@ pub async fn send_chat_message(state: State<'_, SqlPoolContext>,
                                chat_id: String,
                                messages: Vec<ChatMessage>,
                                on_event: Channel<StreamMessageResponse>) -> Result<(), ()> {
-    let ollama = Ollama::default().with_model("qwen2.5:7b");
+    let open_ai = OpenAI::default().with_model("qwen2.5:7b")
+        .with_config(OpenAIConfig::new().with_api_base("http://localhost:11434/v1"));
     let chat = chat::get_chat_settings(&state.pool, &chat_id).await;
 
     let messages_normalize: Vec<Message> = messages.iter().map(|m| m.into()).collect();
     let chain = LLMChainBuilder::new()
-        .llm(ollama.clone())
+        .llm(open_ai.clone())
         .prompt(
             message_formatter![
                 fmt_template!(SystemMessagePromptTemplate::new(template_fstring!(

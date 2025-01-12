@@ -3,13 +3,14 @@ import {PreferenceEnum} from "../../utils/constant.ts";
 import Input from "../basic/form/components/Input.tsx";
 
 type PreferenceProps = {
-    label: string,
-    keyword: PreferenceEnum,
+    label: string
+    keyword: PreferenceEnum
+    placeholder?: string
     onSave?: () => void
 }
 
 const Preference = (props: PreferenceProps) => {
-    const {keyword, label} = props;
+    const {keyword, label, placeholder} = props;
     const {value, handleUpdate} = usePreference(keyword);
 
     const handleChange = (newValue: string) => {
@@ -21,6 +22,7 @@ const Preference = (props: PreferenceProps) => {
             <label className="text-sm text-gray-700">{label}</label>
             <Input
                 type="block"
+                placeholder={placeholder}
                 onChange={handleChange}
                 value={value}
             />

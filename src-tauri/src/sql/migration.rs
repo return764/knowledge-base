@@ -63,6 +63,20 @@ pub fn init() -> Vec<Migration> {
                 created_at DATETIME DEFAULT current_timestamp\
               );",
             kind: MigrationKind::Up,
-        }
+        },
+        Migration {
+          version: 6,
+          description: "create_model_table",
+          sql: "CREATE TABLE model (\
+              id TEXT PRIMARY KEY,\
+              url TEXT NOT NULL,\
+              name TEXT NOT NULL,\
+              type TEXT NOT NULL,\
+              api_key TEXT NOT NULL,\
+              active INTEGER CHECK(active IN (0, 1)) DEFAULT 0,\
+              created_at DATETIME DEFAULT current_timestamp\
+            );",
+          kind: MigrationKind::Up,
+      }
     ]
 }

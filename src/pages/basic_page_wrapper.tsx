@@ -10,19 +10,17 @@ function BasicPageWrapper() {
     return (
         <>
             <div className="h-6 shrink-0"></div>
-            <div className="flex flex-col flex-1 p-4">
-                <SwitchTransition mode="out-in">
-                    <CSSTransition
-                        key={location.pathname}
-                        timeout={100}
-                        classNames="fade"
-                        nodeRef={itemRef}
-                        unmountOnExit
-                    >
-                        <div ref={itemRef}>{currentOutlet}</div>
-                    </CSSTransition>
-                </SwitchTransition>
-            </div>
+            <SwitchTransition mode="out-in">
+                <CSSTransition
+                    key={location.pathname}
+                    timeout={100}
+                    classNames="fade"
+                    nodeRef={itemRef}
+                    unmountOnExit
+                >
+                    <div ref={itemRef} className="flex flex-col flex-1 p-4">{currentOutlet}</div>
+                </CSSTransition>
+            </SwitchTransition>
         </>
     );
 }

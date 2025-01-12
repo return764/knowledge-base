@@ -15,7 +15,7 @@ export const usePreference = (key: PreferenceEnum): PreferenceData => {
     useEffect(() => {
         const value = getPrefValue(key);
         setLocalValue(value || '');
-    }, [key, getPrefValue]);
+    }, [key, getPrefValue(key)]);
 
     const handleUpdate = (value: any) => {
         setLocalValue(value);
