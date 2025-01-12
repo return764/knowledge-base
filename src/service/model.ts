@@ -27,14 +27,35 @@ export const queryAllModels = async (url: string, key: string): Promise<OpenAIMo
     return (await response.json())["data"];
 }
 
-export const saveModels = async (models: OpenAIModel[], type: string, url: string, key: string) => {
-    const llmModels: LLMModel[] = await Promise.all(models.map(async it => ({
-        id: await invoke('uuid'),
-        url: url,
-        api_key: key,
-        name: it.id,
-        type: type,
-        active: false
-    })))
-    await API.model.insertModels(llmModels)
+export const saveAndUpdateModels = async (models: OpenAIModel[], type: string, url: string, key: string) => {
+    // 获取所有已存在的模型
+    const existingModels = await API.model.queryAll()
+    const updatedModels: LLMModel[] = []
+    const insertedModels: LLMModel[] = []
+
+    // 处理每个模型
+    for (const model of models) {
+        // 检查模型是否已存在
+        const existingModel = existingModels.find(m => m.name === model.id);
+
+        if (existingModel) {
+            updatedModels.push({
+                ...existingModel,
+                url: url,
+                api_key: key,
+                type: type
+            })
+        } else {
+            insertedModels.push({
+                id: await invoke('uuid'),
+                url: url,
+                api_key: key,
+                name: model.id,
+                type: type,
+                active: false
+            })
+        }
+    }
+    await API.model.updateModels(updatedModels);
+    await API.model.insertModels(insertedModels);
 }

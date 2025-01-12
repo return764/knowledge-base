@@ -4,7 +4,7 @@ import Table, {Column} from "../basic/table/table.tsx";
 import Preference from "../preference/Preference.tsx";
 import {LLM_TYPE, PreferenceEnum} from "../../utils/constant.ts";
 import PreferenceContext from "../preference/context/PreferenceContext.ts";
-import {queryAllModels, saveModels} from "../../service/model.ts";
+import {queryAllModels, saveAndUpdateModels} from "../../service/model.ts";
 import toast from "react-hot-toast";
 import {useQuery} from "../../hooks/useQuery.ts";
 import Switch from "../basic/form/components/switch.tsx";
@@ -44,11 +44,12 @@ function ModelSettings() {
             const apiURL = getPrefValue(PreferenceEnum.OPENAI_API_URL)
             const apiKey = getPrefValue(PreferenceEnum.OPENAI_API_KEY)
             const models = await queryAllModels(apiURL, apiKey)
-            await saveModels(models, LLM_TYPE.OPENAI, apiURL, apiKey)
+            await saveAndUpdateModels(models, LLM_TYPE.OPENAI, apiURL, apiKey)
             onSave([PreferenceEnum.OPENAI_API_URL, PreferenceEnum.OPENAI_API_KEY])
             toast.success("保存model成功")
         } finally {
             setIsValidating(false)
+            await mutate()
         }
     }
 
