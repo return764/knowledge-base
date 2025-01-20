@@ -24,7 +24,7 @@ function ChatSettings(props: {form: FormInstance}) {
     }, [knowledgeBases])
 
     const modelOptions = useMemo(() => {
-        return (activeModels ?? []).map((model: LLMModel) => ({
+        return (activeModels ?? []).filter(it => it.type === "llm").map((model: LLMModel) => ({
             label: model.name,
             value: model.id
         }))
@@ -39,11 +39,6 @@ function ChatSettings(props: {form: FormInstance}) {
                     />
                 </FormItem>
                 <FormItem name={"chat_model"} label={"聊天模型"}>
-                    <Select
-                        options={modelOptions}
-                    />
-                </FormItem>
-                <FormItem name={"embed_model"} label={"文本嵌入模型"}>
                     <Select
                         options={modelOptions}
                     />

@@ -20,7 +20,6 @@ export type ChatHistory = {
 
 export type ChatSettings = {
     knowledge_base?: string[],
-    embed_model?: string,
     chat_model?: string,
 }
 

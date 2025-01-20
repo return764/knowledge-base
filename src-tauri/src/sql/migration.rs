@@ -71,6 +71,7 @@ pub fn init() -> Vec<Migration> {
               id TEXT PRIMARY KEY,\
               url TEXT NOT NULL,\
               name TEXT NOT NULL,\
+              provider TEXT NOT NULL,\
               type TEXT NOT NULL,\
               api_key TEXT NOT NULL,\
               active INTEGER CHECK(active IN (0, 1)) DEFAULT 0,\

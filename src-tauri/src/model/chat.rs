@@ -32,15 +32,13 @@ pub struct Chat {
 pub struct ChatSettings {
     pub knowledge_base: Option<Vec<String>>,
     pub chat_model: Option<String>,
-    pub embed_model: Option<String>
 }
 
 impl Default for ChatSettings {
     fn default() -> Self {
         Self {
             knowledge_base: Some(Vec::new()),
-            chat_model: Some(String::new()),
-            embed_model: Some(String::new())
+            chat_model: Some(String::new())
         }
     }
 }

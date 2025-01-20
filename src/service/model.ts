@@ -3,7 +3,6 @@ import {LLMModel} from "../api/model.ts";
 import {invoke} from "@tauri-apps/api/core";
 import {API} from "../api";
 
-
 type OpenAIModel = {
     id: string,
     object: string,
@@ -27,7 +26,7 @@ export const queryAllModels = async (url: string, key: string): Promise<OpenAIMo
     return (await response.json())["data"];
 }
 
-export const saveAndUpdateModels = async (models: OpenAIModel[], type: string, url: string, key: string) => {
+export const saveAndUpdateModels = async (models: OpenAIModel[], provider: string, url: string, key: string) => {
     // 获取所有已存在的模型
     const existingModels = await API.model.queryAll()
     const updatedModels: LLMModel[] = []
@@ -43,7 +42,7 @@ export const saveAndUpdateModels = async (models: OpenAIModel[], type: string, u
                 ...existingModel,
                 url: url,
                 api_key: key,
-                type: type
+                provider: provider
             })
         } else {
             insertedModels.push({
@@ -51,11 +50,19 @@ export const saveAndUpdateModels = async (models: OpenAIModel[], type: string, u
                 url: url,
                 api_key: key,
                 name: model.id,
-                type: type,
+                type: getModelType(model.id),
+                provider: provider,
                 active: false
             })
         }
     }
     await API.model.updateModels(updatedModels);
     await API.model.insertModels(insertedModels);
+}
+
+const getModelType = (name: string) => {
+    if (/text|embedding|embed/i.test(name)) {
+        return "embedding"
+    }
+    return "llm"
 }
