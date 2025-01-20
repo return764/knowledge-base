@@ -50,7 +50,9 @@ const FormContextProvider = (props: PropsWithChildren<FormContextProps>) => {
     )
 }
 
-export const useForm = (form?: FormInstance): [FormInstance] => {
+
+
+export const useForm = (form?: FormInstance | null): [FormInstance] => {
     const formRef = useRef<FormInstance>();
 
     if (!formRef.current) {

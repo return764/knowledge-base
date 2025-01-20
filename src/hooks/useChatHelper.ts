@@ -4,7 +4,7 @@ import {Channel, invoke} from "@tauri-apps/api/core";
 import {buildAiMessage, buildChatBlock, buildHumanMessage} from "../utils/chat.ts";
 import {ChatBlock} from "../components/chat/ChatContextProvider.tsx";
 import { ChatSettings } from "../api/chat.ts";
-import { API } from "../api/index.ts";
+import { API } from "../api";
 
 type StreamMessageResponse =
     | { event: "appendMessage", data: { content: string } }
@@ -12,8 +12,7 @@ type StreamMessageResponse =
     | { event: "done" }
 
 export const useChatHelper = () => {
-    const {chatBlocks, setChatBlocks, chat, setSettings} = useContext(ChatContext)
-
+    const {chatBlocks, setChatBlocks, chat, saveSettings} = useContext(ChatContext)
 
     const sendMessage = async (content: string) => {
         const message = buildHumanMessage(content)
@@ -56,7 +55,7 @@ export const useChatHelper = () => {
 
     const updateSettings = async (settings: ChatSettings) => {
         await API.chat.saveSettings(chat?.id!!, settings)
-        setSettings(settings);
+        saveSettings(settings);
     }
 
     return {

@@ -34,4 +34,8 @@ export class ModelAPI extends APIAbc {
     async activeModel(id: string, active: boolean) {
         await this.execute("UPDATE model SET active = ? WHERE id = ?", [active ? 1 : 0, id])
     }
+
+    async queryAllActiveModel() {
+        return await this.query<LLMModel[]>("SELECT * FROM model WHERE active = 1")
+    }
 }

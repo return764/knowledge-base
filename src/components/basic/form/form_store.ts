@@ -23,7 +23,7 @@ const FormStore = (): FormInstance => {
         delete store[name]
     }
 
-    const registerFormItem = (item) => {
+    const registerFormItem = (item: ReactElement) => {
         formItems.push(item)
         return () => {
             const name = item.props.name

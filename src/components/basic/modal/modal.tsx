@@ -31,13 +31,13 @@ function Modal(props: PropsWithChildren<ModalProps>) {
                             ref={nodeRef}
                             className={`flex overflow-y-auto overflow-x-hidden fixed backdrop-blur-sm backdrop-brightness-75 top-0 right-0 left-0 z-40 justify-center items-center w-full h-full`}>
                             <div
-                                className="relative flex flex-col h-64 w-96 bg-white rounded-lg shadow dark:bg-gray-700">
+                                className="relative flex flex-col min-h-64 max-h-96 w-96 bg-white rounded-lg shadow dark:bg-gray-700">
                                 <div className="flex justify-center p-1 border-b-zinc-100 border-b">
                                     <h3 className="text-color">
                                         {props.title ?? "标题"}
                                     </h3>
                                 </div>
-                                <div className="p-2 grow">
+                                <div className="p-2 grow overflow-y-scroll">
                                     {props.children}
                                 </div>
                                 <div className="flex justify-end p-2 gap-2">

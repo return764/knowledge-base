@@ -35,6 +35,6 @@ export type FormError = {
 }
 
 export type OnChangeAndValue = {
-    value?: string,
-    onChange?: (value: string) => void
+    value?: any,
+    onChange?: (value: any) => void
 }

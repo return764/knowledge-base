@@ -1,42 +1,54 @@
-import { useContext, useMemo } from "react";
+import {useContext, useMemo} from "react";
 import { useQuery } from "../../hooks/useQuery";
 import { KnowledgeBase } from "../../api/knowledge_base";
 import Select from "../basic/form/components/select";
-import { ChatContext } from "./ChatContext";
-import { useChatHelper } from "../../hooks/useChatHelper";
+import Form from "../basic/form/form.tsx";
+import FormItem from "../basic/form/form_item.tsx";
+import {FormInstance} from "../basic/form/interface.ts";
+import {LLMModel} from "../../api/model.ts";
+import Combobox from "../basic/form/components/combobox.tsx";
+import {ChatContext} from "./ChatContext.tsx";
 
 
-function ChatSettings() {
+function ChatSettings(props: {form: FormInstance}) {
+    const {form} = props;
+    const {data: knowledgeBases} = useQuery<KnowledgeBase[]>('knowledgeBase', 'queryAll')
+    const {data: activeModels} = useQuery<LLMModel[]>('model', 'queryAllActiveModel')
     const {settings} = useContext(ChatContext)
-    const {updateSettings} = useChatHelper();
-    const {data} = useQuery<KnowledgeBase[]>('knowledgeBase', 'queryAll')
 
-    const options = useMemo(() => {
-        return (data ?? []).map((kb: KnowledgeBase) => ({
+    const knowledgeBaseOptions = useMemo(() => {
+        return (knowledgeBases ?? []).map((kb: KnowledgeBase) => ({
             label: kb.name,
             value: kb.id
         }))
-    }, [data])
+    }, [knowledgeBases])
 
-    const handleKnowledgeBaseChange = (value: string) => {
-        updateSettings({
-            ...settings,
-            knowledge_base: [value],
-        })
-    }
-
-    // 如何做相似度搜索 知识库id
-    // 交给rust后，rust查出所有的数据集？直接将用户输入作为相似度搜索的参数，搜索出top_k的文档
-    // 将文档填入上下文中交给llm进行解析
-    // 正常返回数据
+    const modelOptions = useMemo(() => {
+        return (activeModels ?? []).map((model: LLMModel) => ({
+            label: model.name,
+            value: model.id
+        }))
+    }, [activeModels])
 
     return (
         <>
-            <Select
-                options={options}
-                value={settings?.knowledge_base?.[0]}
-                onChange={handleKnowledgeBaseChange}
-            />
+            <Form form={form} initialValue={settings}>
+                <FormItem name={"knowledge_base"} label={"关联知识库"}>
+                    <Combobox
+                        options={knowledgeBaseOptions}
+                    />
+                </FormItem>
+                <FormItem name={"chat_model"} label={"聊天模型"}>
+                    <Select
+                        options={modelOptions}
+                    />
+                </FormItem>
+                <FormItem name={"embed_model"} label={"文本嵌入模型"}>
+                    <Select
+                        options={modelOptions}
+                    />
+                </FormItem>
+            </Form>
         </>
     );
 }

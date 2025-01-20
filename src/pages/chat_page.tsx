@@ -1,23 +1,36 @@
 import Button from "../components/basic/button/button.tsx";
 import {MdOutlineArrowBackIosNew, MdOutlineSettings} from "react-icons/md";
-import {useLoaderData, useNavigate} from "react-router-dom";
-import {Chat} from "../api/chat.ts";
+import {useNavigate} from "react-router-dom";
 import ChatInput from "../components/chat/ChatInput.tsx";
 import ChatPanel from "../components/chat/ChatPanel.tsx";
-import {ChatContextProvider} from "../components/chat/ChatContextProvider.tsx";
-import React, {useContext} from "react";
+import {useContext} from "react";
 import {ChatContext} from "../components/chat/ChatContext.tsx";
 import Modal from "../components/basic/modal/modal.tsx";
 import { useToggle } from "ahooks";
 import ChatSettings from "../components/chat/ChatSettings.tsx";
+import {useForm} from "../components/basic/form/form.tsx";
+import {useChatHelper} from "../hooks/useChatHelper.ts";
+import toast from "react-hot-toast";
+import {WrapChatContext} from "../components/WrapChatContext.tsx";
 
 function ChatPage() {
     const navigate = useNavigate()
     const {chat} = useContext(ChatContext)
     const [visible, {toggle}] = useToggle();
+    const [form] = useForm();
+    const {updateSettings} = useChatHelper();
 
     const handleModal = () => {
         toggle()
+    }
+
+    const saveSettings = async () => {
+        try {
+            await updateSettings(form.getFieldValues())
+            toast.success("保存设置成功")
+        } catch (e) {
+            toast.error("保存设置失败")
+        }
     }
 
     return (
@@ -35,23 +48,11 @@ function ChatPage() {
             </div>
             <ChatPanel/>
             <ChatInput/>
-            <Modal onClose={handleModal} open={visible} title="聊天设置">
-                <ChatSettings />
+            <Modal onClose={handleModal} onConfirm={saveSettings} open={visible} title="聊天设置">
+                <ChatSettings form={form}/>
             </Modal>
         </div>
     )
 }
 
-const WrapCmp = (Cmp: () => React.ReactElement) => {
-    return () => {
-        const chat = useLoaderData() as Chat
-
-        return (
-            <ChatContextProvider chat={chat}>
-                <Cmp/>
-            </ChatContextProvider>
-        )
-    }
-}
-
-export default WrapCmp(ChatPage);
+export default WrapChatContext(ChatPage);

@@ -43,6 +43,10 @@ export const ChatContextProvider = (props: PropsWithChildren<{chat: Chat}>) => {
         return chatBlocks.map(it => it.message)
     }, [chatBlocks])
 
+    const saveSettings = (settings: ChatSettings) => {
+        setSettings({...settings})
+    }
+
     return (
         <ChatContext.Provider value={{
             chat,
@@ -50,7 +54,7 @@ export const ChatContextProvider = (props: PropsWithChildren<{chat: Chat}>) => {
             chatBlocks,
             setChatBlocks,
             settings,
-            setSettings,
+            saveSettings,
             isReady
         }}>
             {props.children}
