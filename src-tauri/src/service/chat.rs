@@ -1,7 +1,7 @@
 use uuid::Uuid;
 use sqlx::{Pool, Sqlite};
 use langchain_rust::schemas::MessageType;
-use crate::model::chat::Chat;
+use crate::model::{chat::Chat, Model};
 
 
 pub async fn add_chat_history(pool: &Pool<Sqlite>, chat_id: &String, content: String, message_type: MessageType) {
@@ -15,8 +15,16 @@ pub async fn add_chat_history(pool: &Pool<Sqlite>, chat_id: &String, content: St
 }
 
 pub async fn get_chat_settings(pool: &Pool<Sqlite>, chat_id: &String) -> Chat {
-    return sqlx::query_as("SELECT id, name, prompts, settings FROM chat WHERE id = $1")
+    sqlx::query_as("SELECT id, name, prompts, settings FROM chat WHERE id = $1")
         .bind(chat_id)
         .fetch_one(pool)
-        .await.unwrap();
+        .await.unwrap()
+}
+
+
+pub async fn get_model(pool: &Pool<Sqlite>, model_id: &String) -> Model {
+    sqlx::query_as("SELECT id, name, url, type, api_key, active FROM model WHERE id = $1")
+        .bind(model_id)
+        .fetch_one(pool)
+        .await.unwrap()
 }

@@ -1,7 +1,6 @@
 use langchain_rust::schemas::{Message, MessageType};
 use serde::Deserialize;
-use sqlx::{types::Json, Database, Decode, FromRow, Sqlite, Type, Value, ValueRef};
-use sqlx::sqlite::SqliteTypeInfo;
+use sqlx::{Database, Decode, FromRow, Sqlite, Type};
 
 #[derive(Clone, FromRow, Deserialize, Debug)]
 pub struct ChatMessage {
@@ -31,13 +30,17 @@ pub struct Chat {
 
 #[derive(Clone, Deserialize, FromRow, Debug)]
 pub struct ChatSettings {
-    pub knowledge_base: Option<Vec<String>>
+    pub knowledge_base: Option<Vec<String>>,
+    pub chat_model: Option<String>,
+    pub embed_model: Option<String>
 }
 
 impl Default for ChatSettings {
     fn default() -> Self {
         Self {
-            knowledge_base: Some(Vec::new())
+            knowledge_base: Some(Vec::new()),
+            chat_model: Some(String::new()),
+            embed_model: Some(String::new())
         }
     }
 }

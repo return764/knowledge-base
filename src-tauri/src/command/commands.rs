@@ -1,9 +1,8 @@
 use std::collections::HashMap;
 use langchain_rust::chain::{Chain, LLMChainBuilder};
 use langchain_rust::document_loaders::{Loader, TextLoader};
-use langchain_rust::llm::client::Ollama;
 use langchain_rust::text_splitter::{SplitterOptions, TokenSplitter};
-use langchain_rust::{fmt_message, fmt_placeholder, fmt_template, message_formatter, prompt_args, template_fstring};
+use langchain_rust::{fmt_template, message_formatter, prompt_args, template_fstring};
 use langchain_rust::prompt::{HumanMessagePromptTemplate, SystemMessagePromptTemplate};
 use langchain_rust::schemas::{Document, Message, MessageType};
 use langchain_rust::vectorstore::{VecStoreOptions, VectorStore};
@@ -23,9 +22,18 @@ pub async fn send_chat_message(state: State<'_, SqlPoolContext>,
                                chat_id: String,
                                messages: Vec<ChatMessage>,
                                on_event: Channel<StreamMessageResponse>) -> Result<(), ()> {
-    let open_ai = OpenAI::default().with_model("qwen2.5:7b")
-        .with_config(OpenAIConfig::new().with_api_base("http://localhost:11434/v1"));
     let chat = chat::get_chat_settings(&state.pool, &chat_id).await;
+
+    let chat_model = match chat.settings.chat_model {
+        Some(model_id) => chat::get_model(&state.pool, &model_id).await,
+        None => panic!("Error invoking LLMChain: chat model not exist")
+    };
+
+    let open_ai = OpenAI::default()
+        .with_model(chat_model.name)
+        .with_config(OpenAIConfig::new()
+            .with_api_key(chat_model.api_key)
+            .with_api_base(chat_model.url));
 
     let messages_normalize: Vec<Message> = messages.iter().map(|m| m.into()).collect();
     let chain = LLMChainBuilder::new()

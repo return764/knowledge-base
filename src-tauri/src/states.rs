@@ -1,5 +1,4 @@
 use std::str::FromStr;
-use langchain_rust::embedding::OllamaEmbedder;
 use langchain_rust::embedding::openai::OpenAiEmbedder;
 use langchain_rust::llm::OpenAIConfig;
 use langchain_rust::vectorstore::sqlite_vec::{Store, StoreBuilder};
