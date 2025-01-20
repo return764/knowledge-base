@@ -9,8 +9,7 @@ pub fn init() -> Vec<Migration> {
                 id TEXT PRIMARY KEY,\
                 name TEXT UNIQUE NOT NULL,\
                 description TEXT,\
-                embedder_model_id TEXT,\
-                language_model_id TEXT,\
+                embedding_model_id TEXT,\
                 created_at DATETIME DEFAULT current_timestamp\
               );",
             kind: MigrationKind::Up,
