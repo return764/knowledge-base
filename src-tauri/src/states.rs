@@ -9,7 +9,7 @@ use sqlx::sqlite::{SqliteConnectOptions, SqlitePoolOptions};
 
 pub struct SqlPoolContext {
     pub pool: Pool<Sqlite>,
-    pub store: Store
+    pub db_path: String
 }
 
 
@@ -35,8 +35,8 @@ impl SqlPoolContext {
         store.initialize().await.unwrap();
 
         SqlPoolContext {
-            pool: pool,
-            store: store
+            pool,
+            db_path: db_path.to_string()
         }
     }
 }

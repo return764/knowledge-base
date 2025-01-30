@@ -1,7 +1,7 @@
 use uuid::Uuid;
 use sqlx::{Pool, Sqlite};
 use langchain_rust::schemas::MessageType;
-use crate::model::{chat::Chat, Model};
+use crate::model::{chat::Chat, KnowledgeBase, Model};
 
 
 pub async fn add_chat_history(pool: &Pool<Sqlite>, chat_id: &String, content: String, message_type: MessageType) {
@@ -22,9 +22,26 @@ pub async fn get_chat_settings(pool: &Pool<Sqlite>, chat_id: &String) -> Chat {
 }
 
 
-pub async fn get_model(pool: &Pool<Sqlite>, model_id: &String) -> Model {
-    sqlx::query_as("SELECT id, name, url, type, api_key, active FROM model WHERE id = $1")
-        .bind(model_id)
+pub async fn get_knowledge_bases(pool: &Pool<Sqlite>, kb_ids: &Vec<String>) -> Vec<KnowledgeBase> {
+    let ids_str = kb_ids.iter()
+        .map(|id| format!("'{}'", id))
+        .collect::<Vec<String>>()
+        .join(",");
+
+    sqlx::query_as(
+        &format!("SELECT id, name, description, embedding_model_id FROM knowledge_base WHERE id IN ({})", ids_str)
+    )
+    .fetch_all(pool)
+    .await
+    .unwrap()
+}
+
+pub async fn get_knowledge_base(pool: &Pool<Sqlite>, kb_id: &String) -> KnowledgeBase {
+    sqlx::query_as(
+        "SELECT id, name, description, embedding_model_id FROM knowledge_base WHERE id = $1"
+    )
+        .bind(kb_id)
         .fetch_one(pool)
-        .await.unwrap()
+        .await
+        .unwrap()
 }

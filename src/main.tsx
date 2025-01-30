@@ -7,6 +7,7 @@ import BasicPageWrapper from "./pages/basic_page_wrapper.tsx";
 import routes from "./routes/routes.tsx";
 import {API} from "./api";
 import PreferenceProvider from "./components/preference/context/PreferenceProvider";
+import {invoke} from "@tauri-apps/api/core";
 
 // 初始化 preferences
 const initPreferences = async () => {
@@ -49,6 +50,7 @@ const router = createBrowserRouter([
 ]);
 
 initPreferences()
+invoke("init_vec_db")
 
 ReactDOM.createRoot(document.getElementById("root") as HTMLElement).render(
     <React.StrictMode>
