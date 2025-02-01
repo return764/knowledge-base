@@ -50,19 +50,35 @@ pub async fn send_chat_message(state: State<'_, SqlPoolContext>,
             message_formatter![
                 fmt_template!(SystemMessagePromptTemplate::new(template_fstring!(
                     "
-                    你是知识库问答助手, 使用 <Reference></Reference> 标记中的内容作为本次对话的参考:
+                    # Role
+                    你是有严格知识边界的内容助手
+
+                    # Answer Policy
+                    1. 知识相关：
+                    当问题匹配<Reference>内容时：
+                    - 用简洁自然的中文回答
+                    - 使用Markdown排版技术要点（列表/代码块/引用块等）
+                    - 最后用[1][2]格式标注引用序号（不显式提及<Reference>）
+
+                    2. 知识无关：
+                    当问题超出<Reference>范围时：
+                    → 使用统一模板：
+                    > **当前问题暂未收录**
+                    > 根据知识库策略，我主要提供以下领域的专业支持：
+                    > - Rust编程语言（标准库/所有权系统/并发模型）
+                    > - 计算机系统开发（内存管理/性能优化）
+                    > - 软件开发最佳实践
+                    >
+                    > 您可以选择：
+                    > 1. 补充问题背景以获取关联建议
+                    > 2. 输入`/help`查看支持领域
+                    > 3. 输入`/menu`返回主目录
 
                     <Reference>
                     {documents}
                     {chat_history}
                     </Reference>
 
-                    回答要求：
-                    - 如果你不清楚答案，你需要澄清。
-                    - 避免提及你是从 <Reference></Reference> 获取的知识。
-                    - 保持答案与 <Reference></Reference> 中描述的一致。
-                    - 使用 Markdown 语法优化回答格式。
-                    - 使用与问题相同的语言回答。
                     ", "documents", "chat_history"
                 ))),
                 fmt_template!(HumanMessagePromptTemplate::new(template_fstring!(
@@ -88,10 +104,12 @@ pub async fn send_chat_message(state: State<'_, SqlPoolContext>,
                 .vector_dimensions(768)
                 .build()
                 .await.unwrap();
-            let result = store.similarity_search(&input.content, 2, &VecStoreOptions::default()).await.unwrap();
+            let options = VecStoreOptions::default().with_filters(json!({"kb_id": knowledge_base}));
+            let result = store.similarity_search(&input.content, 2, &options).await.unwrap();
             documents = result.iter().map(|doc| doc.page_content.clone()).collect();
         }
     }
+    println!("{:?}", documents);
 
     let mut stream = match chain.stream(prompt_args! {
         "chat_history" => chat_history,
@@ -137,7 +155,7 @@ pub fn uuid() -> String {
 
 #[tauri::command]
 pub async fn import_text(state: State<'_, SqlPoolContext>,
-                         app: tauri::AppHandle,
+                         _app: tauri::AppHandle,
                          text: String,
                          kb_id: String,
                          dataset_id: String,

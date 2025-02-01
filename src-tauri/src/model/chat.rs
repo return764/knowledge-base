@@ -49,9 +49,9 @@ impl Type<Sqlite> for ChatSettings {
     }
 }
 
-impl<'r,DB: Database> Decode<'r, DB> for ChatSettings
+impl<'r, DB: Database> Decode<'r, DB> for ChatSettings
 where &'r str: Decode<'r, DB> {
-    fn decode(value: <DB as sqlx::database::HasValueRef<'r>>::ValueRef) -> Result<ChatSettings, sqlx::error::BoxDynError> {
+    fn decode(value: <DB as Database>::ValueRef<'r>) -> Result<ChatSettings, sqlx::error::BoxDynError> {
         let value = <&str as Decode<DB>>::decode(value)?;
         if value.len() == 0 {
             return Ok(ChatSettings::default());

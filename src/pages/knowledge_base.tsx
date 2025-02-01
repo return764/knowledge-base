@@ -10,14 +10,26 @@ import toast from "react-hot-toast";
 import {useToggle} from "ahooks";
 import Form, {useForm} from "../components/basic/form/form.tsx";
 import FormItem from "../components/basic/form/form_item.tsx";
+import Select from "../components/basic/form/components/select.tsx";
+import {useMemo} from "react";
+import {LLMModel} from "../api/model.ts";
 
 function KnowledgeBasePage() {
     const {data} = useQuery<KnowledgeBase[]>('knowledgeBase', 'queryAll')
+    const {data: activeModels} = useQuery<LLMModel[]>('model', 'queryAllActiveModel')
     const [visible, {toggle}] = useToggle(false)
     const [form] = useForm();
 
+    const modelOptions = useMemo(() => {
+        return (activeModels ?? []).filter(it => it.type === "embedding").map((model: LLMModel) => ({
+            label: model.name,
+            value: model.id
+        }))
+    }, [activeModels])
+
+
     const handleSubmitNewKB = async () => {
-        await API.knowledgeBase.insert({name: form.getFieldValue("name")})
+        await API.knowledgeBase.insert({name: form.getFieldValue("name"), embeddingModel: form.getFieldValue('embedding_model_id')})
         toast.success("创建知识库成功!")
     }
 
@@ -44,6 +56,11 @@ function KnowledgeBasePage() {
                 <Form form={form}>
                     <FormItem name={"name"} label={"知识库名"}>
                         <Input size={"small"}/>
+                    </FormItem>
+                    <FormItem name={"embedding_model_id"} label={"文本嵌入模型"}>
+                        <Select
+                            options={modelOptions}
+                        />
                     </FormItem>
                 </Form>
             </Modal>

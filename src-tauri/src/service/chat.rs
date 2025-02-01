@@ -1,7 +1,7 @@
 use uuid::Uuid;
 use sqlx::{Pool, Sqlite};
 use langchain_rust::schemas::MessageType;
-use crate::model::{chat::Chat, KnowledgeBase, Model};
+use crate::model::{chat::Chat, KnowledgeBase};
 
 
 pub async fn add_chat_history(pool: &Pool<Sqlite>, chat_id: &String, content: String, message_type: MessageType) {

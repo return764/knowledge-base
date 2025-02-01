@@ -1,7 +1,7 @@
 use std::str::FromStr;
 use langchain_rust::embedding::openai::OpenAiEmbedder;
 use langchain_rust::llm::OpenAIConfig;
-use langchain_rust::vectorstore::sqlite_vec::{Store, StoreBuilder};
+use langchain_rust::vectorstore::sqlite_vec::StoreBuilder;
 use sqlx::{Pool, Sqlite};
 use sqlx::sqlite::{SqliteConnectOptions, SqlitePoolOptions};
 

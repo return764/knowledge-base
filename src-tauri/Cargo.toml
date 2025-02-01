@@ -17,23 +17,23 @@ name = "knowledge_keeper_lib"
 crate-type = ["lib", "cdylib", "staticlib"]
 
 [build-dependencies]
-tauri-build = { version = "2.0.0-beta", features = [] }
+tauri-build = { version = "2.0.5", features = [] }
 
 [target."cfg(target_os = \"macos\")".dependencies]
 cocoa = "0.25.0"
 
 [dependencies]
-tauri = { version = "2.0.0-beta", features = [] }
-tauri-plugin-shell = "2.0.0-beta"
-tauri-plugin-sql = {version = "2.0.0-beta", features = ["sqlite"] }
+tauri = { version = "2.2.5", features = [] }
+tauri-plugin-shell = "2.2.0"
+tauri-plugin-sql = {version = "2.2.0", features = ["sqlite"] }
 serde = { version = "1", features = ["derive"] }
 serde_json = "1"
 
-langchain-rust = { version = "4.3.1", features = ["ollama", "sqlite-vec"] }
-libsqlite3-sys = "0.27.0"
+langchain-rust = { version = "4.6.0", features = ["ollama", "sqlite-vec"] }
+libsqlite3-sys = "0.28.0"
 sqlite-vec = "0.1.1"
 uuid = { version = "1.10.0", features = ["v4"] }
-sqlx = { version = "=0.7.4", features = ["sqlite", "runtime-tokio"] }
+sqlx = { version = "0.8.0", features = ["sqlite", "runtime-tokio"] }
 futures = "0.3.30"
 tokio = "1.40.0"
 

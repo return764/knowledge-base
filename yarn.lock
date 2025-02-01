@@ -629,90 +629,90 @@
   resolved "https://registry.npmmirror.com/@tanstack/virtual-core/-/virtual-core-3.10.8.tgz#975446a667755222f62884c19e5c3c66d959b8b4"
   integrity sha512-PBu00mtt95jbKFi6Llk9aik8bnR3tR/oQP1o3TSi+iG//+Q2RTIzCEgKkHG8BB86kxMNW6O8wku+Lmi+QFR6jA==
 
-"@tauri-apps/api@2.0.0-beta.15", "@tauri-apps/api@>=2.0.0-beta.0":
-  version "2.0.0-beta.15"
-  resolved "https://registry.npmmirror.com/@tauri-apps/api/-/api-2.0.0-beta.15.tgz#41d5fbeaccf3926b6f9f3f9fb5137ba2e272e5c1"
-  integrity sha512-H9w6iISmR+NvH4XuyCZB4zDN10tf9RFt6i/9JHEjaRhAowdAaJ+oiXq/3kedizNClHMtbTQ5j0oqDVPkZDAI8g==
+"@tauri-apps/api@^2.0.0", "@tauri-apps/api@^2.2.0":
+  version "2.2.0"
+  resolved "https://registry.npmmirror.com/@tauri-apps/api/-/api-2.2.0.tgz#daaff2515b1a4ff1e763cf84a414548b02b566c5"
+  integrity sha512-R8epOeZl1eJEl603aUMIGb4RXlhPjpgxbGVEaqY+0G5JG9vzV/clNlzTeqc+NLYXVqXcn8mb4c5b9pJIUDEyAg==
 
-"@tauri-apps/cli-darwin-arm64@2.0.0-beta.22":
-  version "2.0.0-beta.22"
-  resolved "https://registry.npmmirror.com/@tauri-apps/cli-darwin-arm64/-/cli-darwin-arm64-2.0.0-beta.22.tgz#5e41c880a4b324bf5c1345fec7259c6b99be2caf"
-  integrity sha512-Ofhythvg1Ks2IM87WUYNtgFzm21aU1Zn+8QP81lJy9Y7ZGMxP8FYfqeHz6GIWKI+CYf6I77HA8LHkT9pyE5PYg==
+"@tauri-apps/cli-darwin-arm64@2.2.7":
+  version "2.2.7"
+  resolved "https://registry.npmmirror.com/@tauri-apps/cli-darwin-arm64/-/cli-darwin-arm64-2.2.7.tgz#42ec056eb19309aa50b11c9568b6c0e6637f41ca"
+  integrity sha512-54kcpxZ3X1Rq+pPTzk3iIcjEVY4yv493uRx/80rLoAA95vAC0c//31Whz75UVddDjJfZvXlXZ3uSZ+bnCOnt0A==
 
-"@tauri-apps/cli-darwin-x64@2.0.0-beta.22":
-  version "2.0.0-beta.22"
-  resolved "https://registry.npmmirror.com/@tauri-apps/cli-darwin-x64/-/cli-darwin-x64-2.0.0-beta.22.tgz#029fc107abaa9ede26f5fa3f0949fbf8eaf3667c"
-  integrity sha512-/lWIixo7WgmMUqcxlPT7Ojlkl6qbVlNDwUZ+9DtTpoWnaaBxv/YpSe1k62vDWEC7l0apFY+Fz7cRONN2wglFyQ==
+"@tauri-apps/cli-darwin-x64@2.2.7":
+  version "2.2.7"
+  resolved "https://registry.npmmirror.com/@tauri-apps/cli-darwin-x64/-/cli-darwin-x64-2.2.7.tgz#60cb5806e7bec9af2e22ae38a6bd2a769b0a61b0"
+  integrity sha512-Vgu2XtBWemLnarB+6LqQeLanDlRj7CeFN//H8bVVdjbNzxcSxsvbLYMBP8+3boa7eBnjDrqMImRySSgL6IrwTw==
 
-"@tauri-apps/cli-linux-arm-gnueabihf@2.0.0-beta.22":
-  version "2.0.0-beta.22"
-  resolved "https://registry.npmmirror.com/@tauri-apps/cli-linux-arm-gnueabihf/-/cli-linux-arm-gnueabihf-2.0.0-beta.22.tgz#5913e0a3c062e22974f0351f5e10c9fd4f66d33c"
-  integrity sha512-9nJCSStoxu4BKaKVJhu/uBJ8IsIofwAdsX0TWFxqo0obaZbeQSEpPhVsCy+uk3u/28dF+qyUtMCYawO2Uljnag==
+"@tauri-apps/cli-linux-arm-gnueabihf@2.2.7":
+  version "2.2.7"
+  resolved "https://registry.npmmirror.com/@tauri-apps/cli-linux-arm-gnueabihf/-/cli-linux-arm-gnueabihf-2.2.7.tgz#451029b68b50486e0553adf1a45cbd27c00eb3f9"
+  integrity sha512-+Clha2iQAiK9zoY/KKW0KLHkR0k36O78YLx5Sl98tWkwI3OBZFg5H5WT1plH/4sbZIS2aLFN6dw58/JlY9Bu/g==
 
-"@tauri-apps/cli-linux-arm64-gnu@2.0.0-beta.22":
-  version "2.0.0-beta.22"
-  resolved "https://registry.npmmirror.com/@tauri-apps/cli-linux-arm64-gnu/-/cli-linux-arm64-gnu-2.0.0-beta.22.tgz#86c2107e12c2f2b1289d74a29ebe810df7bb22aa"
-  integrity sha512-TF9q9zHFBx9LaG2fJJC+BcpIokOmX1UIniBapndvx3dJmdDiK4F6w2QYKDkrBQVzDzcIducmdo2zNBv17O9tFQ==
+"@tauri-apps/cli-linux-arm64-gnu@2.2.7":
+  version "2.2.7"
+  resolved "https://registry.npmmirror.com/@tauri-apps/cli-linux-arm64-gnu/-/cli-linux-arm64-gnu-2.2.7.tgz#74f28cc303b0f476209c6117325fc235a3d5ad0f"
+  integrity sha512-Z/Lp4SQe6BUEOays9BQAEum2pvZF4w9igyXijP+WbkOejZx4cDvarFJ5qXrqSLmBh7vxrdZcLwoLk9U//+yQrg==
 
-"@tauri-apps/cli-linux-arm64-musl@2.0.0-beta.22":
-  version "2.0.0-beta.22"
-  resolved "https://registry.npmmirror.com/@tauri-apps/cli-linux-arm64-musl/-/cli-linux-arm64-musl-2.0.0-beta.22.tgz#8a87be68e3ffc9115052bc8d015a9515c7870969"
-  integrity sha512-ak/RdmaV7sATQmNOxlpHVlbKlrdquH7WH8nOv82X+iK+1HgAOGGqLqBUMzzhkGqo9SHQ9zJ6A2yOo7Z6TJXMmQ==
+"@tauri-apps/cli-linux-arm64-musl@2.2.7":
+  version "2.2.7"
+  resolved "https://registry.npmmirror.com/@tauri-apps/cli-linux-arm64-musl/-/cli-linux-arm64-musl-2.2.7.tgz#c51890295186395effd2a751739b88c9689eea6c"
+  integrity sha512-+8HZ+txff/Y3YjAh80XcLXcX8kpGXVdr1P8AfjLHxHdS6QD4Md+acSxGTTNbplmHuBaSHJvuTvZf9tU1eDCTDg==
 
-"@tauri-apps/cli-linux-x64-gnu@2.0.0-beta.22":
-  version "2.0.0-beta.22"
-  resolved "https://registry.npmmirror.com/@tauri-apps/cli-linux-x64-gnu/-/cli-linux-x64-gnu-2.0.0-beta.22.tgz#108aaa4a939de0ea7567974c627b8061b88be091"
-  integrity sha512-9t+jQeMqBdXz51ikTh1PQFG/gs9PBzXmtMcIzUxE0juvH/ynjw0Vf+yZbNmwqVS9g7cj8XiBXoc6/N41SZE2cA==
+"@tauri-apps/cli-linux-x64-gnu@2.2.7":
+  version "2.2.7"
+  resolved "https://registry.npmmirror.com/@tauri-apps/cli-linux-x64-gnu/-/cli-linux-x64-gnu-2.2.7.tgz#14959a065858dcc6bff87ca8eb4525b071ab4ffe"
+  integrity sha512-ahlSnuCnUntblp9dG7/w5ZWZOdzRFi3zl0oScgt7GF4KNAOEa7duADsxPA4/FT2hLRa0SvpqtD4IYFvCxoVv3Q==
 
-"@tauri-apps/cli-linux-x64-musl@2.0.0-beta.22":
-  version "2.0.0-beta.22"
-  resolved "https://registry.npmmirror.com/@tauri-apps/cli-linux-x64-musl/-/cli-linux-x64-musl-2.0.0-beta.22.tgz#2ea7740c86dc2fc83ed5dfd3f887b0ab76545be4"
-  integrity sha512-PemcztfHG3HAuuo7HcnhfDrtN9NT7kueyNg8ipxJNPMa+s4K7kfieViyEiMW5pTr2F5WG/UuBSNcuwY+DVCcPA==
+"@tauri-apps/cli-linux-x64-musl@2.2.7":
+  version "2.2.7"
+  resolved "https://registry.npmmirror.com/@tauri-apps/cli-linux-x64-musl/-/cli-linux-x64-musl-2.2.7.tgz#6199c671d760b39c75ad13228cc422fadbbd0b15"
+  integrity sha512-+qKAWnJRSX+pjjRbKAQgTdFY8ecdcu8UdJ69i7wn3ZcRn2nMMzOO2LOMOTQV42B7/Q64D1pIpmZj9yblTMvadA==
 
-"@tauri-apps/cli-win32-arm64-msvc@2.0.0-beta.22":
-  version "2.0.0-beta.22"
-  resolved "https://registry.npmmirror.com/@tauri-apps/cli-win32-arm64-msvc/-/cli-win32-arm64-msvc-2.0.0-beta.22.tgz#c378ff68b99aa1afa17a583e4e7a0b16339282b7"
-  integrity sha512-EgKoG/jGEtTzhOp7ISjMdQsfd8IOG/5yZhO9Z4L/u7oB9mprKAJohYs24+ZxJtq2bOz4f/ZIysZ19nbkpxUzrg==
+"@tauri-apps/cli-win32-arm64-msvc@2.2.7":
+  version "2.2.7"
+  resolved "https://registry.npmmirror.com/@tauri-apps/cli-win32-arm64-msvc/-/cli-win32-arm64-msvc-2.2.7.tgz#e83f3efda339f8315a54c6b3a105bb16c1d78d66"
+  integrity sha512-aa86nRnrwT04u9D9fhf5JVssuAZlUCCc8AjqQjqODQjMd4BMA2+d4K9qBMpEG/1kVh95vZaNsLogjEaqSTTw4A==
 
-"@tauri-apps/cli-win32-ia32-msvc@2.0.0-beta.22":
-  version "2.0.0-beta.22"
-  resolved "https://registry.npmmirror.com/@tauri-apps/cli-win32-ia32-msvc/-/cli-win32-ia32-msvc-2.0.0-beta.22.tgz#88a81f2c6dbf62ea18252a542d45eb4190b4ed6e"
-  integrity sha512-67OrM2m4FB3KujPbjd/i+9lqcLDO3/ixqL1GMc3BoHhcjF+7QY08OxqWeitdsP/8ihnMIIdir2xEjNUKc6Zelw==
+"@tauri-apps/cli-win32-ia32-msvc@2.2.7":
+  version "2.2.7"
+  resolved "https://registry.npmmirror.com/@tauri-apps/cli-win32-ia32-msvc/-/cli-win32-ia32-msvc-2.2.7.tgz#6e9cdc615cf1f86469e067e65493a85470c4d6c7"
+  integrity sha512-EiJ5/25tLSQOSGvv+t6o3ZBfOTKB5S3vb+hHQuKbfmKdRF0XQu2YPdIi1CQw1DU97ZAE0Dq4frvnyYEKWgMzVQ==
 
-"@tauri-apps/cli-win32-x64-msvc@2.0.0-beta.22":
-  version "2.0.0-beta.22"
-  resolved "https://registry.npmmirror.com/@tauri-apps/cli-win32-x64-msvc/-/cli-win32-x64-msvc-2.0.0-beta.22.tgz#eb156270431382b64f8d95f0e86a72a6311a3b6f"
-  integrity sha512-BsO5xMUxliTZTImXnOC73sKT2U9VUeqR8AtklSObBcAg5LaZKpYOdF2pZzU6rIMAZwzROTAT1hYsr4r/nx2UZg==
+"@tauri-apps/cli-win32-x64-msvc@2.2.7":
+  version "2.2.7"
+  resolved "https://registry.npmmirror.com/@tauri-apps/cli-win32-x64-msvc/-/cli-win32-x64-msvc-2.2.7.tgz#c561efac129b386be35a936b0080a4cd2cd01b6d"
+  integrity sha512-ZB8Kw90j8Ld+9tCWyD2fWCYfIrzbQohJ4DJSidNwbnehlZzP7wAz6Z3xjsvUdKtQ3ibtfoeTqVInzCCEpI+pWg==
 
-"@tauri-apps/cli@>=2.0.0-beta.0":
-  version "2.0.0-beta.22"
-  resolved "https://registry.npmmirror.com/@tauri-apps/cli/-/cli-2.0.0-beta.22.tgz#a8c58568db903271b767ecec689bdf7632fbc8cf"
-  integrity sha512-OAuiDdSRKxNmr/dseQKKMoZZxIhQ6aAxmXJctGYJxCnkd62tQ8xeq87roVXGNS5Qkuv7WpySAyR0ntiMjvNLUA==
+"@tauri-apps/cli@^2.2.7":
+  version "2.2.7"
+  resolved "https://registry.npmmirror.com/@tauri-apps/cli/-/cli-2.2.7.tgz#4aedaf941f58bf2839fec38aa8191c5aefc7bb45"
+  integrity sha512-ZnsS2B4BplwXP37celanNANiIy8TCYhvg5RT09n72uR/o+navFZtGpFSqljV8fy1Y4ixIPds8FrGSXJCN2BerA==
   optionalDependencies:
-    "@tauri-apps/cli-darwin-arm64" "2.0.0-beta.22"
-    "@tauri-apps/cli-darwin-x64" "2.0.0-beta.22"
-    "@tauri-apps/cli-linux-arm-gnueabihf" "2.0.0-beta.22"
-    "@tauri-apps/cli-linux-arm64-gnu" "2.0.0-beta.22"
-    "@tauri-apps/cli-linux-arm64-musl" "2.0.0-beta.22"
-    "@tauri-apps/cli-linux-x64-gnu" "2.0.0-beta.22"
-    "@tauri-apps/cli-linux-x64-musl" "2.0.0-beta.22"
-    "@tauri-apps/cli-win32-arm64-msvc" "2.0.0-beta.22"
-    "@tauri-apps/cli-win32-ia32-msvc" "2.0.0-beta.22"
-    "@tauri-apps/cli-win32-x64-msvc" "2.0.0-beta.22"
+    "@tauri-apps/cli-darwin-arm64" "2.2.7"
+    "@tauri-apps/cli-darwin-x64" "2.2.7"
+    "@tauri-apps/cli-linux-arm-gnueabihf" "2.2.7"
+    "@tauri-apps/cli-linux-arm64-gnu" "2.2.7"
+    "@tauri-apps/cli-linux-arm64-musl" "2.2.7"
+    "@tauri-apps/cli-linux-x64-gnu" "2.2.7"
+    "@tauri-apps/cli-linux-x64-musl" "2.2.7"
+    "@tauri-apps/cli-win32-arm64-msvc" "2.2.7"
+    "@tauri-apps/cli-win32-ia32-msvc" "2.2.7"
+    "@tauri-apps/cli-win32-x64-msvc" "2.2.7"
 
-"@tauri-apps/plugin-shell@>=2.0.0-beta.0":
-  version "2.0.0-beta.8"
-  resolved "https://registry.npmmirror.com/@tauri-apps/plugin-shell/-/plugin-shell-2.0.0-beta.8.tgz#19dd2d4015b64d15d0266d949f836a41f3643b32"
-  integrity sha512-rFXI6MvsCdSGbuKbDu/NaOePREb9YTVTdeugHdvvljnKWW3dvmThBb2h/8Hxj+Z7Cd8MUoRxPeJWUZbPbJ2Imw==
+"@tauri-apps/plugin-shell@^2.2.0":
+  version "2.2.0"
+  resolved "https://registry.npmmirror.com/@tauri-apps/plugin-shell/-/plugin-shell-2.2.0.tgz#3a52375457ae8358666ff80a968cc93d92573abf"
+  integrity sha512-iC3Ic1hLmasoboG7BO+7p+AriSoqAwKrIk+Hpk+S/bjTQdXqbl2GbdclghI4gM32X0bls7xHzIFqhRdrlvJeaA==
   dependencies:
-    "@tauri-apps/api" "2.0.0-beta.15"
+    "@tauri-apps/api" "^2.0.0"
 
-"@tauri-apps/plugin-sql@^2.0.0-beta.7":
-  version "2.0.0-beta.7"
-  resolved "https://registry.npmmirror.com/@tauri-apps/plugin-sql/-/plugin-sql-2.0.0-beta.7.tgz#47cb822231cba62c7019728543e369560896a2c4"
-  integrity sha512-VPJntJtyY0Y3UEwgRrG3C/BUNgFuWNdw1w2DuOvdiQtz97VT6DuJO7IPY+T9iYG0JfVqpKmJSHiuLvI6jZ/IMw==
+"@tauri-apps/plugin-sql@^2.2.0":
+  version "2.2.0"
+  resolved "https://registry.npmmirror.com/@tauri-apps/plugin-sql/-/plugin-sql-2.2.0.tgz#1f0916b40d468112829cbfa3dc9ec9fc6d4cb89d"
+  integrity sha512-yGdybpaMENe/p6lTXslvDHYNNvD9qB7palaBBF5fJHdYSkwd3vrLiYU9dFfLwUAwnsBylND55EiivWsjhazejA==
   dependencies:
-    "@tauri-apps/api" "2.0.0-beta.15"
+    "@tauri-apps/api" "^2.0.0"
 
 "@types/babel__core@^7.20.5":
   version "7.20.5"
