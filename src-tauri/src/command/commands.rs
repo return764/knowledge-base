@@ -5,13 +5,13 @@ use langchain_rust::text_splitter::{SplitterOptions, TokenSplitter};
 use langchain_rust::{fmt_template, message_formatter, prompt_args, template_fstring};
 use langchain_rust::prompt::{HumanMessagePromptTemplate, SystemMessagePromptTemplate};
 use langchain_rust::schemas::{Document, Message, MessageType};
-use langchain_rust::vectorstore::{VecStoreOptions, VectorStore};
+use langchain_rust::vectorstore::{VectorStore};
 use serde_json::json;
 use tauri::ipc::Channel;
 use uuid::Uuid;
 use crate::states::SqlPoolContext;
 use futures::StreamExt;
-use langchain_rust::vectorstore::sqlite_vec::StoreBuilder;
+use langchain_rust::vectorstore::sqlite_vec::{SqliteFilter, SqliteOptions, StoreBuilder};
 use tauri::State;
 use crate::command::event::{ProgressEvent, StreamMessageResponse};
 use crate::model::chat::ChatMessage;
@@ -64,15 +64,6 @@ pub async fn send_chat_message(state: State<'_, SqlPoolContext>,
                     当问题超出<Reference>范围时：
                     → 使用统一模板：
                     > **当前问题暂未收录**
-                    > 根据知识库策略，我主要提供以下领域的专业支持：
-                    > - Rust编程语言（标准库/所有权系统/并发模型）
-                    > - 计算机系统开发（内存管理/性能优化）
-                    > - 软件开发最佳实践
-                    >
-                    > 您可以选择：
-                    > 1. 补充问题背景以获取关联建议
-                    > 2. 输入`/help`查看支持领域
-                    > 3. 输入`/menu`返回主目录
 
                     <Reference>
                     {documents}
@@ -104,12 +95,12 @@ pub async fn send_chat_message(state: State<'_, SqlPoolContext>,
                 .vector_dimensions(768)
                 .build()
                 .await.unwrap();
-            let options = VecStoreOptions::default().with_filters(json!({"kb_id": knowledge_base}));
+            let options = SqliteOptions::default()
+                .with_filters(SqliteFilter::In("kb_id".to_string(), knowledge_base));
             let result = store.similarity_search(&input.content, 2, &options).await.unwrap();
             documents = result.iter().map(|doc| doc.page_content.clone()).collect();
         }
     }
-    println!("{:?}", documents);
 
     let mut stream = match chain.stream(prompt_args! {
         "chat_history" => chat_history,
@@ -212,7 +203,7 @@ pub async fn import_text(state: State<'_, SqlPoolContext>,
         .await.unwrap();
 
     store
-        .add_documents(&final_docs, &VecStoreOptions::default())
+        .add_documents(&final_docs, &SqliteOptions::default())
         .await.map_err(|e| e.to_string())?;
 
     on_event.send(ProgressEvent::Finished {

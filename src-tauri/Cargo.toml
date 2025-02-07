@@ -38,5 +38,5 @@ futures = "0.3.30"
 tokio = "1.40.0"
 
 [patch.crates-io]
-langchain-rust = { git = "https://github.com/return764/langchain-rust", branch = "support-sqlite-vec" }
+langchain-rust = { git = "https://github.com/return764/langchain-rust", branch = "support-sqlite-filter" }
 
