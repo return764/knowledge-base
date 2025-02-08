@@ -1,8 +1,7 @@
 import {useContext} from "react";
 import {ChatContext} from "../components/chat/ChatContext.tsx";
 import {Channel, invoke} from "@tauri-apps/api/core";
-import {buildAiMessage, buildChatBlock, buildHumanMessage} from "../utils/chat.ts";
-import {ChatBlock} from "../components/chat/ChatContextProvider.tsx";
+import {buildAiMessage, buildHumanMessage, combineMessage} from "../utils/chat.ts";
 import { ChatSettings } from "../api/chat.ts";
 import { API } from "../api";
 
@@ -11,45 +10,37 @@ type StreamMessageResponse =
     | { event: "error", data: { message: string } }
     | { event: "done" }
 
+// type MessageStatus = StreamMessageResponse["event"]
+
 export const useChatHelper = () => {
-    const {chatBlocks, setChatBlocks, chat, saveSettings} = useContext(ChatContext)
+    const {updateChatMessage, chat, saveSettings} = useContext(ChatContext)
 
     const sendMessage = async (content: string) => {
         const message = buildHumanMessage(content)
-        const currentAiResultMessage = buildAiMessage('')
-        const blocks = [
-            ...chatBlocks,
-            buildChatBlock(message),
-            buildChatBlock(currentAiResultMessage, 'processing')
-        ] as ChatBlock[]
-        setChatBlocks(blocks)
+        updateChatMessage(message, "ok")
 
         const onEvent = new Channel<StreamMessageResponse>()
-        onEvent.onmessage = handleMessage(blocks)
-        await invoke("send_chat_message", {messages: blocks.slice(0, -1).map(it => it.message), onEvent, chatId: chat!!.id})
+        onEvent.onmessage = handleMessage()
+        await invoke("send_chat_message", {message, onEvent, chatId: chat!!.id})
     }
 
-    const handleMessage = (chatBlocks: ChatBlock[]) => {
-        let cacheBlocks = chatBlocks.slice(0, -1)
-        let msg = ""
+    const handleMessage = () => {
+        let msg = buildAiMessage("")
+        updateChatMessage(msg, "processing")
         return (message: StreamMessageResponse) => {
             switch (message.event) {
                 case "appendMessage":
-                    msg = msg.concat(message.data.content)
-                    const chatMessageProcessing = buildAiMessage(msg)
-                    setChatBlocks([...cacheBlocks, {message: chatMessageProcessing, status: 'processing'}])
+                    combineMessage(msg, message.data.content)
+                    updateChatMessage(msg, "processing")
                     break
                 case "error":
-                    //const chatMessageError = buildAiMessage(`Error: ${message.data.message}`)
-                    setChatBlocks([...cacheBlocks, {message: buildAiMessage(msg), status: 'failed'}])
-                    msg = ""
+                    updateChatMessage(msg, "failed")
                     break
                 case "done":
-                    const chatMessageDone = buildAiMessage(msg)
-                    setChatBlocks([...cacheBlocks, {message: chatMessageDone, status: 'ok'}])
-                    msg = ""
+                    updateChatMessage(msg, "ok")
                     break
             }
+
         }
     }
 

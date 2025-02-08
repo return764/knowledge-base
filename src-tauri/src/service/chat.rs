@@ -2,7 +2,14 @@ use uuid::Uuid;
 use sqlx::{Pool, Sqlite};
 use langchain_rust::schemas::MessageType;
 use crate::model::{chat::Chat, KnowledgeBase};
+use crate::model::chat::ChatMessage;
 
+pub async fn get_chat_history(pool: &Pool<Sqlite>, chat_id: &String) -> Vec<ChatMessage> {
+    sqlx::query_as("SELECT content, role FROM chat_history WHERE chat_id = $1")
+        .bind(chat_id)
+        .fetch_all(pool)
+        .await.unwrap()
+}
 
 pub async fn add_chat_history(pool: &Pool<Sqlite>, chat_id: &String, content: String, message_type: MessageType) {
     sqlx::query("INSERT INTO chat_history (id, chat_id, content, role) VALUES ($1, $2, $3, $4)")

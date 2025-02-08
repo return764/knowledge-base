@@ -1,2 +1,2 @@
 pub mod commands;
-mod event;
+pub(crate) mod event;

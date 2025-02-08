@@ -1,13 +1,20 @@
 import {PropsWithChildren, useEffect, useMemo, useState} from "react";
 import {Chat, ChatHistory, ChatSettings} from "../../api/chat.ts";
 import {useQuery} from "../../hooks/useQuery.ts";
-import {ChatContext, ChatMessage} from "./ChatContext.tsx";
+import {ChatContext, ChatMessage, ChatStatus} from "./ChatContext.tsx";
 import {buildMessage, buildOkBlocks} from "../../utils/chat.ts";
 import {useParams} from "react-router-dom";
+import {API} from "../../api";
 
-export type ChatBlock = {
-    message: ChatMessage,
-    status: 'processing' | 'failed' | 'ok'
+
+export class ChatBlock {
+    message: ChatMessage
+    status : ChatStatus
+
+    constructor(message: ChatMessage, status: ChatStatus = 'ok') {
+        this.message = message
+        this.status = status
+    }
 }
 
 export const ChatContextProvider = (props: PropsWithChildren<{chat: Chat}>) => {
@@ -47,12 +54,33 @@ export const ChatContextProvider = (props: PropsWithChildren<{chat: Chat}>) => {
         setSettings({...settings})
     }
 
+    const updateChatMessage = (message: ChatMessage, status: ChatStatus = "processing") => {
+        if (chatBlocks.length === 0) {
+            setChatBlocks([new ChatBlock(message, status)])
+            return
+        }
+
+        setChatBlocks((chatBlocks) => {
+            const latestChatBlock = chatBlocks[chatBlocks.length - 1]
+            if (latestChatBlock.status != "processing") {
+                return [...chatBlocks, new ChatBlock(message, status)]
+            }
+            let cacheBlocks = chatBlocks.slice(0, -1)
+            return [...cacheBlocks, new ChatBlock(message, status)]
+        })
+
+        if (status === "ok") {
+            API.chat.insertHistory(chat.id, message)
+        }
+    }
+
     return (
         <ChatContext.Provider value={{
             chat,
             messages,
             chatBlocks,
             setChatBlocks,
+            updateChatMessage,
             settings,
             saveSettings,
             isReady

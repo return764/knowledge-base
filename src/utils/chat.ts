@@ -2,12 +2,7 @@ import {ChatMessage, ChatRole} from "../components/chat/ChatContext.tsx";
 import {ChatBlock} from "../components/chat/ChatContextProvider.tsx";
 
 export const buildOkBlocks = (messages: ChatMessage[]): ChatBlock[] => {
-    return messages.map(it => (
-        {
-            message: it,
-            status: 'ok'
-        }
-    ))
+    return messages.map(it => new ChatBlock(it))
 }
 
 export const buildMessage = (content: string, role: ChatRole): ChatMessage => {
@@ -22,6 +17,6 @@ export const buildAiMessage = (content: string): ChatMessage => {
     return buildMessage(content, "ai")
 }
 
-export const buildChatBlock = (message: ChatMessage, status: ChatBlock['status'] = 'ok') => {
-    return {message, status}
+export const combineMessage = (message: ChatMessage, msgToken: string) => {
+    message.content = message.content.concat(msgToken)
 }

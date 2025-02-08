@@ -3,19 +3,20 @@ use langchain_rust::chain::{Chain, LLMChainBuilder};
 use langchain_rust::document_loaders::{Loader, TextLoader};
 use langchain_rust::text_splitter::{SplitterOptions, TokenSplitter};
 use langchain_rust::{fmt_template, message_formatter, prompt_args, template_fstring};
-use langchain_rust::prompt::{HumanMessagePromptTemplate, SystemMessagePromptTemplate};
-use langchain_rust::schemas::{Document, Message, MessageType};
+use langchain_rust::schemas::Document;
 use langchain_rust::vectorstore::{VectorStore};
 use serde_json::json;
 use tauri::ipc::Channel;
 use uuid::Uuid;
 use crate::states::SqlPoolContext;
 use futures::StreamExt;
+use langchain_rust::prompt::{HumanMessagePromptTemplate, SystemMessagePromptTemplate};
 use langchain_rust::vectorstore::sqlite_vec::{SqliteFilter, SqliteOptions, StoreBuilder};
 use tauri::State;
 use crate::command::event::{ProgressEvent, StreamMessageResponse};
 use crate::model::chat::ChatMessage;
 use crate::service::{model, chat};
+use crate::llm::{prompt, ChainChannel};
 
 #[tauri::command]
 pub async fn init_vec_db(state: State<'_, SqlPoolContext>) -> Result<(), ()> {
@@ -33,7 +34,7 @@ pub async fn init_vec_db(state: State<'_, SqlPoolContext>) -> Result<(), ()> {
 #[tauri::command]
 pub async fn send_chat_message(state: State<'_, SqlPoolContext>,
                                chat_id: String,
-                               messages: Vec<ChatMessage>,
+                               message: ChatMessage,
                                on_event: Channel<StreamMessageResponse>) -> Result<(), ()> {
     let chat = chat::get_chat_settings(&state.pool, &chat_id).await;
 
@@ -43,42 +44,16 @@ pub async fn send_chat_message(state: State<'_, SqlPoolContext>,
 
     let open_ai = model::build_open_ai_model(chat_model);
 
-    let messages_normalize: Vec<Message> = messages.iter().map(|m| m.into()).collect();
+    let chat_history: Vec<ChatMessage> = chat::get_chat_history(&state.pool, &chat_id).await;
     let chain = LLMChainBuilder::new()
         .llm(open_ai)
         .prompt(
             message_formatter![
-                fmt_template!(SystemMessagePromptTemplate::new(template_fstring!(
-                    "
-                    # Role
-                    你是有严格知识边界的内容助手
-
-                    # Answer Policy
-                    1. 知识相关：
-                    当问题匹配<Reference>内容时：
-                    - 用简洁自然的中文回答
-                    - 使用Markdown排版技术要点（列表/代码块/引用块等）
-                    - 最后用[1][2]格式标注引用序号（不显式提及<Reference>）
-
-                    2. 知识无关：
-                    当问题超出<Reference>范围时：
-                    → 使用统一模板：
-                    > **当前问题暂未收录**
-
-                    <Reference>
-                    {documents}
-                    {chat_history}
-                    </Reference>
-
-                    ", "documents", "chat_history"
-                ))),
-                fmt_template!(HumanMessagePromptTemplate::new(template_fstring!(
-                "{input}", "input"
-            ))),
+                fmt_template!(SystemMessagePromptTemplate::new(template_fstring!(prompt::CHAT_PROMPT, "documents", "chat_history"))),
+                fmt_template!(HumanMessagePromptTemplate::new(template_fstring!("{input}", "input"))),
         ])
         .build()
         .unwrap();
-    let (input, chat_history) = messages_normalize.split_last().unwrap();
 
     let embedder = match embedding_model {
         Some(model) => Some(model::build_embedding_model(model)),
@@ -97,45 +72,18 @@ pub async fn send_chat_message(state: State<'_, SqlPoolContext>,
                 .await.unwrap();
             let options = SqliteOptions::default()
                 .with_filters(SqliteFilter::In("kb_id".to_string(), knowledge_base));
-            let result = store.similarity_search(&input.content, 2, &options).await.unwrap();
+            let result = store.similarity_search(&message.content, 2, &options).await.unwrap();
             documents = result.iter().map(|doc| doc.page_content.clone()).collect();
         }
     }
 
-    let mut stream = match chain.stream(prompt_args! {
+    chain.stream_channel(prompt_args! {
         "chat_history" => chat_history,
-        "input" => input.content.clone(),
+        "input" => message.content.clone(),
         "documents" => documents
-    }).await {
-        Ok(stream) => stream,
-        Err(e) => {
-            on_event.send(StreamMessageResponse::Error {
-                message: format!("Error: {}", e),
-            }).unwrap();
-            return Ok(());
-        }
-    };
-
-    let mut complete_ai_message = String::new();
-    while let Some(result) = stream.next().await {
-        match result {
-            Ok(value) => {
-                complete_ai_message.push_str(&value.content);
-                on_event.send(StreamMessageResponse::AppendMessage {
-                    content: value.content,
-                }).unwrap();
-            },
-            Err(e) => {
-                on_event.send(StreamMessageResponse::Error {
-                    message: format!("Error invoking LLMChain: {:?}", e),
-                }).unwrap();
-                panic!("Error invoking LLMChain: {:?}", e)
-            },
-        }
-    }
-    on_event.send(StreamMessageResponse::Done).unwrap();
-    chat::add_chat_history(&state.pool, &chat_id, input.content.clone(), MessageType::HumanMessage).await;
-    chat::add_chat_history(&state.pool, &chat_id, complete_ai_message.clone(), MessageType::AIMessage).await;
+    }, on_event).await;
+    // chat::add_chat_history(&state.pool, &chat_id, input.content.clone(), MessageType::HumanMessage).await;
+    // chat::add_chat_history(&state.pool, &chat_id, complete_ai_message.clone(), MessageType::AIMessage).await;
     Ok(())
 }
 

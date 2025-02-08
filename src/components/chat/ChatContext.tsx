@@ -10,14 +10,18 @@ export type ChatMessage = {
 
 export type ChatRole = 'human' | 'ai' | 'system'
 
+export type ChatStatus = 'processing' | 'failed' | 'ok'
+
+
 type ChatContextProps = {
-    chat?: Chat,
-    messages: ChatMessage[],
-    chatBlocks: ChatBlock[],
+    chat?: Chat
+    messages: ChatMessage[]
+    chatBlocks: ChatBlock[]
     setChatBlocks: Dispatch<SetStateAction<ChatBlock[]>>
-    settings: ChatSettings,
-    saveSettings: (settings: ChatSettings) => void,
-    isReady: boolean,
+    updateChatMessage: (message: ChatMessage, status: ChatStatus) => void
+    settings: ChatSettings
+    saveSettings: (settings: ChatSettings) => void
+    isReady: boolean
 }
 
 export const ChatContext = createContext<ChatContextProps>({
@@ -25,6 +29,7 @@ export const ChatContext = createContext<ChatContextProps>({
     messages: [],
     chatBlocks: [],
     setChatBlocks: () => {},
+    updateChatMessage: () => {},
     settings: {},
     saveSettings: () => {},
     isReady: false

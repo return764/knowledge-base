@@ -1,6 +1,6 @@
 mod sql;
 mod command;
-mod langchian;
+mod llm;
 mod states;
 mod model;
 mod service;
