@@ -3,8 +3,7 @@ import { Fragment, useState } from 'react'
 import ModelSettings from "../components/settings/ModelSettings.tsx";
 
 const menuItems = [
-  { name: '模型设置', component: () => <ModelSettings/> },
-  { name: '模型设置2', component: () => <ModelSettings/> },
+  { name: '模型设置', component: () => <ModelSettings/> }
 ]
 
 const Settings = () => {
