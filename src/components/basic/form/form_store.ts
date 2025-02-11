@@ -1,10 +1,5 @@
-import {FormError, FormInstance, isFunctionRule, isRequiredRule, Store} from "./interface";
+import {FormError, FormInstance, isFunctionRule, isRequiredRule, Rule, Store} from "./interface";
 import {ReactElement} from "react";
-
-interface ValidationRule {
-  required?: boolean;
-  message?: string;
-}
 
 const FormStore = (): FormInstance => {
     const store: Store = {}
@@ -51,7 +46,7 @@ const FormStore = (): FormInstance => {
         formItems.forEach(item => {
             const {name, rules} = item.props
             if (rules && rules.length > 0) {
-                rules.forEach(rule => {
+                rules.forEach((rule: Rule) => {
                     const value = getFieldValue(name)
                     if (isRequiredRule(rule) && rule.required) {
                         value == null && err.push({
