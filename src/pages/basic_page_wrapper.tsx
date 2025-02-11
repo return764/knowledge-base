@@ -5,7 +5,7 @@ import {useRef} from "react";
 function BasicPageWrapper() {
     const location = useLocation()
     const currentOutlet = useOutlet()
-    const itemRef = useRef()
+    const contentRef = useRef<HTMLDivElement>(null);
 
     return (
         <>
@@ -15,10 +15,10 @@ function BasicPageWrapper() {
                     key={location.pathname}
                     timeout={100}
                     classNames="fade"
-                    nodeRef={itemRef}
+                    nodeRef={contentRef}
                     unmountOnExit
                 >
-                    <div ref={itemRef} className="flex flex-col flex-1 p-4">{currentOutlet}</div>
+                    <div ref={contentRef} className="flex flex-col flex-1 p-4">{currentOutlet}</div>
                 </CSSTransition>
             </SwitchTransition>
         </>

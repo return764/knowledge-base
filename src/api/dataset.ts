@@ -59,11 +59,11 @@ export class DatasetAPI extends APIAbc {
     }
 
     // TODO 考虑移除kbId参数，查询没有用到
-    async queryAllDocumentsByDatasetId(kbId: string, datasetId: string) {
+    async queryAllDocumentsByDatasetId(datasetId: string) {
         return await this.query<DocumentData[]>(`SELECT json_extract(metadata, '$.id') as id, text, json_extract(metadata, '$.dataset_id') as dataset_id FROM documents WHERE json_extract(metadata, '$.dataset_id') = ?`, [datasetId]);
     }
 
-    async deleteDocumentsByDatasetId(kbId: string, datasetId: string) {
+    async deleteDocumentsByDatasetId(datasetId: string) {
         return await this.execute(`DELETE FROM documents WHERE json_extract(metadata, '$.dataset_id') = ?`, [datasetId])
     }
 }

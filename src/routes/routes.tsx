@@ -6,6 +6,12 @@ import Datasets from "../pages/datasets.tsx";
 import Chats from "../pages/chats.tsx";
 import ChatPage from "../pages/chat_page.tsx";
 
+// 添加类型定义
+interface RouteParams {
+  id?: string;
+  // 其他可能的参数
+}
+
 export default [
     {
         path: "/knowledge-base",
@@ -13,19 +19,19 @@ export default [
     }, {
         path: "/knowledge-base/:id",
         element: <KnowledgeBaseDetail/>,
-        loader: async ({ params }) => {
+        loader: async ({ params }: { params: RouteParams }) => {
             return await API.knowledgeBase.queryById(params['id']!!)
         },
     }, {
         path: "/knowledge-base/:id/import",
         element: <KnowledgeBaseImport/>,
-        loader: async ({ params }) => {
+        loader: async ({ params }: { params: RouteParams }) => {
             return await API.knowledgeBase.queryById(params['id']!!)
         },
     }, {
         path: "/knowledge-base/:id/dataset/:datasetId",
         element: <Datasets/>,
-        loader: async ({params}) => {
+        loader: async ({params}: { params: RouteParams }) => {
             return await API.dataset.queryAllDocumentsByDatasetId(params['id']!!, params['datasetId']!!)
         }
     }, {
@@ -34,7 +40,7 @@ export default [
     }, {
         path: "/chats/:id",
         element: <ChatPage/>,
-        loader: async ({params}) => {
+        loader: async ({params}: { params: RouteParams }) => {
             return await API.chat.queryById(params['id']!!)
         }
     }

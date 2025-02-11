@@ -1,3 +1,4 @@
+import type { FC } from 'react';
 import React, {forwardRef, useImperativeHandle, useMemo, useState} from 'react';
 
 
@@ -16,15 +17,13 @@ type Step = {
 
 const Stepper = (props: StepperProps) => {
     const steps = useMemo(() => {
-        return props.items.map((label: string, index: number, arr: []) => {
-            return {
-                index,
-                label,
-                active: index === 0,
-                isLast: (index + 1) === arr.length
-            }
-        })
-    }, [props.items])
+        return props.items.map((label: string, index: number, array: string[]) => ({
+            index,
+            label,
+            active: props.current >= index,
+            isLast: index === array.length - 1
+        }));
+    }, [props.items, props.current]);
 
     const isActive = (it: Step) => {
         return it.index <= props.current

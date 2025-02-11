@@ -29,7 +29,7 @@ class FormItem extends React.PureComponent<FormItemProps> {
         const {children, name} = this.props
 
         const child = React.Children.only(children)!! as ReactElement;
-        const {form, fieldOptions} = this.context;
+        const {form} = this.context;
         const value = form.getFieldValue(name)
 
         return {

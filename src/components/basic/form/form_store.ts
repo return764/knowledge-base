@@ -1,6 +1,11 @@
 import {FormError, FormInstance, isFunctionRule, isRequiredRule, Store} from "./interface";
 import {ReactElement} from "react";
 
+interface ValidationRule {
+  required?: boolean;
+  message?: string;
+}
+
 const FormStore = (): FormInstance => {
     const store: Store = {}
     const formItems: ReactElement[] = []

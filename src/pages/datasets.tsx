@@ -5,8 +5,12 @@ import {MdOutlineArrowBackIosNew} from "react-icons/md";
 import {BiImport} from "react-icons/bi";
 import {useQuery} from "../hooks/useQuery.ts";
 import DocumentCard from "../components/document-card/DocumentCard.tsx";
+import type { FC } from 'react';
 
-function Datasets(props) {
+interface DatasetsProps {
+}
+
+const Datasets: FC<DatasetsProps> = () => {
     const documents = useLoaderData() as DocumentData[]
     const {datasetId} = useParams();
     const {data: dataset, error} = useQuery<Dataset>('dataset', 'queryById', {id: datasetId})
