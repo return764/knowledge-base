@@ -38,13 +38,22 @@ pub fn run() {
             let sqlconext = Runtime::new().unwrap().block_on(SqlPoolContext::new(db_path));
             app.manage(sqlconext);
 
-            let win_builder =
+            let mut win_builder =
                 WebviewWindowBuilder::new(app, "main", WebviewUrl::default())
-                    .hidden_title(true)
                     .resizable(true)
                     .fullscreen(false)
                     .min_inner_size(400.0, 300.0)
                     .inner_size(800.0, 600.0);
+
+            #[cfg(target_os = "macos")]
+            {
+                win_builder = win_builder.hidden_title(true);
+            }
+
+            #[cfg(target_os = "windows")]
+            {
+                win_builder = win_builder.decorations(false);
+            }
 
             // // 仅在 macOS 时设置透明标题栏
             // #[cfg(target_os = "macos")]
