@@ -19,7 +19,7 @@ impl SqlPoolContext {
         .connect_with(
             SqliteConnectOptions::from_str(db_path).unwrap()
             .create_if_missing(true)
-            .extension("vec0")
+            .extension("./libs/vec0")
         ).await.unwrap();
 
         let embedder = OpenAiEmbedder::default()
