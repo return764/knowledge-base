@@ -1,7 +1,7 @@
 ## 业务功能
 
-- [] 给models表新增default字段
-- [] 新增chat和知识库的时候使用默认的model
+- [X] 给models表新增default字段 // no considered
+- [X] 新增chat和知识库的时候使用默认的model
 - [] 支持更多的model api类型
 - [] 添加测试
 - [] 计算此次聊天的主题并更新到chat的标题
