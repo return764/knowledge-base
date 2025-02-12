@@ -1,10 +1,12 @@
 import { OnChangeAndValue } from '../interface';
-import { useMemo } from 'react';
+import {useEffect, useMemo} from 'react';
 import { Label, Listbox, ListboxButton, ListboxOption, ListboxOptions } from '@headlessui/react';
 import { HiChevronUpDown } from 'react-icons/hi2';
 import { MdCheck } from 'react-icons/md';
+import {useBoolean} from "ahooks";
 
 type SelectProps = {
+    defaultValue?: string,
     options: SelectItem[],
     label?: string
 } & OnChangeAndValue
@@ -15,11 +17,25 @@ type SelectItem = {
 }
 
 function Select(props: SelectProps) {
-    const { options, value, onChange, label } = props;
+    const { options, value, onChange, label, defaultValue } = props;
+    const [needUpdateDefaultValue, {setTrue}] = useBoolean(false)
 
-    const selected = useMemo(() =>
-        options.find(option => option.value === value) ?? null
-    , [value, options]);
+    const selected = useMemo(() => {
+        let option = options.find(option => option.value === value) ?? null
+        if (!option) {
+            option = options.find(option => option.value === defaultValue)
+            ?? options.length > 0 ? options[0] : null
+            setTrue()
+        }
+        return option
+    } , [value, options, defaultValue, setTrue]);
+
+
+    useEffect(() => {
+        if (needUpdateDefaultValue && selected) {
+            handleChangeSelect(selected)
+        }
+    }, [needUpdateDefaultValue, selected]);
 
     const handleChangeSelect = (item: SelectItem) => {
         onChange?.(item.value);
