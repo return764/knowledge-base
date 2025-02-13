@@ -3,7 +3,7 @@ import {MdOutlineArrowBackIosNew, MdOutlineSettings} from "react-icons/md";
 import {useNavigate} from "react-router-dom";
 import ChatInput from "../components/chat/ChatInput.tsx";
 import ChatPanel from "../components/chat/ChatPanel.tsx";
-import {useContext} from "react";
+import {useContext, useEffect} from "react";
 import {ChatContext} from "../components/chat/ChatContext.tsx";
 import Modal from "../components/basic/modal/modal.tsx";
 import { useToggle } from "ahooks";
@@ -12,10 +12,13 @@ import {useForm} from "../components/basic/form/form.tsx";
 import {useChatHelper} from "../hooks/useChatHelper.ts";
 import toast from "react-hot-toast";
 import {WrapChatContext} from "../components/WrapChatContext.tsx";
+import {DEFAULT_CHAT_TITLE} from "../api/chat.ts";
+import {invoke} from "@tauri-apps/api/core";
+import {API} from "../api";
 
 function ChatPage() {
     const navigate = useNavigate()
-    const {chat} = useContext(ChatContext)
+    const {chat, messages} = useContext(ChatContext)
     const [visible, {toggle}] = useToggle();
     const [form] = useForm();
     const {updateSettings} = useChatHelper();
@@ -32,6 +35,15 @@ function ChatPage() {
             toast.error("保存设置失败")
         }
     }
+
+    useEffect(() => {
+        if (messages.length >= 2 && chat?.name === DEFAULT_CHAT_TITLE) {
+            invoke("generate_chat_title", {messages , chatId: chat.id})
+                .then(res => {
+                    API.chat.updateName(chat.id, res as string)
+                })
+        }
+    }, [messages.length]);
 
     return (
         <div className="h-full flex flex-col">

@@ -17,8 +17,7 @@ type ChatContextProps = {
     chat?: Chat
     messages: ChatMessage[]
     chatBlocks: ChatBlock[]
-    setChatBlocks: Dispatch<SetStateAction<ChatBlock[]>>
-    updateChatMessage: (message: ChatMessage, status: ChatStatus) => void
+    updateChatMessage: (message: ChatMessage, status: ChatStatus) => void,
     settings: ChatSettings
     saveSettings: (settings: ChatSettings) => void
     isReady: boolean
@@ -28,7 +27,6 @@ export const ChatContext = createContext<ChatContextProps>({
     chat: undefined,
     messages: [],
     chatBlocks: [],
-    setChatBlocks: () => {},
     updateChatMessage: () => {},
     settings: {},
     saveSettings: () => {},

@@ -1,14 +1,13 @@
 import React from "react";
-import {useLoaderData} from "react-router-dom";
-import {Chat} from "../api/chat.ts";
+import {useParams} from "react-router-dom";
 import {ChatContextProvider} from "./chat/ChatContextProvider.tsx";
 
 export const WrapChatContext = (Cmp: () => React.ReactElement) => {
     return () => {
-        const chat = useLoaderData() as Chat
+        const {id: chatId} = useParams()
 
         return (
-            <ChatContextProvider chat={chat}>
+            <ChatContextProvider chatId={chatId!!}>
                 <Cmp/>
             </ChatContextProvider>
         )

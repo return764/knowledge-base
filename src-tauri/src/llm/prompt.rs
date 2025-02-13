@@ -22,4 +22,14 @@ pub const CHAT_PROMPT: &str = "
 
                     ";
 
-pub const CHAT_TITLE_PROMPT: &str = "提炼用户问题的核心内容，并生成一个简洁明了的聊天标题";
+pub const CHAT_TITLE_PROMPT: &str = "
+                    Based on the chat history, give this conversation a name.
+Keep it short - 10 characters max, no quotes.
+Just provide the name, nothing else.
+
+Here's the conversation:
+
+```
+{}
+```
+";

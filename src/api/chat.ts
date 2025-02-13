@@ -23,6 +23,8 @@ export type ChatSettings = {
     chat_model?: string,
 }
 
+export const DEFAULT_CHAT_TITLE = "未命名聊天"
+
 export class ChatAPI extends APIAbc {
     async saveSettings(id: string, settings: ChatSettings) {
         await this.execute("UPDATE chat SET settings = ? WHERE id = ?", [settings, id])
@@ -32,12 +34,12 @@ export class ChatAPI extends APIAbc {
         return await this.query<Chat[]>("SELECT * FROM chat ORDER BY created_at DESC")
     }
 
-    async queryById(id: string) {
-        return (await this.query<Chat[]>("SELECT * FROM chat WHERE id = ?", [id]))[0]
+    async queryById(params: {id: string}) {
+        return (await this.query<Chat[]>("SELECT * FROM chat WHERE id = ?", [params.id]))[0]
     }
 
     async insert() {
-        await this.execute("INSERT INTO chat (id, name) VALUES (?, ?)", [await invoke('uuid'), "未命名聊天"])
+        await this.execute("INSERT INTO chat (id, name) VALUES (?, ?)", [await invoke('uuid'), DEFAULT_CHAT_TITLE])
     }
 
     async insertHistory(chatId: string, message: ChatMessage) {
@@ -46,5 +48,9 @@ export class ChatAPI extends APIAbc {
 
     async queryHistoryByChatId(params: {chatId: string}) {
         return await this.query<ChatHistory[]>("SELECT * FROM chat_history WHERE chat_id = ? ORDER BY created_at", [params.chatId])
+    }
+
+    async updateName(chatId: string, name: string) {
+        await this.execute("UPDATE chat SET name = ? WHERE id = ?", [name, chatId])
     }
 }

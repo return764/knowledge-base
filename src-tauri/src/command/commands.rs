@@ -1,22 +1,25 @@
-use std::collections::HashMap;
-use langchain_rust::chain::{Chain, LLMChainBuilder};
-use langchain_rust::document_loaders::{Loader, TextLoader};
-use langchain_rust::text_splitter::{SplitterOptions, TokenSplitter};
-use langchain_rust::{fmt_template, message_formatter, prompt_args, template_fstring};
-use langchain_rust::schemas::Document;
-use langchain_rust::vectorstore::{VectorStore};
-use serde_json::json;
-use tauri::ipc::Channel;
-use uuid::Uuid;
+use crate::command::event::{ProgressEvent, StreamMessageResponse};
+use crate::llm::{prompt, ChainChannel};
+use crate::model::chat::ChatMessage;
+use crate::service::{chat, model};
 use crate::states::SqlPoolContext;
 use futures::StreamExt;
+use langchain_rust::chain::{Chain, LLMChainBuilder};
+use langchain_rust::document_loaders::{Loader, TextLoader};
+use langchain_rust::language_models::llm::LLM;
 use langchain_rust::prompt::{HumanMessagePromptTemplate, SystemMessagePromptTemplate};
+use langchain_rust::schemas::Document;
+use langchain_rust::text_splitter::{SplitterOptions, TokenSplitter};
 use langchain_rust::vectorstore::sqlite_vec::{SqliteFilter, SqliteOptions, StoreBuilder};
+use langchain_rust::vectorstore::VectorStore;
+use langchain_rust::{fmt_template, message_formatter, prompt_args, template_fstring};
+use serde_json::json;
+use std::collections::HashMap;
+use std::fmt::Debug;
+use tauri::ipc::Channel;
 use tauri::State;
-use crate::command::event::{ProgressEvent, StreamMessageResponse};
-use crate::model::chat::ChatMessage;
-use crate::service::{model, chat};
-use crate::llm::{prompt, ChainChannel};
+use uuid::Uuid;
+use crate::llm::prompt::CHAT_TITLE_PROMPT;
 
 #[tauri::command]
 pub async fn init_vec_db(state: State<'_, SqlPoolContext>) -> Result<(), ()> {
@@ -29,6 +32,26 @@ pub async fn init_vec_db(state: State<'_, SqlPoolContext>) -> Result<(), ()> {
         .await.unwrap();
     store.initialize().await.unwrap();
     Ok(())
+}
+
+#[tauri::command]
+pub async fn generate_chat_title(state: State<'_, SqlPoolContext>,
+                                 chat_id: String,
+                                 messages: Vec<ChatMessage>) -> Result<String, ()> {
+    let chat = chat::get_chat_settings(&state.pool, &chat_id).await;
+
+    let (chat_model, _) = model::get_model_from_chat_settings(&state.pool, &chat.settings).await;
+
+    let chat_model = chat_model.expect("There must be at least one llm model");
+
+    // TODO 使用更兼容的方案生成聊天标题，例如一个小的模型，足以胜任该工作
+    let open_ai = model::build_open_ai_model(chat_model);
+
+    let result = open_ai.invoke(CHAT_TITLE_PROMPT.replace("{}", messages.into_iter().map(|message| { message.content }).collect::<Vec<String>>().join(";\n").as_str()).as_str())
+        .await
+        .unwrap();
+
+    Ok(result)
 }
 
 #[tauri::command]
@@ -82,8 +105,6 @@ pub async fn send_chat_message(state: State<'_, SqlPoolContext>,
         "input" => message.content.clone(),
         "documents" => documents
     }, on_event).await;
-    // chat::add_chat_history(&state.pool, &chat_id, input.content.clone(), MessageType::HumanMessage).await;
-    // chat::add_chat_history(&state.pool, &chat_id, complete_ai_message.clone(), MessageType::AIMessage).await;
     Ok(())
 }
 
@@ -159,21 +180,5 @@ pub async fn import_text(state: State<'_, SqlPoolContext>,
     }).unwrap();
 
     Ok(())
-
-    // todo 下面应该被移除到另一个方法中去
-    // let results = store
-    //     .similarity_search(&"what is langchain-rust", 2, &VecStoreOptions::default())
-    //     .await
-    //     .unwrap();
-    //
-    // if results.is_empty() {
-    //     println!("No results found.");
-    //     return String::from("No results");
-    // } else {
-    //     results.iter().for_each(|r| {
-    //         println!("Document: {}", r.page_content);
-    //     });
-    //     return results.first().unwrap().clone().page_content;
-    // }
 }
 

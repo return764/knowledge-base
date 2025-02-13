@@ -34,8 +34,5 @@ export default [
     }, {
         path: "/chats/:id",
         element: <ChatPage/>,
-        loader: async ({params}: { params: any }) => {
-            return await API.chat.queryById(params['id']!!)
-        }
     }
 ]

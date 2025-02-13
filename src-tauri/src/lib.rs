@@ -7,7 +7,7 @@ mod service;
 
 use tokio::runtime::Runtime;
 use tauri::{Manager, WebviewUrl, WebviewWindowBuilder};
-use command::commands::{import_text, uuid, send_chat_message, init_vec_db};
+use command::commands::{import_text, uuid, send_chat_message, init_vec_db, generate_chat_title};
 use states::SqlPoolContext;
 
 #[cfg_attr(mobile, tauri::mobile_entry_point)]
@@ -31,7 +31,7 @@ pub fn run() {
 
     tauri::Builder::default()
         .plugin(tauri_plugin_shell::init())
-        .invoke_handler(tauri::generate_handler![import_text, uuid, send_chat_message, init_vec_db])
+        .invoke_handler(tauri::generate_handler![import_text, uuid, send_chat_message, init_vec_db, generate_chat_title])
         .plugin(tauri_plugin_sql::Builder::default().add_migrations("sqlite:knowledge_keeper.db", sql::migration::init()).build())
         .setup(|app| {
             let db_path = &format!("sqlite:{}/knowledge_keeper.db", app.path().app_config_dir().unwrap().to_str().unwrap());
