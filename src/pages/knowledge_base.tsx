@@ -38,20 +38,18 @@ function KnowledgeBasePage() {
     }
 
     return (
-        <div>
-            <div>
-                <div className="flex justify-between mb-2">
-                    <div className="text-primary text-xl leading-none my-auto">我的知识库</div>
-                    <div><Button onClick={handleOpenAddKBModal} icon={FaPlus}>新建</Button></div>
-                </div>
-                <section className='relative'>
-                    <section className="grid sm:grid-cols-2 md:grid-cols-4 lg:grid-cols-5 xl:grid-cols-6 gap-3">
-                        {data?.map((it, index) => {
-                            return <ExpandedCard key={index} knowledgeBase={it}/>
-                        })}
-                    </section>
-                </section>
+        <div className="h-full flex flex-col">
+            <div className="flex justify-between mb-2">
+                <div className="text-primary text-xl leading-none my-auto">我的知识库</div>
+                <div><Button onClick={handleOpenAddKBModal} icon={FaPlus}>新建</Button></div>
             </div>
+            <section className='relative flex flex-grow flex-col flex-flow h-0 overflow-y-scroll'>
+                <section className="grid sm:grid-cols-2 md:grid-cols-4 lg:grid-cols-5 xl:grid-cols-6 gap-3">
+                    {data?.map((it, index) => {
+                        return <ExpandedCard key={index} knowledgeBase={it}/>
+                    })}
+                </section>
+            </section>
             <Modal title={"新建知识库"} onClose={toggle} open={visible} onConfirm={handleSubmitNewKB}>
                 <Form form={form}>
                     <FormItem name={"name"} label={"知识库名"}>

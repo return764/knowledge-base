@@ -13,17 +13,15 @@ function Chats() {
     }
 
     return (
-        <div>
-            <div>
-                <div className="flex justify-between mb-2">
-                    <div className="text-primary text-xl leading-none my-auto">聊天</div>
-                    <div><Button onClick={handleNewChat} icon={FaPlus}>创建新对话</Button></div>
-                </div>
-                <div className="flex flex-col gap-y-1.5">
-                    {
-                        data?.map(it => <ChatCard key={it.id} chat={it}/>)
-                    }
-                </div>
+        <div className="h-full flex flex-col">
+            <div className="flex justify-between mb-2">
+                <div className="text-primary text-xl leading-none my-auto">聊天</div>
+                <div><Button onClick={handleNewChat} icon={FaPlus}>创建新对话</Button></div>
+            </div>
+            <div className="flex flex-grow flex-col gap-y-1.5 overflow-y-scroll flex-flow h-0">
+                {
+                    data?.map(it => <ChatCard key={it.id} chat={it}/>)
+                }
             </div>
             {/*<Modal title={"新聊天"} onClose={toggle} open={visible} onConfirm={handleNewChat}>*/}
             {/*    <Form form={form}>*/}

@@ -9,7 +9,7 @@ function Root() {
             <Toaster/>
             <div className="fixed h-6 w-full z-50" data-tauri-drag-region={true}></div>
             <Navigations/>
-            <section className="flex flex-col flex-1 overflow-scroll">
+            <section className="flex flex-col flex-1 overflow-hidden">
                 <Outlet/>
             </section>
         </main>
