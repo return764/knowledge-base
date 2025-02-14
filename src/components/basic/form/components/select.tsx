@@ -3,10 +3,9 @@ import {useEffect, useMemo} from 'react';
 import { Label, Listbox, ListboxButton, ListboxOption, ListboxOptions } from '@headlessui/react';
 import { HiChevronUpDown } from 'react-icons/hi2';
 import { MdCheck } from 'react-icons/md';
-import {useBoolean} from "ahooks";
 
 type SelectProps = {
-    defaultValue?: string,
+    defaultFirst?: boolean,
     options: SelectItem[],
     label?: string
 } & OnChangeAndValue
@@ -17,25 +16,21 @@ type SelectItem = {
 }
 
 function Select(props: SelectProps) {
-    const { options, value, onChange, label, defaultValue } = props;
-    const [needUpdateDefaultValue, {setTrue}] = useBoolean(false)
+    const { options, value, onChange, label, defaultFirst = true } = props;
 
     const selected = useMemo(() => {
         let option = options.find(option => option.value === value) ?? null
-        if (!option) {
-            option = options.find(option => option.value === defaultValue)
-            ?? options.length > 0 ? options[0] : null
-            setTrue()
+        if (!option && defaultFirst) {
+            option = options.length > 0 ? options[0] : null
         }
         return option
-    } , [value, options, defaultValue, setTrue]);
-
+    } , [value, options, defaultFirst]);
 
     useEffect(() => {
-        if (needUpdateDefaultValue && selected) {
-            handleChangeSelect(selected)
+        if (!value && selected && defaultFirst && options.length > 0) {
+            onChange?.(selected.value)
         }
-    }, [needUpdateDefaultValue, selected]);
+    }, [options, value]);
 
     const handleChangeSelect = (item: SelectItem) => {
         onChange?.(item.value);
@@ -43,7 +38,7 @@ function Select(props: SelectProps) {
 
     return (
         <Listbox value={selected} onChange={handleChangeSelect}>
-            {label ?? <Label className="block text-sm font-medium leading-6 text-gray-900">{label}</Label>}
+            {label && <Label className="block text-sm font-medium leading-6 text-gray-900">{label}</Label>}
             <div className="relative mt-2">
                 <ListboxButton className="relative w-full cursor-default rounded-md bg-white py-1.5 pl-3 pr-10 text-left text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 focus:outline-none focus:ring-2 focus:ring-indigo-500 sm:text-sm sm:leading-6">
                     <span className="flex items-center">

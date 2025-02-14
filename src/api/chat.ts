@@ -1,6 +1,7 @@
 import {APIAbc} from "./api.ts";
 import {invoke} from "@tauri-apps/api/core";
 import {ChatMessage} from "../components/chat/ChatContext.tsx";
+import {API} from "./index.ts";
 
 export type Chat = {
     id: string,
@@ -39,7 +40,25 @@ export class ChatAPI extends APIAbc {
     }
 
     async insert() {
-        await this.execute("INSERT INTO chat (id, name) VALUES (?, ?)", [await invoke('uuid'), DEFAULT_CHAT_TITLE])
+        // 获取第一个 LLM 模型
+        const models = await API.model.queryAllActiveModel();
+        const defaultModel = models.find(it => it.type === "llm");
+        
+        // 准备默认设置
+        const defaultSettings: ChatSettings = {
+            knowledge_base: [],
+            chat_model: defaultModel?.id
+        };
+
+        // 插入新的聊天记录，包含默认设置
+        await this.execute(
+            "INSERT INTO chat (id, name, settings) VALUES (?, ?, ?)", 
+            [
+                await invoke('uuid'), 
+                DEFAULT_CHAT_TITLE,
+                JSON.stringify(defaultSettings)
+            ]
+        );
     }
 
     async insertHistory(chatId: string, message: ChatMessage) {
@@ -53,4 +72,5 @@ export class ChatAPI extends APIAbc {
     async updateName(chatId: string, name: string) {
         await this.execute("UPDATE chat SET name = ? WHERE id = ?", [name, chatId])
     }
+
 }
