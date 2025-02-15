@@ -15,6 +15,7 @@ import {WrapChatContext} from "../components/WrapChatContext.tsx";
 import {DEFAULT_CHAT_TITLE} from "../api/chat.ts";
 import {invoke} from "@tauri-apps/api/core";
 import {API} from "../api";
+import AnimatedTitle from "../components/basic/animated_title.tsx";
 
 function ChatPage() {
     const navigate = useNavigate()
@@ -52,7 +53,10 @@ function ChatPage() {
                     <Button onClick={() => {
                         navigate(-1)
                     }} icon={MdOutlineArrowBackIosNew} type="text"/>
-                    <div className="text-primary text-xl leading-none my-auto">{chat?.name}</div>
+                    <AnimatedTitle 
+                        text={chat?.name || DEFAULT_CHAT_TITLE} 
+                        className="text-primary text-xl leading-none my-auto"
+                    />
                 </div>
                 <div>
                     <Button onClick={handleModal} icon={MdOutlineSettings}>设置</Button>
