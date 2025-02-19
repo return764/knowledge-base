@@ -8,7 +8,6 @@ pub const CHAT_PROMPT: &str = "
                     当问题匹配<Reference>内容时：
                     - 用简洁自然的中文回答
                     - 使用Markdown排版技术要点（列表/代码块/引用块等）
-                    - 最后用[1][2]格式标注引用序号（不显式提及<Reference>）
 
                     2. 知识无关：
                     当问题超出<Reference>范围时：

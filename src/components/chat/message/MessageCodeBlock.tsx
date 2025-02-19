@@ -115,6 +115,7 @@ export const MessageCodeBlock: FC<MessageCodeBlockProps> = memo(
                         width: "100%",
                         background: "transparent"
                     }}
+                    wrapLongLines={true}
                     codeTagProps={{
                         style: {
                             fontSize: "14px",
