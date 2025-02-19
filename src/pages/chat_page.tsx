@@ -53,8 +53,8 @@ function ChatPage() {
                     <Button onClick={() => {
                         navigate(-1)
                     }} icon={MdOutlineArrowBackIosNew} type="text"/>
-                    <AnimatedTitle 
-                        text={chat?.name || DEFAULT_CHAT_TITLE} 
+                    <AnimatedTitle
+                        text={chat?.name}
                         className="text-primary text-xl leading-none my-auto"
                     />
                 </div>

@@ -1,17 +1,23 @@
-import {useEffect, useState} from 'react';
+import {useEffect, useState, useRef} from 'react';
 
 interface AnimatedTitleProps {
-    text: string;
+    text?: string;
     className?: string;
 }
 
-function AnimatedTitle({text, className = ""}: AnimatedTitleProps) {
+function AnimatedTitle({text = "", className = ""}: AnimatedTitleProps) {
     const [displayText, setDisplayText] = useState(text);
     const [isAnimating, setIsAnimating] = useState(false);
+    const prevTextRef = useRef(text);
 
     useEffect(() => {
-        if (text === displayText) return;
-        
+        // 如果是第一次设置文本或文本没有变化，直接更新
+        if (prevTextRef.current === "" || text === displayText) {
+            setDisplayText(text);
+            prevTextRef.current = text;
+            return;
+        }
+
         setIsAnimating(true);
         
         // 先逐字消失
@@ -35,6 +41,7 @@ function AnimatedTitle({text, className = ""}: AnimatedTitleProps) {
         fadeOut().then(() => {
             fadeIn().then(() => {
                 setIsAnimating(false);
+                prevTextRef.current = text;
             });
         });
     }, [text]);
@@ -46,4 +53,4 @@ function AnimatedTitle({text, className = ""}: AnimatedTitleProps) {
     );
 }
 
-export default AnimatedTitle; 
+export default AnimatedTitle;
