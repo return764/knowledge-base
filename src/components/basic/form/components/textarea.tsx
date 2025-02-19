@@ -1,4 +1,4 @@
-import {ChangeEvent, useMemo} from 'react';
+import {ChangeEvent, KeyboardEventHandler, useMemo} from 'react';
 import {OnChangeAndValue} from "../interface.ts";
 import {useControllableValue} from "ahooks";
 import { Textarea as HeadlessTextarea } from '@headlessui/react'
@@ -8,6 +8,7 @@ type TextareaProps = {
     resize?: boolean,
     className?: string,
     placeholder?: string,
+    onKeyDown?: KeyboardEventHandler,
 } & OnChangeAndValue
 
 function Textarea(props: TextareaProps) {
@@ -31,6 +32,7 @@ function Textarea(props: TextareaProps) {
         <HeadlessTextarea
             value={text}
             onChange={handleChange}
+            onKeyDown={props.onKeyDown}
             rows={rows}
             placeholder={props.placeholder}
             className={`${resizeClass} ${calcClassName}`}/>
