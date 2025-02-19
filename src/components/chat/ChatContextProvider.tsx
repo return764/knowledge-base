@@ -38,7 +38,7 @@ export const ChatContextProvider = (props: PropsWithChildren<{chatId: string}>) 
         if (data) {
             const result = []
             // TODO 目前prompt集成在后台，这里没有用上
-            if (chat.prompts) {
+            if (chat?.prompts) {
                 result.push(buildMessage(chat.prompts, 'system'))
             }
             data?.forEach(it => {
