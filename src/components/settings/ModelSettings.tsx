@@ -9,6 +9,11 @@ import toast from "react-hot-toast";
 import {useQuery} from "../../hooks/useQuery.ts";
 import Switch from "../basic/form/components/switch.tsx";
 import {API} from "../../api";
+import ModelSettingSidebar from "./ModelSettingSidebar.tsx";
+import {AiFillOpenAI} from "react-icons/ai";
+import SiliconFlowSvg from "../../assets/siliconflow.svg?react";
+import OllamaSvg from "../../assets/ollama.svg?react";
+import QwenSvg from "../../assets/qwen.svg?react";
 
 type SegmentProps = {
     title: string;
@@ -33,9 +38,33 @@ type ModelColumn = {
     active: boolean
 }
 
+const menuItems = [
+    {
+        key: 'OpenAI',
+        icon: AiFillOpenAI,
+        label: 'OpenAI'
+    },
+    {
+        key: 'SiliconFlow',
+        icon: SiliconFlowSvg,
+        label: 'SiliconFlow'
+    },
+    {
+        key: 'Ollama',
+        icon: OllamaSvg,
+        label: 'Ollama'
+    },
+    {
+        key: 'Qwen',
+        icon: QwenSvg,
+        label: 'Qwen'
+    }
+];
+
 function ModelSettings() {
     const [isValidating, setIsValidating] = useState<boolean>(false)
-    const {data, mutate} = useQuery("model","queryAll", {}, {})
+    const [selectedType, setSelectedType] = useState(menuItems[0].key);
+    const {data, mutate} = useQuery("model", "queryAll", {}, {})
     const {onSave, getPrefValue} = useContext(PreferenceContext)
 
     const handleValidate = async () => {
@@ -77,31 +106,40 @@ function ModelSettings() {
     ]
 
     return (
-        <div className="flex flex-col gap-6">
-            <Table<ModelColumn>
-                columns={columns}
-                data={data}
+        <div className="h-full flex">
+            <ModelSettingSidebar
+                items={menuItems}
+                onChange={setSelectedType}
+                defaultSelected={menuItems[0].key}
             />
-            <Segment title="OpenAI API">
-                <div className="flex flex-col gap-4">
-                    <Preference
-                        label="API Key"
-                        placeholder='sk-....'
-                        keyword={PreferenceEnum.OPENAI_API_KEY}/>
-                    <Preference
-                        label="API URL"
-                        placeholder='https://api.openai.com/v1'
-                        keyword={PreferenceEnum.OPENAI_API_URL}/>
-                    <div className="flex justify-end">
-                        <Button
-                            onClick={handleValidate}
-                            loading={isValidating}
-                        >
-                            验证
-                        </Button>
-                    </div>
-                </div>
-            </Segment>
+            <div className="flex-1 p-4">
+                <section className="flex flex-col gap-6">
+                    <Table<ModelColumn>
+                        columns={columns}
+                        data={data}
+                    />
+                    <Segment title="OpenAI API">
+                        <div className="flex flex-col gap-4">
+                            <Preference
+                                label="API Key"
+                                placeholder='sk-....'
+                                keyword={PreferenceEnum.OPENAI_API_KEY}/>
+                            <Preference
+                                label="API URL"
+                                placeholder='https://api.openai.com/v1'
+                                keyword={PreferenceEnum.OPENAI_API_URL}/>
+                            <div className="flex justify-end">
+                                <Button
+                                    onClick={handleValidate}
+                                    loading={isValidating}
+                                >
+                                    验证
+                                </Button>
+                            </div>
+                        </div>
+                    </Segment>
+                </section>
+            </div>
         </div>
     );
 }

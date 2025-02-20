@@ -10,9 +10,9 @@ const Settings = () => {
   const [selectedIndex, setSelectedIndex] = useState(0)
 
   return (
-    <div className="container mx-auto py-6 px-1">
-      <TabGroup selectedIndex={selectedIndex} onChange={setSelectedIndex}>
-        <div className="flex flex-col gap-4">
+    <div className="h-full pt-6 px-1">
+      <TabGroup className="h-full" selectedIndex={selectedIndex} onChange={setSelectedIndex}>
+        <div className="flex flex-col gap-1 h-full">
           {/* 顶部菜单 */}
           <TabList className="flex border-b border-gray-200">
             {menuItems.map((item) => (
@@ -33,11 +33,11 @@ const Settings = () => {
           </TabList>
 
           {/* 下方内容区域 */}
-          <TabPanels>
+          <TabPanels className="h-full">
             {menuItems.map((item) => (
               <TabPanel
                 key={item.name}
-                className="shadow"
+                className="h-full"
               >
                 <item.component />
               </TabPanel>

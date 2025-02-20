@@ -1,13 +1,14 @@
 import { defineConfig } from "vite";
 import react from "@vitejs/plugin-react";
 import { internalIpV4 } from "internal-ip";
+import svgr from "vite-plugin-svgr";
 
 // @ts-expect-error process is a nodejs global
 const mobile = !!/android|ios/.exec(process.env.TAURI_ENV_PLATFORM);
 
 // https://vitejs.dev/config/
 export default defineConfig(async () => ({
-  plugins: [react()],
+  plugins: [react(), svgr()],
 
   // Vite options tailored for Tauri development and only applied in `tauri dev` or `tauri build`
   //
