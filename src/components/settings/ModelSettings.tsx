@@ -1,4 +1,4 @@
-import {useContext, useState} from "react";
+import {useContext, useEffect, useMemo, useState} from "react";
 import Button from "../basic/button/button.tsx";
 import Table, {Column} from "../basic/table/table.tsx";
 import Preference from "../preference/Preference.tsx";
@@ -14,6 +14,10 @@ import {AiFillOpenAI} from "react-icons/ai";
 import SiliconFlowSvg from "../../assets/siliconflow.svg?react";
 import OllamaSvg from "../../assets/ollama.svg?react";
 import QwenSvg from "../../assets/qwen.svg?react";
+import {LLMModel, LLMProvider} from "../../api/model.ts";
+import Form, {useForm} from "../basic/form/form.tsx";
+import FormItem from "../basic/form/form_item.tsx";
+import Input from "../basic/form/components/Input.tsx";
 
 type SegmentProps = {
     title: string;
@@ -64,18 +68,41 @@ const menuItems = [
 function ModelSettings() {
     const [isValidating, setIsValidating] = useState<boolean>(false)
     const [selectedType, setSelectedType] = useState(menuItems[0].key);
-    const {data, mutate} = useQuery("model", "queryAll", {}, {})
-    const {onSave, getPrefValue} = useContext(PreferenceContext)
+    const {data: models, mutate} = useQuery("model", "queryAll", {}, {})
+    const {data: providers} = useQuery("model", "queryAllProvider", {}, {})
+    const [form] = useForm()
+
+    const currentProvider: LLMProvider = useMemo(() => {
+        if (!providers) return {}
+        return providers.find((it: LLMProvider) => it.name === selectedType)
+    }, [providers, selectedType])
+
+    const currentModels = useMemo(() => {
+        if (!models) return []
+        return models.filter((it: LLMModel) => it.provider === selectedType)
+    }, [models, selectedType])
+
+    useEffect(() => {
+        form.setFieldValue('url', currentProvider.url)
+        form.setFieldValue('api_key', currentProvider.api_key)
+    }, [currentProvider]);
 
     const handleValidate = async () => {
         setIsValidating(true)
         try {
-            const apiURL = getPrefValue(PreferenceEnum.OPENAI_API_URL)
-            const apiKey = getPrefValue(PreferenceEnum.OPENAI_API_KEY)
+            const apiURL = form.getFieldValue('url')
+            const apiKey = form.getFieldValue('api_key')
             const models = await queryAllModels(apiURL, apiKey)
-            await saveAndUpdateModels(models, LLM_TYPE.OPENAI, apiURL, apiKey)
-            onSave([PreferenceEnum.OPENAI_API_URL, PreferenceEnum.OPENAI_API_KEY])
+            await API.model.updateProvider({
+                ...currentProvider,
+                api_key: apiKey,
+                url: apiURL
+            })
+            await saveAndUpdateModels(models, currentProvider.id)
             toast.success("保存model成功")
+        } catch (e) {
+            console.error(e)
+            toast.error("保存model失败")
         } finally {
             setIsValidating(false)
             await mutate()
@@ -83,7 +110,7 @@ function ModelSettings() {
     }
 
     const handleActiveModel = async (index: number, checked: boolean) => {
-        await API.model.activeModel(data[index].id, checked)
+        await API.model.activeModel(currentModels[index].id, checked)
         await mutate((data: any) => {
             data[index].active = checked ? 1 : 0
             return data
@@ -112,22 +139,22 @@ function ModelSettings() {
                 onChange={setSelectedType}
                 defaultSelected={menuItems[0].key}
             />
-            <div className="flex-1 p-4">
+            <div className="flex-1 p-4 overflow-y-scroll">
                 <section className="flex flex-col gap-6">
                     <Table<ModelColumn>
                         columns={columns}
-                        data={data}
+                        data={currentModels}
                     />
                     <Segment title="OpenAI API">
                         <div className="flex flex-col gap-4">
-                            <Preference
-                                label="API Key"
-                                placeholder='sk-....'
-                                keyword={PreferenceEnum.OPENAI_API_KEY}/>
-                            <Preference
-                                label="API URL"
-                                placeholder='https://api.openai.com/v1'
-                                keyword={PreferenceEnum.OPENAI_API_URL}/>
+                            <Form form={form}>
+                                <FormItem name="url" label="API URL">
+                                    <Input placeholder="https://api.openai.com/v1"/>
+                                </FormItem>
+                                <FormItem name="api_key" label="API Key">
+                                    <Input placeholder="sk-..."/>
+                                </FormItem>
+                            </Form>
                             <div className="flex justify-end">
                                 <Button
                                     onClick={handleValidate}

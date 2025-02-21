@@ -68,15 +68,25 @@ pub fn init() -> Vec<Migration> {
           description: "create_model_table",
           sql: "CREATE TABLE model (\
               id TEXT PRIMARY KEY,\
-              url TEXT NOT NULL,\
               name TEXT NOT NULL,\
-              provider TEXT NOT NULL,\
+              provider_id TEXT NOT NULL,\
               type TEXT NOT NULL,\
-              api_key TEXT NOT NULL,\
               active INTEGER CHECK(active IN (0, 1)) DEFAULT 0,\
               created_at DATETIME DEFAULT current_timestamp\
             );",
           kind: MigrationKind::Up,
-      }
+      },
+        Migration {
+            version: 7,
+            description: "create_model_provider_table",
+            sql: "CREATE TABLE model_provider (\
+              id TEXT PRIMARY KEY,\
+              name TEXT NOT NULL,\
+              url TEXT NOT NULL,\
+              api_key TEXT NOT NULL,\
+              created_at DATETIME DEFAULT current_timestamp\
+            );",
+            kind: MigrationKind::Up,
+        }
     ]
 }

@@ -26,6 +26,33 @@ const initPreferences = async () => {
                 value: { value: "" }
             }])
         }
+
+        const providers = await API.model.queryAllProvider();
+        if (providers.length === 0) {
+            await API.model.insertProviders([
+                {
+                    id: await invoke("uuid"),
+                    name: 'Ollama',
+                    url: 'http://localhost:11434/v1',
+                    api_key: ''
+                }, {
+                    id: await invoke("uuid"),
+                    name: 'SiliconFlow',
+                    url: 'https://api.siliconflow.cn/v1',
+                    api_key: ''
+                }, {
+                    id: await invoke("uuid"),
+                    name: 'OpenAI',
+                    url: 'https://api.openai.com/v1',
+                    api_key: ''
+                }, {
+                    id: await invoke("uuid"),
+                    name: 'Qwen',
+                    url: 'https://dashscope.aliyuncs.com/compatible-mode/v1',
+                    api_key: ''
+                }
+            ])
+        }
     } catch (e) {
         console.error('Failed to initialize preferences:', e)
     }

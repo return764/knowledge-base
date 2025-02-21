@@ -2452,7 +2452,7 @@ dependencies = [
 [[package]]
 name = "langchain-rust"
 version = "4.6.0"
-source = "git+https://github.com/return764/langchain-rust?branch=support-sqlite-filter#41194430b84a754f431fb83ed267a1c0e988d3c6"
+source = "git+https://github.com/return764/langchain-rust?branch=support-sqlite-filter#e527c4a60a2adeaf63016c2ea7924b532cd2ce25"
 dependencies = [
  "async-openai",
  "async-recursion",

@@ -25,14 +25,14 @@ pub async fn get_model_from_chat_settings(pool: &Pool<Sqlite>, chat_settings: &C
 }
 
 pub async fn get_model(pool: &Pool<Sqlite>, model_id: &String) -> Option<Model> {
-    sqlx::query_as("SELECT id, name, url, type, api_key, active FROM model WHERE id = $1")
+    sqlx::query_as("SELECT m.id, m.name, m.type, m.active, mp.url, mp.api_key, mp.name as provider FROM model m LEFT JOIN model_provider mp ON m.provider_id = mp.id WHERE m.id = $1")
         .bind(model_id)
         .fetch_optional(pool)
         .await.unwrap()
 }
 
 pub async fn get_active_embedding_model(pool: &Pool<Sqlite>) -> OpenAiEmbedder<OpenAIConfig> {
-    let model = sqlx::query_as("SELECT id, name, url, type, api_key, active FROM model WHERE type = 'embedding' AND active = 1 LIMIT 1")
+    let model = sqlx::query_as("SELECT m.id, m.name, m.type, m.active, mp.url, mp.api_key, mp.name as provider FROM model m LEFT JOIN model_provider mp ON m.provider_id = mp.id  WHERE type = 'embedding' AND active = 1 LIMIT 1")
         .fetch_one(pool)
         .await.unwrap();
 

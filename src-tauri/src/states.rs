@@ -16,7 +16,7 @@ impl SqlPoolContext {
         .connect_with(
             SqliteConnectOptions::from_str(db_path).unwrap()
             .create_if_missing(true)
-            .extension("./libs/vec0")
+            .extension("vec0")
         ).await.unwrap();
 
         SqlPoolContext {
