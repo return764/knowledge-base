@@ -4,18 +4,21 @@ import {
     getCoreRowModel,
     useReactTable,
 } from '@tanstack/react-table'
+import clsx from "clsx";
 
 export type Column<T> = ColumnDef<T>
 
 type TableProps<DataType> = {
     columns: Column<DataType>[],
     data?: DataType[],
+    className?: string,
     onRowClick?: (row: DataType) => void
 }
 
 const Table = <DataType extends object>({
     columns,
     data = [],
+    className,
     onRowClick
 }: TableProps<DataType>) => {
     const table = useReactTable({
@@ -28,7 +31,7 @@ const Table = <DataType extends object>({
     })
 
     return (
-        <div className="max-w-full overflow-hidden rounded-lg shadow-sm">
+        <div className={clsx("max-w-full overflow-hidden rounded-lg shadow-sm", className)}>
             <table className="w-full m-0 table table-auto border-separate text-sm text-left">
                 <thead className="text-xs uppercase bg-gray-50/50">
                     {table.getHeaderGroups().map(headerGroup => (

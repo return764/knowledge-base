@@ -1,9 +1,6 @@
-import {useContext, useEffect, useMemo, useState} from "react";
+import {useEffect, useMemo, useState} from "react";
 import Button from "../basic/button/button.tsx";
 import Table, {Column} from "../basic/table/table.tsx";
-import Preference from "../preference/Preference.tsx";
-import {LLM_TYPE, PreferenceEnum} from "../../utils/constant.ts";
-import PreferenceContext from "../preference/context/PreferenceContext.ts";
 import {queryAllModels, saveAndUpdateModels} from "../../service/model.ts";
 import toast from "react-hot-toast";
 import {useQuery} from "../../hooks/useQuery.ts";
@@ -141,11 +138,7 @@ function ModelSettings() {
             />
             <div className="flex-1 p-4 overflow-y-scroll">
                 <section className="flex flex-col gap-6">
-                    <Table<ModelColumn>
-                        columns={columns}
-                        data={currentModels}
-                    />
-                    <Segment title="OpenAI API">
+                    <Segment title={currentProvider.name}>
                         <div className="flex flex-col gap-4">
                             <Form form={form}>
                                 <FormItem name="url" label="API URL">
@@ -165,6 +158,11 @@ function ModelSettings() {
                             </div>
                         </div>
                     </Segment>
+                    <Table<ModelColumn>
+                        className="mb-10"
+                        columns={columns}
+                        data={currentModels}
+                    />
                 </section>
             </div>
         </div>

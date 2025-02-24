@@ -1,4 +1,4 @@
-import {useContext, useMemo} from "react";
+import {useContext, useEffect, useMemo} from "react";
 import { useQuery } from "../../hooks/useQuery";
 import { KnowledgeBase } from "../../api/knowledge_base";
 import Select from "../basic/form/components/select";
@@ -8,6 +8,7 @@ import {FormInstance} from "../basic/form/interface.ts";
 import {LLMModel} from "../../api/model.ts";
 import Combobox from "../basic/form/components/combobox.tsx";
 import {ChatContext} from "./ChatContext.tsx";
+import {ChatSettings as ChatSettingsModel} from "../../api/chat.ts";
 
 
 function ChatSettings(props: {form: FormInstance}) {
@@ -30,9 +31,15 @@ function ChatSettings(props: {form: FormInstance}) {
         }))
     }, [activeModels])
 
+    useEffect(() => {
+        Object.keys(settings).forEach(it => {
+            form.setFieldValue(it, settings[it as keyof ChatSettingsModel])
+        })
+    }, [settings]);
+
     return (
         <>
-            <Form form={form} initialValue={settings}>
+            <Form form={form}>
                 <FormItem name={"knowledge_base"} label={"关联知识库"}>
                     <Combobox
                         options={knowledgeBaseOptions}
