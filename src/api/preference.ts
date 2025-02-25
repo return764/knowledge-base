@@ -15,19 +15,28 @@ export type PreferenceValue = {
 
 export class PreferenceAPI extends APIAbc {
     async queryByKey(params: {key: string}): Promise<PreferenceModel> {
-        const preference = (await this.query<PreferenceModel[]>("SELECT * FROM preferences WHERE key = ?", [params.key]))[0]
+        const preference = await this.table<PreferenceModel>('preferences')
+            .where('key = ?', params.key)
+            .first();
+            
         return {
-            ...preference,
-            value: JSON.parse(preference.value.toString())
-        }
+            ...preference!,
+            value: JSON.parse(preference!.value.toString())
+        };
     }
 
     async getCount(): Promise<number> {
-        return (await this.query<{count: number}[]>("SELECT COUNT(*) as count FROM preferences"))[0].count;
+        const result = await this.table<{count: number}>('preferences')
+            .select('COUNT(*) as count')
+            .first();
+            
+        return result?.count ?? 0;
     }
 
     async queryAll(): Promise<PreferenceModel[]> {
-        const preferences = await this.query<PreferenceModel[]>("SELECT * FROM preferences");
+        const preferences = await this.table<PreferenceModel>('preferences')
+            .execute();
+            
         return preferences.map(pref => ({
             ...pref,
             value: JSON.parse(pref.value.toString())
@@ -35,8 +44,11 @@ export class PreferenceAPI extends APIAbc {
     }
 
     async update(key: PreferenceEnum, value: any) {
-        const valueParams = {value}
-        return (await this.execute("UPDATE preferences SET value = ? WHERE key = ?", [valueParams, key]))
+        const valueParams = {value};
+        await this.execute(
+            "UPDATE preferences SET value = ? WHERE key = ?", 
+            [valueParams, key]
+        );
     }
 
     async batchInsert(preferences: Omit<PreferenceModel, "id">[]) {
@@ -46,6 +58,6 @@ export class PreferenceAPI extends APIAbc {
                 return [id, pref.key, pref.type, JSON.stringify(pref.value)];
             })
         );
-        await this.bulkInsert('preferences', ["id", "key", "type", "value"], params)
+        await this.bulkInsert('preferences', ["id", "key", "type", "value"], params);
     }
 }

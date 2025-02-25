@@ -32,25 +32,37 @@ export class ChatAPI extends APIAbc {
     }
 
     async queryAll() {
-        return await this.query<Chat[]>("SELECT * FROM chat ORDER BY created_at DESC")
+        return await this.table<Chat>('chat')
+            .orderBy('created_at', 'DESC')
+            .execute();
     }
 
     async queryById(params: {id: string}) {
-        return (await this.query<Chat[]>("SELECT * FROM chat WHERE id = ?", [params.id]))[0]
+        return await this.table<Chat>('chat')
+            .where('id = ?', params.id)
+            .first();
+    }
+
+    async queryHistoryByChatId(params: {chatId: string}) {
+        return await this.table<ChatHistory>('chat_history')
+            .where('chat_id = ?', params.chatId)
+            .orderBy('created_at')
+            .execute();
+    }
+
+    async updateName(chatId: string, name: string) {
+        await this.execute("UPDATE chat SET name = ? WHERE id = ?", [name, chatId]);
     }
 
     async insert() {
-        // 获取第一个 LLM 模型
         const models = await API.model.queryAllActiveModel();
         const defaultModel = models.find(it => it.type === "llm");
         
-        // 准备默认设置
         const defaultSettings: ChatSettings = {
             knowledge_base: [],
             chat_model: defaultModel?.id
         };
 
-        // 插入新的聊天记录，包含默认设置
         await this.execute(
             "INSERT INTO chat (id, name, settings) VALUES (?, ?, ?)", 
             [
@@ -62,15 +74,9 @@ export class ChatAPI extends APIAbc {
     }
 
     async insertHistory(chatId: string, message: ChatMessage) {
-        await this.execute("INSERT INTO chat_history (id, chat_id, content, role) VALUES (?, ?, ?, ?)", [await invoke('uuid'), chatId, message.content, message.role])
+        await this.execute(
+            "INSERT INTO chat_history (id, chat_id, content, role) VALUES (?, ?, ?, ?)", 
+            [await invoke('uuid'), chatId, message.content, message.role]
+        );
     }
-
-    async queryHistoryByChatId(params: {chatId: string}) {
-        return await this.query<ChatHistory[]>("SELECT * FROM chat_history WHERE chat_id = ? ORDER BY created_at", [params.chatId])
-    }
-
-    async updateName(chatId: string, name: string) {
-        await this.execute("UPDATE chat SET name = ? WHERE id = ?", [name, chatId])
-    }
-
 }

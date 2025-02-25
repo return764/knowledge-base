@@ -48,11 +48,16 @@ export class ModelAPI extends APIAbc {
     }
 
     async queryAll() {
-        return await this.query<LLMModel[]>("SELECT m.*, mp.name as provider, mp.url, mp.api_key FROM model m LEFT JOIN model_provider mp ON m.provider_id = mp.id")
+        return await this.table<LLMModel>('model')
+            .as('m')
+            .select(['m.*', 'mp.name as provider', 'mp.url', 'mp.api_key'])
+            .leftJoin('model_provider', 'm.provider_id = mp.id', 'mp')
+            .execute();
     }
 
     async queryAllProvider() {
-        return await this.query<LLMProvider[]>("SELECT * FROM model_provider")
+        return await this.table<LLMProvider>('model_provider')
+            .execute();
     }
 
     async insertProviders(providers: LLMProvider[]) {
@@ -62,10 +67,15 @@ export class ModelAPI extends APIAbc {
     }
 
     async activeModel(id: string, active: boolean) {
-        await this.execute("UPDATE model SET active = ? WHERE id = ?", [active ? 1 : 0, id])
+        await this.execute(
+            "UPDATE model SET active = ? WHERE id = ?", 
+            [active ? 1 : 0, id]
+        );
     }
 
     async queryAllActiveModel() {
-        return await this.query<LLMModel[]>("SELECT * FROM model WHERE active = 1")
+        return await this.table<LLMModel>('model')
+            .where('active = ?', 1)
+            .execute();
     }
 }

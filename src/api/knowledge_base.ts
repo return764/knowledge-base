@@ -12,19 +12,24 @@ export type KnowledgeBase = {
 
 export class KnowledgeBaseAPI extends APIAbc {
     async queryAll() {
-        return await this.query<KnowledgeBase[]>("SELECT * FROM knowledge_base")
+        return await this.table<KnowledgeBase>('knowledge_base')
+            .execute();
     }
 
     async queryById(id: string) {
-        return (await this.query<KnowledgeBase[]>("SELECT * FROM knowledge_base WHERE id = ?", [id]))[0]
+        return await this.table<KnowledgeBase>('knowledge_base')
+            .where('id = ?', id)
+            .first();
     }
 
     async insert(params: {name: string, embeddingModel: string}) {
-        await this.execute("INSERT INTO knowledge_base (id, name, embedding_model_id) VALUES (?, ?, ?)", [await invoke('uuid'), params.name, params.embeddingModel])
+        await this.execute(
+            "INSERT INTO knowledge_base (id, name, embedding_model_id) VALUES (?, ?, ?)", 
+            [await invoke('uuid'), params.name, params.embeddingModel]
+        );
     }
 
     async delete(id: string) {
-
-        await this.execute("DELETE FROM knowledge_base WHERE id = ?", [id])
+        await this.execute("DELETE FROM knowledge_base WHERE id = ?", [id]);
     }
 }

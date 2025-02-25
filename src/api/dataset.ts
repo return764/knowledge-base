@@ -38,32 +38,47 @@ export type ProgressEvent =
     };
 };
 
-
 export class DatasetAPI extends APIAbc {
     async insert(params: {name: string, kbId: string}): Promise<string> {
-        const datasetId: string = await invoke('uuid')
-        await this.execute("INSERT INTO dataset (id, name, kb_id) VALUES (?, ?, ?)", [datasetId, params.name, params.kbId])
-        return Promise.resolve(datasetId)
+        const datasetId: string = await invoke('uuid');
+        await this.execute(
+            "INSERT INTO dataset (id, name, kb_id) VALUES (?, ?, ?)", 
+            [datasetId, params.name, params.kbId]
+        );
+        return datasetId;
     }
 
     async queryAllByKbId(params: {kbId: string}) {
-        return await this.query<Dataset[]>(`SELECT d.* FROM dataset d WHERE d.kb_id = ?`, [params.kbId])
+        return await this.table<Dataset>('dataset')
+            .where('kb_id = ?', params.kbId)
+            .execute();
     }
 
     async queryById(params: {id: string}) {
-        return (await this.query<Dataset[]>("SELECT * FROM dataset WHERE id = ?", [params.id]))[0]
+        return await this.table<Dataset>('dataset')
+            .where('id = ?', params.id)
+            .first();
     }
 
     async deleteById(id: string) {
-        await this.execute("DELETE FROM dataset WHERE id = ?", [id])
+        await this.execute("DELETE FROM dataset WHERE id = ?", [id]);
     }
 
-    // TODO 考虑移除kbId参数，查询没有用到
     async queryAllDocumentsByDatasetId(datasetId: string) {
-        return await this.query<DocumentData[]>(`SELECT json_extract(metadata, '$.id') as id, text, json_extract(metadata, '$.dataset_id') as dataset_id FROM documents WHERE json_extract(metadata, '$.dataset_id') = ?`, [datasetId]);
+        return await this.table<DocumentData>('documents')
+            .select([
+                'json_extract(metadata, "$.id") as id',
+                'text',
+                'json_extract(metadata, "$.dataset_id") as dataset_id'
+            ])
+            .where('json_extract(metadata, "$.dataset_id") = ?', datasetId)
+            .execute();
     }
 
     async deleteDocumentsByDatasetId(datasetId: string) {
-        return await this.execute(`DELETE FROM documents WHERE json_extract(metadata, '$.dataset_id') = ?`, [datasetId])
+        await this.execute(
+            `DELETE FROM documents WHERE json_extract(metadata, '$.dataset_id') = ?`, 
+            [datasetId]
+        );
     }
 }

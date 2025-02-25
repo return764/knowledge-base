@@ -1,23 +1,16 @@
-import Database from '@tauri-apps/plugin-sql';
 import {isBoolean} from "ahooks/es/utils";
+import {QueryBuilder} from "./builder/query_builder";
+import {DatabaseDriver, defaultDriver} from "./builder/database";
 
 export class APIAbc {
-    protected conn: Database | undefined;
+    protected db: DatabaseDriver;
 
-    private async getConn() {
-        if (this.conn) {
-            return this.conn;
-        }
-        this.conn = await Database.load('sqlite:knowledge_keeper.db');
-        return this.conn;
-    }
-
-    async query<T>(sql: string, bindValues?: unknown[]) {
-        return await (await this.getConn()).select<T>(sql, bindValues)
+    constructor(db: DatabaseDriver = defaultDriver) {
+        this.db = db;
     }
 
     async execute(sql: string, bindValues?: unknown[]) {
-        return await (await this.getConn()).execute(sql, bindValues)
+        return await this.db.execute(sql, bindValues);
     }
 
     async bulkInsert(table: string, cols: string[], vals: any[][]) {
@@ -37,6 +30,10 @@ export class APIAbc {
             `INSERT INTO ${table} (${cols.join(",")}) VALUES ${def.join(",")}`,
             values
         );
+    }
+
+    protected table<T>(name: string): QueryBuilder<T> {
+        return new QueryBuilder<T>(name, this.db);
     }
 
     private _valueFormatter(value: any) {
