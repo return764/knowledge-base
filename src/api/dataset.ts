@@ -41,10 +41,13 @@ export type ProgressEvent =
 export class DatasetAPI extends APIAbc {
     async insert(params: {name: string, kbId: string}): Promise<string> {
         const datasetId: string = await invoke('uuid');
-        await this.execute(
-            "INSERT INTO dataset (id, name, kb_id) VALUES (?, ?, ?)", 
-            [datasetId, params.name, params.kbId]
-        );
+        await this.table<Dataset>('dataset')
+            .insert({
+                id: datasetId,
+                name: params.name,
+                kb_id: params.kbId
+            })
+            .execute();
         return datasetId;
     }
 
@@ -61,7 +64,10 @@ export class DatasetAPI extends APIAbc {
     }
 
     async deleteById(id: string) {
-        await this.execute("DELETE FROM dataset WHERE id = ?", [id]);
+        await this.table<Dataset>('dataset')
+            .delete()
+            .where('id = ?', id)
+            .execute();
     }
 
     async queryAllDocumentsByDatasetId(datasetId: string) {
@@ -69,16 +75,16 @@ export class DatasetAPI extends APIAbc {
             .select([
                 'json_extract(metadata, "$.id") as id',
                 'text',
-                'json_extract(metadata, "$.dataset_id") as dataset_id'
+                'json_extract(metadata, "$.dataset_id") as datasetId'
             ])
             .where('json_extract(metadata, "$.dataset_id") = ?', datasetId)
             .execute();
     }
 
     async deleteDocumentsByDatasetId(datasetId: string) {
-        await this.execute(
-            `DELETE FROM documents WHERE json_extract(metadata, '$.dataset_id') = ?`, 
-            [datasetId]
-        );
+        await this.table('documents')
+            .delete()
+            .where('json_extract(metadata, "$.dataset_id") = ?', datasetId)
+            .execute();
     }
 }

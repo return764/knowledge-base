@@ -18,7 +18,7 @@ export class PreferenceAPI extends APIAbc {
         const preference = await this.table<PreferenceModel>('preferences')
             .where('key = ?', params.key)
             .first();
-            
+
         return {
             ...preference!,
             value: JSON.parse(preference!.value.toString())
@@ -29,14 +29,14 @@ export class PreferenceAPI extends APIAbc {
         const result = await this.table<{count: number}>('preferences')
             .select('COUNT(*) as count')
             .first();
-            
+
         return result?.count ?? 0;
     }
 
     async queryAll(): Promise<PreferenceModel[]> {
         const preferences = await this.table<PreferenceModel>('preferences')
             .execute();
-            
+
         return preferences.map(pref => ({
             ...pref,
             value: JSON.parse(pref.value.toString())
@@ -44,20 +44,25 @@ export class PreferenceAPI extends APIAbc {
     }
 
     async update(key: PreferenceEnum, value: any) {
-        const valueParams = {value};
-        await this.execute(
-            "UPDATE preferences SET value = ? WHERE key = ?", 
-            [valueParams, key]
-        );
+        await this.table<PreferenceModel>('preferences')
+            .update({ value: { value } })
+            .where('key = ?', key)
+            .execute();
     }
 
     async batchInsert(preferences: Omit<PreferenceModel, "id">[]) {
-        const params = await Promise.all(
-            preferences.map(async (pref) => {
-                const id = await invoke('uuid');
-                return [id, pref.key, pref.type, JSON.stringify(pref.value)];
+        const insertData: PreferenceModel[] = []
+        for (let pref of preferences) {
+            insertData.push({
+                id: await invoke('uuid'),
+                key: pref.key,
+                type: pref.type,
+                value: pref.value
             })
-        );
-        await this.bulkInsert('preferences', ["id", "key", "type", "value"], params);
+        }
+
+        await this.table<PreferenceModel>('preferences')
+            .bulkInsert(insertData)
+            .execute();
     }
 }

@@ -5,8 +5,7 @@ export type KnowledgeBase = {
     id: string,
     name: string,
     description: string,
-    embedder_model_id: string,
-    language_model_id: string,
+    embedding_model_id: string,
     created_at: Date
 }
 
@@ -23,13 +22,19 @@ export class KnowledgeBaseAPI extends APIAbc {
     }
 
     async insert(params: {name: string, embeddingModel: string}) {
-        await this.execute(
-            "INSERT INTO knowledge_base (id, name, embedding_model_id) VALUES (?, ?, ?)", 
-            [await invoke('uuid'), params.name, params.embeddingModel]
-        );
+        await this.table<KnowledgeBase>('knowledge_base')
+            .insert({
+                id: await invoke('uuid'),
+                name: params.name,
+                embedding_model_id: params.embeddingModel
+            })
+            .execute();
     }
 
     async delete(id: string) {
-        await this.execute("DELETE FROM knowledge_base WHERE id = ?", [id]);
+        await this.table<KnowledgeBase>('knowledge_base')
+            .delete()
+            .where('id = ?', id)
+            .execute();
     }
 }

@@ -1,4 +1,5 @@
 import { DatabaseDriver } from "./database";
+import {isBoolean} from "ahooks/es/utils";
 
 type OrderDirection = 'ASC' | 'DESC';
 type JoinType = 'LEFT' | 'RIGHT' | 'INNER';
@@ -13,6 +14,9 @@ export class QueryBuilder<T> {
     private limitValue?: number;
     private offsetValue?: number;
     private joins: { type: JoinType; table: string; alias?: string; condition: string }[] = [];
+    private updateColumns: { column: string; value: any }[] = [];
+    private insertColumns: string[] = [];
+    private insertValues: any[][] = [];
     private db: DatabaseDriver;
 
     constructor(tableName: string, db: DatabaseDriver) {
@@ -70,8 +74,35 @@ export class QueryBuilder<T> {
         return this;
     }
 
-    buildQuery(): { sql: string; values: any[] } {
-        const fromClause = this.tableAlias 
+    insert(data: Partial<T>): QueryBuilder<T> {
+        const columns = Object.keys(data);
+        const values = Object.values(data);
+        this.insertColumns = columns;
+        this.insertValues = [values];
+        return this;
+    }
+
+    bulkInsert(data: Partial<T>[]): QueryBuilder<T> {
+        if (data.length === 0) return this;
+        this.insertColumns = Object.keys(data[0]);
+        this.insertValues = data.map(item => Object.values(item));
+        return this;
+    }
+
+    update(data: Partial<T>): QueryBuilder<T> {
+        this.updateColumns = Object.entries(data).map(([column, value]) => ({
+            column,
+            value
+        }));
+        return this;
+    }
+
+    delete(): QueryBuilder<T> {
+        return this;
+    }
+
+    private buildSelectQuery(): { sql: string; values: any[] } {
+        const fromClause = this.tableAlias
             ? `${this.tableName} ${this.tableAlias}`
             : this.tableName;
 
@@ -79,7 +110,7 @@ export class QueryBuilder<T> {
 
         if (this.joins.length > 0) {
             const joinClauses = this.joins.map(join => {
-                const tableClause = join.alias 
+                const tableClause = join.alias
                     ? `${join.table} ${join.alias}`
                     : join.table;
                 return `${join.type} JOIN ${tableClause} ON ${join.condition}`;
@@ -106,19 +137,80 @@ export class QueryBuilder<T> {
             sql += ` OFFSET ${this.offsetValue}`;
         }
 
-        return {
-            sql,
-            values: this.whereValues
-        };
+        return { sql, values: this.whereValues };
+    }
+
+    private buildInsertQuery(): { sql: string; values: any[] } {
+        const placeholders = this.insertValues.map(
+            () => `(${Array(this.insertColumns.length).fill('?').join(',')})`
+        ).join(',');
+
+        const sql = `INSERT INTO ${this.tableName} (${this.insertColumns.join(',')}) VALUES ${placeholders}`;
+        const values = this.insertValues.map(this._valueFormatter).flat();
+
+        return { sql, values };
+    }
+
+    private buildUpdateQuery(): { sql: string; values: any[] } {
+        const setClauses = this.updateColumns.map(({column}) => `${column} = ?`);
+        let sql = `UPDATE ${this.tableName} SET ${setClauses.join(', ')}`;
+
+        if (this.whereConditions.length > 0) {
+            sql += ` WHERE ${this.whereConditions.join(' AND ')}`;
+        }
+
+        const values = [
+            ...this.updateColumns.map(({value}) => value),
+            ...this.whereValues
+        ].map(this._valueFormatter);
+
+        return { sql, values };
+    }
+
+    private buildDeleteQuery(): { sql: string; values: any[] } {
+        let sql = `DELETE FROM ${this.tableName}`;
+
+        if (this.whereConditions.length > 0) {
+            sql += ` WHERE ${this.whereConditions.join(' AND ')}`;
+        }
+
+        return { sql, values: this.whereValues.map(this._valueFormatter) };
     }
 
     async execute(): Promise<T[]> {
-        const { sql, values } = this.buildQuery();
-        return await this.db.select<T>(sql, values);
+        let query;
+
+        if (this.insertColumns.length > 0) {
+            query = this.buildInsertQuery();
+            await this.db.execute(query.sql, query.values);
+            return [];
+        }
+
+        if (this.updateColumns.length > 0) {
+            query = this.buildUpdateQuery();
+            await this.db.execute(query.sql, query.values);
+            return [];
+        }
+
+        if (this.selectColumns.length === 0) {
+            query = this.buildDeleteQuery();
+            await this.db.execute(query.sql, query.values);
+            return [];
+        }
+
+        query = this.buildSelectQuery();
+        return await this.db.select<T>(query.sql, query.values);
     }
 
     async first(): Promise<T | undefined> {
         const results = await this.execute();
         return results[0];
     }
-} 
+
+    private _valueFormatter(value: any) {
+        if (isBoolean(value)) {
+            return value ? 1 : 0
+        }
+        return value
+    }
+}

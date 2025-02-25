@@ -26,25 +26,32 @@ export type ModelType = "llm" | "embedding"
 
 export class ModelAPI extends APIAbc {
     async insertModels(llmModels: LLMModelInsert[]) {
-        if (llmModels.length === 0) return
-        const params = llmModels.map(it => [it.id, it.name, it.type, it.active, it.provider_id])
-        await this.bulkInsert('model', ["id", "name", "type", "active", "provider_id"], params)
+        if (llmModels.length === 0) return;
+        await this.table<LLMModel>('model')
+            .bulkInsert(llmModels.map(model => ({
+                id: model.id,
+                name: model.name,
+                type: model.type,
+                active: model.active,
+                provider_id: model.provider_id
+            })))
+            .execute();
     }
 
     async updateModels(llmModels: LLMModel[]) {
         for (let model of llmModels) {
-            await this.execute(
-                "UPDATE model SET type = ?, active = ? WHERE id = ?",
-                [model.type, model.active, model.id]
-            )
+            await this.table<LLMModel>('model')
+                .update({ type: model.type, active: model.active })
+                .where('id = ?', model.id)
+                .execute();
         }
     }
 
     async updateProvider(provider: LLMProvider) {
-        await this.execute(
-            "UPDATE model_provider SET url = ?, api_key = ? WHERE id = ?",
-            [provider.url, provider.api_key, provider.id]
-        )
+        await this.table<LLMProvider>('model_provider')
+            .update({ url: provider.url, api_key: provider.api_key })
+            .where('id = ?', provider.id)
+            .execute();
     }
 
     async queryAll() {
@@ -61,16 +68,16 @@ export class ModelAPI extends APIAbc {
     }
 
     async insertProviders(providers: LLMProvider[]) {
-        if (providers.length === 0) return
-        const params = providers.map(it => [it.id, it.name, it.api_key, it.url])
-        await this.bulkInsert('model_provider', ["id", "name", "api_key", "url"], params)
+        await this.table<LLMProvider>('model_provider')
+            .bulkInsert(providers)
+            .execute();
     }
 
     async activeModel(id: string, active: boolean) {
-        await this.execute(
-            "UPDATE model SET active = ? WHERE id = ?", 
-            [active ? 1 : 0, id]
-        );
+        await this.table<LLMModel>('model')
+            .update({ active })
+            .where('id = ?', id)
+            .execute();
     }
 
     async queryAllActiveModel() {

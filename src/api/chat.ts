@@ -13,7 +13,7 @@ export type Chat = {
 
 export type ChatHistory = {
     id: string
-    chatId: string
+    chat_id: string
     content: string
     role: 'ai' | 'human' | 'system'
     createdAt: string
@@ -28,7 +28,10 @@ export const DEFAULT_CHAT_TITLE = "未命名聊天"
 
 export class ChatAPI extends APIAbc {
     async saveSettings(id: string, settings: ChatSettings) {
-        await this.execute("UPDATE chat SET settings = ? WHERE id = ?", [settings, id])
+        await this.table<Chat>('chat')
+            .update({ settings: JSON.stringify(settings) })
+            .where('id = ?', id)
+            .execute();
     }
 
     async queryAll() {
@@ -51,32 +54,38 @@ export class ChatAPI extends APIAbc {
     }
 
     async updateName(chatId: string, name: string) {
-        await this.execute("UPDATE chat SET name = ? WHERE id = ?", [name, chatId]);
+        await this.table<Chat>('chat')
+            .update({ name })
+            .where('id = ?', chatId)
+            .execute();
     }
 
     async insert() {
         const models = await API.model.queryAllActiveModel();
         const defaultModel = models.find(it => it.type === "llm");
-        
+
         const defaultSettings: ChatSettings = {
             knowledge_base: [],
             chat_model: defaultModel?.id
         };
 
-        await this.execute(
-            "INSERT INTO chat (id, name, settings) VALUES (?, ?, ?)", 
-            [
-                await invoke('uuid'), 
-                DEFAULT_CHAT_TITLE,
-                JSON.stringify(defaultSettings)
-            ]
-        );
+        await this.table<Chat>('chat')
+            .insert({
+                id: await invoke('uuid'),
+                name: DEFAULT_CHAT_TITLE,
+                settings: JSON.stringify(defaultSettings)
+            })
+            .execute();
     }
 
     async insertHistory(chatId: string, message: ChatMessage) {
-        await this.execute(
-            "INSERT INTO chat_history (id, chat_id, content, role) VALUES (?, ?, ?, ?)", 
-            [await invoke('uuid'), chatId, message.content, message.role]
-        );
+        await this.table<ChatHistory>('chat_history')
+            .insert({
+                id: await invoke('uuid'),
+                chat_id: chatId,
+                content: message.content,
+                role: message.role
+            })
+            .execute();
     }
 }
