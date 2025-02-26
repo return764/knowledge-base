@@ -2,22 +2,23 @@ use std::str::FromStr;
 use sqlx::{Pool, Sqlite};
 use sqlx::sqlite::{SqliteConnectOptions, SqlitePoolOptions};
 
-
-
 pub struct SqlPoolContext {
     pub pool: Pool<Sqlite>,
     pub db_path: String
 }
 
-
 impl SqlPoolContext {
     pub async fn new(db_path: &str) -> Self {
-        let pool = SqlitePoolOptions::new()
-        .connect_with(
-            SqliteConnectOptions::from_str(db_path).unwrap()
+        let options = SqliteConnectOptions::from_str(db_path).unwrap()
             .create_if_missing(true)
-            .extension("vec0")
-        ).await.unwrap();
+            .extension(if cfg!(target_os = "windows") {
+                "./libs/vec0"
+            } else {
+                "vec0"
+            });
+
+        let pool = SqlitePoolOptions::new()
+            .connect_with(options).await.unwrap();
 
         SqlPoolContext {
             pool,

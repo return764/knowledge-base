@@ -4,7 +4,7 @@ use crate::model::chat::ChatMessage;
 use crate::service::{chat, model};
 use crate::states::SqlPoolContext;
 use futures::StreamExt;
-use langchain_rust::chain::{Chain, LLMChainBuilder};
+use langchain_rust::chain::LLMChainBuilder;
 use langchain_rust::document_loaders::{Loader, TextLoader};
 use langchain_rust::language_models::llm::LLM;
 use langchain_rust::prompt::{HumanMessagePromptTemplate, SystemMessagePromptTemplate};
