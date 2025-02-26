@@ -9,7 +9,7 @@ function Chats() {
     const {data} = useQuery<Chat[]>('chat', 'queryAll')
 
     const handleNewChat = async () => {
-        await API.chat.insert()
+        await API.chat.newChat()
     }
 
     return (

@@ -10,7 +10,7 @@ const PreferenceProvider = (props: PropsWithChildren<{}>) => {
     useEffect(() => {
         const loadPreferences = async () => {
             try {
-                const allPrefs = await API.preference.queryAll();
+                const allPrefs = await API.preference.queryAllPrefs();
                 const prefsMap = {} as Record<PreferenceEnum, PreferenceModel>;
 
                 // 遍历所有枚举值
@@ -34,7 +34,7 @@ const PreferenceProvider = (props: PropsWithChildren<{}>) => {
     const onSave = async (keys: PreferenceEnum[]) => {
         try {
             for (const it of keys) {
-                await API.preference.update(it, preferences?.[it].value.value);
+                await API.preference.updateByKey(it, preferences?.[it].value.value);
             }
         } catch (error) {
             console.error('Failed to update preference:', error);

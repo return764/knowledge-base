@@ -1,5 +1,4 @@
 import {APIAbc} from "./api.ts";
-import {invoke} from "@tauri-apps/api/core";
 import {ChatMessage} from "../components/chat/ChatContext.tsx";
 import {API} from "./index.ts";
 
@@ -27,40 +26,19 @@ export type ChatSettings = {
 export const DEFAULT_CHAT_TITLE = "未命名聊天"
 
 export class ChatAPI extends APIAbc {
+    protected tableName: string = 'chat';
     async saveSettings(id: string, settings: ChatSettings) {
-        await this.table<Chat>('chat')
-            .update({ settings: JSON.stringify(settings) })
-            .where('id = ?', id)
-            .execute();
+        await this.update<Chat>({ id, settings: JSON.stringify(settings) })
     }
 
-    async queryAll() {
-        return await this.table<Chat>('chat')
-            .orderBy('created_at', 'DESC')
-            .execute();
-    }
-
-    async queryById(params: {id: string}) {
-        return await this.table<Chat>('chat')
-            .where('id = ?', params.id)
-            .first();
-    }
-
-    async queryHistoryByChatId(params: {chatId: string}) {
+    async queryHistoryByChatId(chatId: string) {
         return await this.table<ChatHistory>('chat_history')
-            .where('chat_id = ?', params.chatId)
+            .where('chat_id = ?', chatId)
             .orderBy('created_at')
-            .execute();
+            .query();
     }
 
-    async updateName(chatId: string, name: string) {
-        await this.table<Chat>('chat')
-            .update({ name })
-            .where('id = ?', chatId)
-            .execute();
-    }
-
-    async insert() {
+    async newChat() {
         const models = await API.model.queryAllActiveModel();
         const defaultModel = models.find(it => it.type === "llm");
 
@@ -71,7 +49,6 @@ export class ChatAPI extends APIAbc {
 
         await this.table<Chat>('chat')
             .insert({
-                id: await invoke('uuid'),
                 name: DEFAULT_CHAT_TITLE,
                 settings: JSON.stringify(defaultSettings)
             })
@@ -81,7 +58,6 @@ export class ChatAPI extends APIAbc {
     async insertHistory(chatId: string, message: ChatMessage) {
         await this.table<ChatHistory>('chat_history')
             .insert({
-                id: await invoke('uuid'),
                 chat_id: chatId,
                 content: message.content,
                 role: message.role

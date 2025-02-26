@@ -1,6 +1,5 @@
 import {combineURLs} from "../utils/utils.ts";
-import {LLMModelInsert} from "../api/model.ts";
-import {invoke} from "@tauri-apps/api/core";
+import {LLMModel, LLMModelInsert} from "../api/model.ts";
 import {API} from "../api";
 
 type OpenAIModel = {
@@ -28,7 +27,7 @@ export const queryAllModels = async (url: string, key: string): Promise<OpenAIMo
 
 export const saveAndUpdateModels = async (models: OpenAIModel[], providerId: string) => {
     // 获取所有已存在的模型
-    const existingModels = await API.model.queryAll()
+    const existingModels = await API.model.queryAll<LLMModel>()
     const insertedModels: LLMModelInsert[] = []
 
     // 处理每个模型
@@ -37,7 +36,6 @@ export const saveAndUpdateModels = async (models: OpenAIModel[], providerId: str
         const existingModel = existingModels.find(m => m.name === model.id);
         if (!existingModel) {
             insertedModels.push({
-                id: await invoke('uuid'),
                 name: model.id,
                 type: getModelType(model.id),
                 active: false,
@@ -46,7 +44,7 @@ export const saveAndUpdateModels = async (models: OpenAIModel[], providerId: str
         }
     }
     // TODO 处理删除逻辑
-    await API.model.insertModels(insertedModels);
+    await API.model.bulkInsert(insertedModels);
 }
 
 const getModelType = (name: string) => {

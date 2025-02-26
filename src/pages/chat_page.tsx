@@ -12,7 +12,7 @@ import {useForm} from "../components/basic/form/form.tsx";
 import {useChatHelper} from "../hooks/useChatHelper.ts";
 import toast from "react-hot-toast";
 import {WrapChatContext} from "../components/WrapChatContext.tsx";
-import {DEFAULT_CHAT_TITLE} from "../api/chat.ts";
+import {Chat, DEFAULT_CHAT_TITLE} from "../api/chat.ts";
 import {invoke} from "@tauri-apps/api/core";
 import {API} from "../api";
 import AnimatedTitle from "../components/basic/animated_title.tsx";
@@ -41,7 +41,10 @@ function ChatPage() {
         if (messages.length >= 2 && chat?.name === DEFAULT_CHAT_TITLE) {
             invoke("generate_chat_title", {messages , chatId: chat.id})
                 .then(res => {
-                    API.chat.updateName(chat.id, res as string)
+                    API.chat.update<Chat>({
+                        id: chat.id,
+                        name: res as string
+                    })
                 })
         }
     }, [messages.length]);

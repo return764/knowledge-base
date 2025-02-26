@@ -29,7 +29,10 @@ function KnowledgeBasePage() {
 
 
     const handleSubmitNewKB = async () => {
-        await API.knowledgeBase.insert({name: form.getFieldValue("name"), embeddingModel: form.getFieldValue('embedding_model_id')})
+        await API.knowledgeBase.insert<KnowledgeBase>({
+            name: form.getFieldValue("name"),
+            embedding_model_id: form.getFieldValue('embedding_model_id')
+        })
         toast.success("创建知识库成功!")
     }
 

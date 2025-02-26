@@ -28,7 +28,8 @@
     "react-transition-group": "^4.4.5",
     "remark-gfm": "^4.0.0",
     "remark-math": "^6.0.0",
-    "swr": "^2.2.5"
+    "swr": "^2.2.5",
+    "uuid": "^11.1.0"
   },
   "devDependencies": {
     "@tauri-apps/cli": "^2.2.7",

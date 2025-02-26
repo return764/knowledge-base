@@ -1,5 +1,6 @@
 import { DatabaseDriver } from "./database";
 import {isBoolean} from "ahooks/es/utils";
+import { v4 as uuidv4 } from 'uuid';
 
 type OrderDirection = 'ASC' | 'DESC';
 type JoinType = 'LEFT' | 'RIGHT' | 'INNER';
@@ -75,6 +76,9 @@ export class QueryBuilder<T> {
     }
 
     insert(data: Partial<T>): QueryBuilder<T> {
+        if ("id" !in data) {
+            data.id = uuidv4()
+        }
         const columns = Object.keys(data);
         const values = Object.values(data);
         this.insertColumns = columns;
@@ -144,6 +148,7 @@ export class QueryBuilder<T> {
         const placeholders = this.insertValues.map(
             () => `(${Array(this.insertColumns.length).fill('?').join(',')})`
         ).join(',');
+        // insert 创建的id需要返回给调用者
 
         const sql = `INSERT INTO ${this.tableName} (${this.insertColumns.join(',')}) VALUES ${placeholders}`;
         const values = this.insertValues.map(this._valueFormatter).flat();
@@ -177,34 +182,35 @@ export class QueryBuilder<T> {
         return { sql, values: this.whereValues.map(this._valueFormatter) };
     }
 
-    async execute(): Promise<T[]> {
+    async query(): Promise<T[]> {
+        const query = this.buildSelectQuery();
+        return await this.db.select<T>(query.sql, query.values);
+    }
+
+    async first(): Promise<T | undefined> {
+        const results = await this.query();
+        return results[0];
+    }
+
+    async execute(): Promise<string | void> {
         let query;
 
         if (this.insertColumns.length > 0) {
             query = this.buildInsertQuery();
             await this.db.execute(query.sql, query.values);
-            return [];
+            const idIndex = this.insertColumns.findIndex(it => it === "id")
+            return this.insertValues[0][idIndex];
         }
 
         if (this.updateColumns.length > 0) {
             query = this.buildUpdateQuery();
             await this.db.execute(query.sql, query.values);
-            return [];
         }
 
         if (this.selectColumns.length === 0) {
             query = this.buildDeleteQuery();
             await this.db.execute(query.sql, query.values);
-            return [];
         }
-
-        query = this.buildSelectQuery();
-        return await this.db.select<T>(query.sql, query.values);
-    }
-
-    async first(): Promise<T | undefined> {
-        const results = await this.execute();
-        return results[0];
     }
 
     private _valueFormatter(value: any) {

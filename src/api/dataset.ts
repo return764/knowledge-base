@@ -1,5 +1,4 @@
 import {APIAbc} from "./api.ts";
-import {invoke} from "@tauri-apps/api/core";
 
 export type Dataset = {
     id: string,
@@ -39,35 +38,12 @@ export type ProgressEvent =
 };
 
 export class DatasetAPI extends APIAbc {
-    async insert(params: {name: string, kbId: string}): Promise<string> {
-        const datasetId: string = await invoke('uuid');
-        await this.table<Dataset>('dataset')
-            .insert({
-                id: datasetId,
-                name: params.name,
-                kb_id: params.kbId
-            })
-            .execute();
-        return datasetId;
-    }
+    protected tableName: string = 'dataset';
 
-    async queryAllByKbId(params: {kbId: string}) {
+    async queryAllByKbId(kbId: string) {
         return await this.table<Dataset>('dataset')
-            .where('kb_id = ?', params.kbId)
-            .execute();
-    }
-
-    async queryById(params: {id: string}) {
-        return await this.table<Dataset>('dataset')
-            .where('id = ?', params.id)
-            .first();
-    }
-
-    async deleteById(id: string) {
-        await this.table<Dataset>('dataset')
-            .delete()
-            .where('id = ?', id)
-            .execute();
+            .where('kb_id = ?', kbId)
+            .query();
     }
 
     async queryAllDocumentsByDatasetId(datasetId: string) {
@@ -75,10 +51,10 @@ export class DatasetAPI extends APIAbc {
             .select([
                 'json_extract(metadata, "$.id") as id',
                 'text',
-                'json_extract(metadata, "$.dataset_id") as datasetId'
+                'json_extract(metadata, "$.dataset_id") as dataset_id'
             ])
             .where('json_extract(metadata, "$.dataset_id") = ?', datasetId)
-            .execute();
+            .query();
     }
 
     async deleteDocumentsByDatasetId(datasetId: string) {

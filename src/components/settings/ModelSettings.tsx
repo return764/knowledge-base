@@ -11,10 +11,10 @@ import {AiFillOpenAI} from "react-icons/ai";
 import SiliconFlowSvg from "../../assets/siliconflow.svg?react";
 import OllamaSvg from "../../assets/ollama.svg?react";
 import QwenSvg from "../../assets/qwen.svg?react";
-import {LLMModel, LLMProvider} from "../../api/model.ts";
 import Form, {useForm} from "../basic/form/form.tsx";
 import FormItem from "../basic/form/form_item.tsx";
 import Input from "../basic/form/components/Input.tsx";
+import {LLMProvider} from "../../api/model_provider.ts";
 
 type SegmentProps = {
     title: string;
@@ -64,25 +64,17 @@ const menuItems = [
 
 function ModelSettings() {
     const [isValidating, setIsValidating] = useState<boolean>(false)
-    const [selectedType, setSelectedType] = useState(menuItems[0].key);
-    const {data: models, mutate} = useQuery("model", "queryAll", {}, {})
-    const {data: providers} = useQuery("model", "queryAllProvider", {}, {})
+    const [selectedType, setSelectedType] = useState('OpenAI');
+    const {data: provider} = useQuery("modelProvider", "queryByName", selectedType)
+    const {data: models, mutate} = useQuery("model", "queryAllByProviderName", provider?.name)
     const [form] = useForm()
 
-    const currentProvider: LLMProvider = useMemo(() => {
-        if (!providers) return {}
-        return providers.find((it: LLMProvider) => it.name === selectedType)
-    }, [providers, selectedType])
-
-    const currentModels = useMemo(() => {
-        if (!models) return []
-        return models.filter((it: LLMModel) => it.provider === selectedType)
-    }, [models, selectedType])
 
     useEffect(() => {
-        form.setFieldValue('url', currentProvider.url)
-        form.setFieldValue('api_key', currentProvider.api_key)
-    }, [currentProvider]);
+        if (!provider) return
+        form.setFieldValue('url', provider.url)
+        form.setFieldValue('api_key', provider.api_key)
+    }, [provider]);
 
     const handleValidate = async () => {
         setIsValidating(true)
@@ -90,24 +82,24 @@ function ModelSettings() {
             const apiURL = form.getFieldValue('url')
             const apiKey = form.getFieldValue('api_key')
             const models = await queryAllModels(apiURL, apiKey)
-            await API.model.updateProvider({
-                ...currentProvider,
+            await API.modelProvider.update<LLMProvider>({
+                ...provider,
                 api_key: apiKey,
                 url: apiURL
             })
-            await saveAndUpdateModels(models, currentProvider.id)
+            await saveAndUpdateModels(models, provider.id)
             toast.success("保存model成功")
         } catch (e) {
             console.error(e)
             toast.error("保存model失败")
         } finally {
             setIsValidating(false)
-            await mutate()
+            // await mutate()
         }
     }
 
     const handleActiveModel = async (index: number, checked: boolean) => {
-        await API.model.activeModel(currentModels[index].id, checked)
+        await API.model.activeModel(models[index].id, checked)
         await mutate((data: any) => {
             data[index].active = checked ? 1 : 0
             return data
@@ -134,11 +126,11 @@ function ModelSettings() {
             <ModelSettingSidebar
                 items={menuItems}
                 onChange={setSelectedType}
-                defaultSelected={menuItems[0].key}
+                defaultSelected={selectedType}
             />
             <div className="flex-1 p-4 overflow-y-scroll">
                 <section className="flex flex-col gap-6">
-                    <Segment title={currentProvider.name}>
+                    <Segment title={provider?.name}>
                         <div className="flex flex-col gap-4">
                             <Form form={form}>
                                 <FormItem name="url" label="API URL">
@@ -161,7 +153,7 @@ function ModelSettings() {
                     <Table<ModelColumn>
                         className="mb-10"
                         columns={columns}
-                        data={currentModels}
+                        data={models}
                     />
                 </section>
             </div>

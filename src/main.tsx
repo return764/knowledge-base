@@ -8,6 +8,7 @@ import routes from "./routes/routes.tsx";
 import {API} from "./api";
 import PreferenceProvider from "./components/preference/context/PreferenceProvider";
 import {invoke} from "@tauri-apps/api/core";
+import {v4 as uuidv4} from "uuid"
 
 // 初始化 preferences
 const initPreferences = async () => {
@@ -16,7 +17,7 @@ const initPreferences = async () => {
         const result = await API.preference.getCount();
         if (result === 0) {
             // 插入初始配置
-            await API.preference.batchInsert([{
+            await API.preference.bulkInsert([{
                 key: 'OPENAI_API_URL',
                 type: 'input',
                 value: { value: "" }
@@ -27,26 +28,22 @@ const initPreferences = async () => {
             }])
         }
 
-        const providers = await API.model.queryAllProvider();
+        const providers = await API.modelProvider.queryAll();
         if (providers.length === 0) {
-            await API.model.insertProviders([
+            await API.modelProvider.bulkInsert([
                 {
-                    id: await invoke("uuid"),
                     name: 'Ollama',
                     url: 'http://localhost:11434/v1',
                     api_key: ''
                 }, {
-                    id: await invoke("uuid"),
                     name: 'SiliconFlow',
                     url: 'https://api.siliconflow.cn/v1',
                     api_key: ''
                 }, {
-                    id: await invoke("uuid"),
                     name: 'OpenAI',
                     url: 'https://api.openai.com/v1',
                     api_key: ''
                 }, {
-                    id: await invoke("uuid"),
                     name: 'Qwen',
                     url: 'https://dashscope.aliyuncs.com/compatible-mode/v1',
                     api_key: ''

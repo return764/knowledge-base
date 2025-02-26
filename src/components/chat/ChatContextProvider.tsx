@@ -19,9 +19,9 @@ export class ChatBlock {
 
 export const ChatContextProvider = (props: PropsWithChildren<{chatId: string}>) => {
     const {chatId} = props
-    const {data: chat, mutate} = useQuery("chat", "queryById", {id: chatId})
+    const {data: chat, mutate} = useQuery("chat", "queryById", chatId)
     const {id} = useParams()
-    const {data, isLoading, error} = useQuery<ChatHistory[]>('chat', 'queryHistoryByChatId', {chatId: id}, {refreshInterval: 0})
+    const {data, isLoading, error} = useQuery<ChatHistory[]>('chat', 'queryHistoryByChatId', id, {refreshInterval: 0})
     const [settings, setSettings] = useState<ChatSettings>(JSON.parse(chat?.settings ?? "{}"));
     const [chatBlocks, setChatBlocks] = useState<ChatBlock[]>([]);
     const [isReady, setIsReady] = useState<boolean>(false)

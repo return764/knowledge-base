@@ -12,7 +12,7 @@ import Table, {Column} from "../components/basic/table/table.tsx";
 import {Channel, invoke} from "@tauri-apps/api/core";
 import {KnowledgeBase} from "../api/knowledge_base.ts";
 import {API} from "../api";
-import {ProgressEvent} from "../api/dataset.ts";
+import {Dataset, ProgressEvent} from "../api/dataset.ts";
 import toast from "react-hot-toast";
 
 type UploadTable = {
@@ -40,7 +40,7 @@ function KnowledgeBaseImport() {
 
     const handleComplete = async () => {
         const onEvent = new Channel<ProgressEvent>()
-        const datasetId = await API.dataset.insert({name: form.getFieldValue("name"), kbId: knowledgeBase.id})
+        const datasetId = await API.dataset.insert<Dataset>({name: form.getFieldValue("name"), kb_id: knowledgeBase.id})
 
         onEvent.onmessage = (message: ProgressEvent) => {
             if (message.event === 'started') {
@@ -54,7 +54,7 @@ function KnowledgeBaseImport() {
             await invoke('import_text', {datasetId, kbId: knowledgeBase.id, text: form.getFieldValue("value"), onEvent: onEvent})
         } catch (e) {
             toast.error("导入失败")
-            await API.dataset.deleteById(datasetId)
+            await API.dataset.delete(datasetId)
             return
         }
         toast.success("导入成功")

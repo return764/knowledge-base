@@ -1,5 +1,4 @@
 import {APIAbc} from "./api.ts";
-import {invoke} from "@tauri-apps/api/core";
 import {PreferenceEnum} from "../utils/constant.ts";
 
 export type PreferenceModel = {
@@ -14,16 +13,7 @@ export type PreferenceValue = {
 }
 
 export class PreferenceAPI extends APIAbc {
-    async queryByKey(params: {key: string}): Promise<PreferenceModel> {
-        const preference = await this.table<PreferenceModel>('preferences')
-            .where('key = ?', params.key)
-            .first();
-
-        return {
-            ...preference!,
-            value: JSON.parse(preference!.value.toString())
-        };
-    }
+    protected tableName: string = 'preferences';
 
     async getCount(): Promise<number> {
         const result = await this.table<{count: number}>('preferences')
@@ -33,9 +23,8 @@ export class PreferenceAPI extends APIAbc {
         return result?.count ?? 0;
     }
 
-    async queryAll(): Promise<PreferenceModel[]> {
-        const preferences = await this.table<PreferenceModel>('preferences')
-            .execute();
+    async queryAllPrefs(): Promise<PreferenceModel[]> {
+        const preferences = await this.queryAll<PreferenceModel>();
 
         return preferences.map(pref => ({
             ...pref,
@@ -43,26 +32,10 @@ export class PreferenceAPI extends APIAbc {
         }));
     }
 
-    async update(key: PreferenceEnum, value: any) {
+    async updateByKey(key: PreferenceEnum, value: any) {
         await this.table<PreferenceModel>('preferences')
             .update({ value: { value } })
             .where('key = ?', key)
-            .execute();
-    }
-
-    async batchInsert(preferences: Omit<PreferenceModel, "id">[]) {
-        const insertData: PreferenceModel[] = []
-        for (let pref of preferences) {
-            insertData.push({
-                id: await invoke('uuid'),
-                key: pref.key,
-                type: pref.type,
-                value: pref.value
-            })
-        }
-
-        await this.table<PreferenceModel>('preferences')
-            .bulkInsert(insertData)
-            .execute();
+            .execute()
     }
 }

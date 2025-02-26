@@ -13,7 +13,7 @@ interface DatasetsProps {
 const Datasets: FC<DatasetsProps> = () => {
     const documents = useLoaderData() as DocumentData[]
     const {datasetId} = useParams();
-    const {data: dataset, error} = useQuery<Dataset>('dataset', 'queryById', {id: datasetId})
+    const {data: dataset, error} = useQuery<Dataset>('dataset', 'queryById', datasetId)
     const navigate = useNavigate()
 
     return (
