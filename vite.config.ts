@@ -1,9 +1,11 @@
+/// <reference types="vitest/config" />
+/// <reference types="@vitest/browser/matchers" />
 import { defineConfig } from "vite";
 import react from "@vitejs/plugin-react";
 import { internalIpV4 } from "internal-ip";
 import svgr from "vite-plugin-svgr";
+import path from "path";
 
-// @ts-expect-error process is a nodejs global
 const mobile = !!/android|ios/.exec(process.env.TAURI_ENV_PLATFORM);
 
 // https://vitejs.dev/config/
@@ -31,4 +33,18 @@ export default defineConfig(async () => ({
       ignored: ["**/src-tauri/**"],
     },
   },
+  resolve: {
+    alias: {
+      "@": path.resolve(__dirname, '.'),
+    },
+  },
+  test: {
+    globals: true,
+    environment: 'jsdom',
+    coverage: {
+      reporter: [ 'text', 'json', 'html' ]
+    },
+    setupFiles: "./vitest-setup.ts",
+    exclude: ['**/node_modules/**', '**/src-tauri/**'],
+  }
 }));

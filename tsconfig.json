@@ -22,7 +22,7 @@
     "allowSyntheticDefaultImports": true,
     "noImplicitAny": true,
 
-    "types": ["vite-plugin-svgr/client"]
+    "types": ["vite-plugin-svgr/client", "@vitest/browser/matchers"]
   },
   "include": ["src"],
   "references": [{ "path": "./tsconfig.node.json" }]
