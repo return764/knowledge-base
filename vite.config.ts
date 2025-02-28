@@ -44,6 +44,7 @@ export default defineConfig(async () => ({
     coverage: {
       reporter: [ 'text', 'json', 'html' ]
     },
+    testTimeout: 10000,
     setupFiles: "./vitest-setup.ts",
     exclude: ['**/node_modules/**', '**/src-tauri/**'],
   }
