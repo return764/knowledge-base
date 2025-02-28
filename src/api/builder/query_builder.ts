@@ -4,6 +4,7 @@ import { v4 as uuidv4 } from 'uuid';
 
 type OrderDirection = 'ASC' | 'DESC';
 type JoinType = 'LEFT' | 'RIGHT' | 'INNER';
+type OperationType = "INSERT" | "DELETE" | "UPDATE" | "QUERY"
 
 export class QueryBuilder<T> {
     private tableName: string;
@@ -18,6 +19,7 @@ export class QueryBuilder<T> {
     private updateColumns: { column: string; value: any }[] = [];
     private insertColumns: string[] = [];
     private insertValues: any[][] = [];
+    private operationType: OperationType = "QUERY";
     private db: DatabaseDriver;
 
     constructor(tableName: string, db: DatabaseDriver) {
@@ -76,8 +78,12 @@ export class QueryBuilder<T> {
     }
 
     insert(data: Partial<T>): QueryBuilder<T> {
-        if ("id" !in data) {
-            data.id = uuidv4()
+        this.operationType = "INSERT"
+        if (!('id' in data)) {
+            data = {
+                id: uuidv4(),
+                ...data,
+            };
         }
         const columns = Object.keys(data);
         const values = Object.values(data);
@@ -88,12 +94,14 @@ export class QueryBuilder<T> {
 
     bulkInsert(data: Partial<T>[]): QueryBuilder<T> {
         if (data.length === 0) return this;
+        this.operationType = "INSERT"
         this.insertColumns = Object.keys(data[0]);
         this.insertValues = data.map(item => Object.values(item));
         return this;
     }
 
     update(data: Partial<T>): QueryBuilder<T> {
+        this.operationType = "UPDATE"
         this.updateColumns = Object.entries(data).map(([column, value]) => ({
             column,
             value
@@ -102,6 +110,7 @@ export class QueryBuilder<T> {
     }
 
     delete(): QueryBuilder<T> {
+        this.operationType = "DELETE"
         return this;
     }
 
@@ -195,19 +204,19 @@ export class QueryBuilder<T> {
     async execute(): Promise<string | void> {
         let query;
 
-        if (this.insertColumns.length > 0) {
+        if (this.operationType === "INSERT" && this.insertColumns.length > 0) {
             query = this.buildInsertQuery();
             await this.db.execute(query.sql, query.values);
             const idIndex = this.insertColumns.findIndex(it => it === "id")
             return this.insertValues[0][idIndex];
         }
 
-        if (this.updateColumns.length > 0) {
+        if (this.operationType === "UPDATE" && this.updateColumns.length > 0) {
             query = this.buildUpdateQuery();
             await this.db.execute(query.sql, query.values);
         }
 
-        if (this.selectColumns.length === 0) {
+        if (this.operationType === "DELETE") {
             query = this.buildDeleteQuery();
             await this.db.execute(query.sql, query.values);
         }
