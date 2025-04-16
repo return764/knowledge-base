@@ -28,6 +28,18 @@ export abstract class APIAbc {
             .query();
     }
 
+    async queryBy<T>(column: string, value: string | number): Promise<T[]> {
+        return await this.table<T>(this.tableName)
+            .where(`${column} = ?`, value)
+            .query();
+    }
+
+    async queryFirstBy<T>(column: string, value: string | number): Promise<T | undefined> {
+        return await this.table<T>(this.tableName)
+            .where(`${column} = ?`, value)
+            .first();
+    }
+
     async delete(id: string) {
         await this.table(this.tableName)
             .delete()

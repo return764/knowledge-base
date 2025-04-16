@@ -47,12 +47,10 @@ export class ChatAPI extends APIAbc {
             chat_model: defaultModel?.id
         };
 
-        await this.table<Chat>('chat')
-            .insert({
+        await this.insert({
                 name: DEFAULT_CHAT_TITLE,
                 settings: JSON.stringify(defaultSettings)
-            })
-            .execute();
+            });
     }
 
     async insertHistory(chatId: string, message: ChatMessage) {

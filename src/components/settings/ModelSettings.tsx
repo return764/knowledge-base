@@ -94,7 +94,7 @@ function ModelSettings() {
             toast.error("保存model失败")
         } finally {
             setIsValidating(false)
-            // await mutate()
+            await mutate()
         }
     }
 

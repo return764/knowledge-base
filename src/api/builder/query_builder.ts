@@ -95,8 +95,8 @@ export class QueryBuilder<T> {
     bulkInsert(data: Partial<T>[]): QueryBuilder<T> {
         if (data.length === 0) return this;
         this.operationType = "INSERT"
-        this.insertColumns = Object.keys(data[0]);
-        this.insertValues = data.map(item => Object.values(item));
+        this.insertColumns = ["id", ...Object.keys(data[0])];
+        this.insertValues = data.map(item => [uuidv4(), ...Object.values(item)]);
         return this;
     }
 
@@ -160,7 +160,7 @@ export class QueryBuilder<T> {
         // insert 创建的id需要返回给调用者
 
         const sql = `INSERT INTO ${this.tableName} (${this.insertColumns.join(',')}) VALUES ${placeholders}`;
-        const values = this.insertValues.map(this._valueFormatter).flat();
+        const values = this.insertValues.flat().map(this._valueFormatter);
 
         return { sql, values };
     }

@@ -11,8 +11,6 @@ export class ModelProviderAPI extends APIAbc {
     protected tableName: string = 'model_provider';
 
     async queryByName(name: string) {
-        return await this.table<LLMProvider>('model_provider')
-            .where("name = ?", name)
-            .first()
+        return await this.queryFirstBy('name', name)
     }
 }

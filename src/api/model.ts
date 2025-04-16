@@ -36,8 +36,6 @@ export class ModelAPI extends APIAbc {
     }
 
     async queryAllActiveModel() {
-        return await this.table<LLMModel>('model')
-            .where('active = ?', 1)
-            .query();
+        return await this.queryBy('active', 1);
     }
 }

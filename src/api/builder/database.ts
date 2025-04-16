@@ -22,7 +22,7 @@ export class SqliteDriver implements DatabaseDriver {
     }
 
     async select<T>(sql: string, bindValues?: unknown[]): Promise<T[]> {
-        return await (await this.getConn()).select<T>(sql, bindValues);
+        return await (await this.getConn()).select<T[]>(sql, bindValues);
     }
 
     async execute(sql: string, bindValues?: unknown[]): Promise<any> {

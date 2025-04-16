@@ -137,8 +137,8 @@ describe('QueryBuilder', () => {
                 .execute();
 
             expect(mockDb.execute).toHaveBeenCalledWith(
-                'INSERT INTO test_table (name,email) VALUES (?,?),(?,?)',
-                ['test1', 'test1@example.com', 'test2', 'test2@example.com']
+                'INSERT INTO test_table (id,name,email) VALUES (?,?,?),(?,?,?)',
+                ['mocked-uuid', 'test1', 'test1@example.com', 'mocked-uuid', 'test2', 'test2@example.com']
             );
         });
     });

@@ -41,9 +41,7 @@ export class DatasetAPI extends APIAbc {
     protected tableName: string = 'dataset';
 
     async queryAllByKbId(kbId: string) {
-        return await this.table<Dataset>('dataset')
-            .where('kb_id = ?', kbId)
-            .query();
+        return await this.queryBy('kb_id', kbId);
     }
 
     async queryAllDocumentsByDatasetId(datasetId: string) {
