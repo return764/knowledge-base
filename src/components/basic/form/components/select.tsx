@@ -4,6 +4,7 @@ import { Label, Listbox, ListboxButton, ListboxOption, ListboxOptions } from '@h
 import { HiChevronUpDown } from 'react-icons/hi2';
 import { MdCheck } from 'react-icons/md';
 import { LuLoader2 } from "react-icons/lu";
+import { useUpdateEffect } from 'ahooks';
 
 type SelectProps = {
     defaultFirst?: boolean,
@@ -22,6 +23,10 @@ function Select(props: SelectProps) {
     const [isOpen, setIsOpen] = useState(false);
     const [isLoading, setIsLoading] = useState(false);
     const [options, setOptions] = useState<SelectItem[]>(initialOptions);
+
+    useUpdateEffect(() => {
+        setOptions(initialOptions);
+    }, [initialOptions]);
 
     const selected = useMemo(() => {
         let option = options.find(option => option.value === value) ?? null
