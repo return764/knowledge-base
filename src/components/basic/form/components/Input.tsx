@@ -1,11 +1,11 @@
-import {ChangeEvent, useMemo} from 'react';
+import {ChangeEvent, HTMLInputTypeAttribute, useMemo} from 'react';
 import { Input as HeadlessInput } from '@headlessui/react'
 import {OnChangeAndValue} from "../interface.ts";
 
 type InputProps = {
     name?: string,
     label?: string,
-    type?: "inline" | "block",
+    type?: HTMLInputTypeAttribute,
     size?: "small" | "default" | "large",
     placeholder?: string,
 } & OnChangeAndValue
@@ -32,6 +32,7 @@ function Input(props: InputProps) {
         <HeadlessInput
             value={props.value ?? ""}
             onChange={handleChange}
+            type={props.type}
             placeholder={placeholder}
             className={`${inputClass} bg-gray-50 border border-[#CFD1E8] text-gray-900 rounded-lg focus:ring-0 focus:outline-0 focus:border-[#cfd0e8] block w-full dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500`} name={props.name}/>
     );

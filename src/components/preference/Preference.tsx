@@ -21,7 +21,6 @@ const Preference = (props: PreferenceProps) => {
         <div className="flex flex-col gap-1.5">
             <label className="text-sm text-gray-700">{label}</label>
             <Input
-                type="block"
                 placeholder={placeholder}
                 onChange={handleChange}
                 value={value}
