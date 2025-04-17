@@ -1,5 +1,5 @@
-import {QueryBuilder} from "./builder/query_builder";
-import {DatabaseDriver, defaultDriver} from "./builder/database";
+import {QueryBuilder} from "./builder/query_builder.ts";
+import {DatabaseDriver, defaultDriver} from "./builder/database.ts";
 
 type EnsureId<T> = T extends { id: infer Id } ? Partial<T> & { id: Id } : never;
 

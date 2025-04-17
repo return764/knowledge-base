@@ -1,18 +1,18 @@
 import {ExpandedCard} from "../components/expanded-card/ExpandedCard.tsx";
 import {useQuery} from "../hooks/useQuery.ts";
-import {KnowledgeBase} from "../api/knowledge_base.ts";
+import {KnowledgeBase} from "../package/api/knowledge_base.ts";
 import Button from "../components/basic/button/button.tsx";
 import {FaPlus} from "react-icons/fa6";
 import Modal from "../components/basic/modal/modal.tsx";
 import Input from "../components/basic/form/components/Input.tsx";
-import {API} from "../api";
+import {API} from "../package/api";
 import toast from "react-hot-toast";
 import {useToggle} from "ahooks";
 import Form, {useForm} from "../components/basic/form/form.tsx";
 import FormItem from "../components/basic/form/form_item.tsx";
 import Select from "../components/basic/form/components/select.tsx";
 import {useMemo} from "react";
-import {LLMModel} from "../api/model.ts";
+import {LLMModel} from "../package/api/model.ts";
 
 function KnowledgeBasePage() {
     const {data} = useQuery<KnowledgeBase[]>('knowledgeBase', 'queryAll')

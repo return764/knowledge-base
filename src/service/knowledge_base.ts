@@ -1,4 +1,4 @@
-import {API} from "../api";
+import {API} from "../package/api";
 import {deleteDataset} from "./dataset.ts";
 
 export async function deleteKnowledgeBase(id: string) {

@@ -2,8 +2,8 @@ import {useContext} from "react";
 import {ChatContext} from "../components/chat/ChatContext.tsx";
 import {Channel, invoke} from "@tauri-apps/api/core";
 import {buildAiMessage, buildHumanMessage, combineMessage} from "../utils/chat.ts";
-import { ChatSettings } from "../api/chat.ts";
-import { API } from "../api";
+import { ChatSettings } from "../package/api/chat.ts";
+import { API } from "../package/api";
 
 type StreamMessageResponse =
     | { event: "appendMessage", data: { content: string } }

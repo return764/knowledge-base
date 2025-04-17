@@ -1,5 +1,5 @@
 import {MouseEventHandler, useState} from "react";
-import {KnowledgeBase} from "../../api/knowledge_base.ts";
+import {KnowledgeBase} from "../../package/api/knowledge_base.ts";
 import {RiCloseLine} from "react-icons/ri";
 import Button from "../basic/button/button.tsx";
 import {useNavigate} from "react-router-dom";

@@ -1,6 +1,6 @@
 import {createContext} from "react";
 import {PreferenceEnum} from "../../../utils/constant.ts";
-import {PreferenceModel} from "../../../api/preference.ts";
+import {PreferenceModel} from "../../../package/api/preference.ts";
 
 type PreferenceContextProps = {
     preferences: Record<PreferenceEnum, PreferenceModel>

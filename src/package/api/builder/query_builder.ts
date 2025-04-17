@@ -1,4 +1,4 @@
-import { DatabaseDriver } from "./database";
+import { DatabaseDriver } from "./database.ts";
 import {isBoolean} from "ahooks/es/utils";
 import { v4 as uuidv4 } from 'uuid';
 

@@ -1,14 +1,14 @@
 import {useContext, useEffect, useMemo} from "react";
 import { useQuery } from "../../hooks/useQuery";
-import { KnowledgeBase } from "../../api/knowledge_base";
+import { KnowledgeBase } from "../../package/api/knowledge_base";
 import Select from "../basic/form/components/select";
 import Form from "../basic/form/form.tsx";
 import FormItem from "../basic/form/form_item.tsx";
 import {FormInstance} from "../basic/form/interface.ts";
-import {LLMModel} from "../../api/model.ts";
+import {LLMModel} from "../../package/api/model.ts";
 import Combobox from "../basic/form/components/combobox.tsx";
 import {ChatContext} from "./ChatContext.tsx";
-import {ChatSettings as ChatSettingsModel} from "../../api/chat.ts";
+import {ChatSettings as ChatSettingsModel} from "../../package/api/chat.ts";
 
 
 function ChatSettings(props: {form: FormInstance}) {

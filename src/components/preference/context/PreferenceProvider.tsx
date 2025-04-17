@@ -1,8 +1,8 @@
 import {PropsWithChildren, useEffect, useState} from "react";
 import PreferenceContext from "./PreferenceContext.ts";
 import {PreferenceEnum} from "../../../utils/constant.ts";
-import {API} from "../../../api";
-import {PreferenceModel} from "../../../api/preference.ts";
+import {API} from "../../../package/api";
+import {PreferenceModel} from "../../../package/api/preference.ts";
 
 const PreferenceProvider = (props: PropsWithChildren<{}>) => {
     const [preferences, setPreferences] = useState<Record<PreferenceEnum, PreferenceModel>>({} as Record<PreferenceEnum, PreferenceModel>);

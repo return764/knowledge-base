@@ -1,6 +1,6 @@
 import { describe, it, expect, vi, beforeEach } from 'vitest';
-import { QueryBuilder } from '../query_builder';
-import { DatabaseDriver } from '../database';
+import { QueryBuilder } from '../query_builder.ts';
+import { DatabaseDriver } from '../database.ts';
 import { v4 as uuidv4 } from 'uuid';
 
 vi.mock('uuid', () => ({

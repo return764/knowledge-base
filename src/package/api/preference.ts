@@ -1,5 +1,5 @@
 import {APIAbc} from "./api.ts";
-import {PreferenceEnum} from "../utils/constant.ts";
+import {PreferenceEnum} from "../../utils/constant.ts";
 
 export type PreferenceModel = {
     id: string

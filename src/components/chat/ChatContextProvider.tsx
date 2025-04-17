@@ -1,10 +1,10 @@
 import {PropsWithChildren, useEffect, useMemo, useState} from "react";
-import {ChatHistory, ChatSettings} from "../../api/chat.ts";
+import {ChatHistory, ChatSettings} from "../../package/api/chat.ts";
 import {useQuery} from "../../hooks/useQuery.ts";
 import {ChatContext, ChatMessage, ChatStatus} from "./ChatContext.tsx";
 import {buildMessage, buildOkBlocks} from "../../utils/chat.ts";
 import {useParams} from "react-router-dom";
-import {API} from "../../api";
+import {API} from "../../package/api";
 
 
 export class ChatBlock {

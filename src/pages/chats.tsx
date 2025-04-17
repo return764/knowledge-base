@@ -2,8 +2,8 @@ import Button from "../components/basic/button/button.tsx";
 import {FaPlus} from "react-icons/fa6";
 import ChatCard from "../components/chat/ChatCard.tsx";
 import {useQuery} from "../hooks/useQuery.ts";
-import {Chat} from "../api/chat.ts";
-import {API} from "../api";
+import {Chat} from "../package/api/chat.ts";
+import {API} from "../package/api";
 
 function Chats() {
     const {data} = useQuery<Chat[]>('chat', 'queryAll')

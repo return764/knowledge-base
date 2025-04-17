@@ -1,4 +1,4 @@
-import {Chat} from "../../api/chat.ts";
+import {Chat} from "../../package/api/chat.ts";
 import {useNavigate} from "react-router-dom";
 
 type ChatCardProps = {

@@ -1,5 +1,5 @@
 import {createContext, Dispatch, SetStateAction} from "react";
-import {Chat, ChatSettings} from "../../api/chat.ts";
+import {Chat, ChatSettings} from "../../package/api/chat.ts";
 import {ChatBlock} from "./ChatContextProvider.tsx";
 
 

@@ -12,9 +12,9 @@ import {useForm} from "../components/basic/form/form.tsx";
 import {useChatHelper} from "../hooks/useChatHelper.ts";
 import toast from "react-hot-toast";
 import {WrapChatContext} from "../components/WrapChatContext.tsx";
-import {Chat, DEFAULT_CHAT_TITLE} from "../api/chat.ts";
+import {Chat, DEFAULT_CHAT_TITLE} from "../package/api/chat.ts";
 import {invoke} from "@tauri-apps/api/core";
-import {API} from "../api";
+import {API} from "../package/api";
 import AnimatedTitle from "../components/basic/animated_title.tsx";
 
 function ChatPage() {

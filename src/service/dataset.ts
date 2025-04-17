@@ -1,4 +1,4 @@
-import {API} from "../api";
+import {API} from "../package/api";
 
 export async function deleteDataset(id: string) {
     await API.dataset.delete(id)

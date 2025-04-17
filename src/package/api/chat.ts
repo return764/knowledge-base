@@ -1,5 +1,5 @@
 import {APIAbc} from "./api.ts";
-import {ChatMessage} from "../components/chat/ChatContext.tsx";
+import {ChatMessage} from "../../components/chat/ChatContext.tsx";
 import {API} from "./index.ts";
 
 export type Chat = {

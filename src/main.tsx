@@ -5,10 +5,9 @@ import Root from "./pages/root.tsx";
 import Settings from "./pages/settings.tsx";
 import BasicPageWrapper from "./pages/basic_page_wrapper.tsx";
 import routes from "./routes/routes.tsx";
-import {API} from "./api";
+import {API} from "./package/api";
 import PreferenceProvider from "./components/preference/context/PreferenceProvider";
 import {invoke} from "@tauri-apps/api/core";
-import {v4 as uuidv4} from "uuid"
 
 // 初始化 preferences
 const initPreferences = async () => {
