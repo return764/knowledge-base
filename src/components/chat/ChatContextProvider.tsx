@@ -1,10 +1,11 @@
 import {PropsWithChildren, useEffect, useMemo, useState} from "react";
-import {ChatHistory, ChatSettings} from "../../package/api/chat.ts";
+import {ChatSettings} from "../../package/api/chat.ts";
 import {useQuery} from "../../hooks/useQuery.ts";
 import {ChatContext, ChatMessage, ChatStatus} from "./ChatContext.tsx";
 import {buildMessage, buildOkBlocks} from "../../utils/chat.ts";
 import {useParams} from "react-router-dom";
 import {API} from "../../package/api";
+import {ChatHistory} from "../../package/api/chat_history.ts";
 
 
 export class ChatBlock {
@@ -21,7 +22,7 @@ export const ChatContextProvider = (props: PropsWithChildren<{chatId: string}>) 
     const {chatId} = props
     const {data: chat, mutate} = useQuery("chat", "queryById", chatId)
     const {id} = useParams()
-    const {data, isLoading, error} = useQuery<ChatHistory[]>('chat', 'queryHistoryByChatId', id, {refreshInterval: 0})
+    const {data, isLoading, error} = useQuery<ChatHistory[]>('chatHistory', 'queryByChatId', id, {refreshInterval: 0})
     const [settings, setSettings] = useState<ChatSettings>(JSON.parse(chat?.settings ?? "{}"));
     const [chatBlocks, setChatBlocks] = useState<ChatBlock[]>([]);
     const [isReady, setIsReady] = useState<boolean>(false)
@@ -70,7 +71,7 @@ export const ChatContextProvider = (props: PropsWithChildren<{chatId: string}>) 
         })
 
         if (status === "ok") {
-            API.chat.insertHistory(chat.id, message)
+            API.chatHistory.insertHistory(chat.id, message)
         }
     }
 

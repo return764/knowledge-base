@@ -7,7 +7,7 @@ export type LLMProvider = {
     api_key: string
 }
 
-export class ModelProviderAPI extends APIAbc {
+export class ModelProviderAPI extends APIAbc<LLMProvider> {
     protected tableName: string = 'model_provider';
 
     async queryByName(name: string) {

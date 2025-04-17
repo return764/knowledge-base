@@ -13,7 +13,7 @@ import {invoke} from "@tauri-apps/api/core";
 const initPreferences = async () => {
     try {
         // 检查表是否为空
-        const result = await API.preference.getCount();
+        const result = await API.preference.count();
         if (result === 0) {
             // 插入初始配置
             await API.preference.bulkInsert([{

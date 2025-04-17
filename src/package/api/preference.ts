@@ -12,19 +12,11 @@ export type PreferenceValue = {
     value: string
 }
 
-export class PreferenceAPI extends APIAbc {
+export class PreferenceAPI extends APIAbc<PreferenceModel> {
     protected tableName: string = 'preferences';
 
-    async getCount(): Promise<number> {
-        const result = await this.table<{count: number}>('preferences')
-            .select('COUNT(*) as count')
-            .first();
-
-        return result?.count ?? 0;
-    }
-
     async queryAllPrefs(): Promise<PreferenceModel[]> {
-        const preferences = await this.queryAll<PreferenceModel>();
+        const preferences = await this.queryAll();
 
         return preferences.map(pref => ({
             ...pref,
@@ -33,7 +25,7 @@ export class PreferenceAPI extends APIAbc {
     }
 
     async updateByKey(key: PreferenceEnum, value: any) {
-        await this.table<PreferenceModel>('preferences')
+        await this.table('preferences')
             .update({ value: { value } })
             .where('key = ?', key)
             .execute()

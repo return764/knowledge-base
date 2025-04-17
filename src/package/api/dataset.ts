@@ -37,7 +37,7 @@ export type ProgressEvent =
     };
 };
 
-export class DatasetAPI extends APIAbc {
+export class DatasetAPI extends APIAbc<Dataset> {
     protected tableName: string = 'dataset';
 
     async queryAllByKbId(kbId: string) {
@@ -45,7 +45,7 @@ export class DatasetAPI extends APIAbc {
     }
 
     async queryAllDocumentsByDatasetId(datasetId: string) {
-        return await this.table<DocumentData>('documents')
+        return await this.table('documents')
             .select([
                 'json_extract(metadata, "$.id") as id',
                 'text',
@@ -60,5 +60,12 @@ export class DatasetAPI extends APIAbc {
             .delete()
             .where('json_extract(metadata, "$.dataset_id") = ?', datasetId)
             .execute();
+    }
+
+    async updateDatasetCount(datasetId: string, count: number) {
+        await this.update({
+            id: datasetId,
+            count
+        })
     }
 }

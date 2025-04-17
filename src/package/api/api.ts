@@ -4,7 +4,7 @@ import {DatabaseDriver, defaultDriver} from "./builder/database.ts";
 type EnsureId<T> = T extends { id: infer Id } ? Partial<T> & { id: Id } : never;
 
 
-export abstract class APIAbc {
+export abstract class APIAbc<T> {
     protected db: DatabaseDriver;
     protected abstract tableName: string;
 
@@ -12,30 +12,30 @@ export abstract class APIAbc {
         this.db = db;
     }
 
-    protected table<T>(name: string): QueryBuilder<T> {
+    protected table(name: string): QueryBuilder<T> {
         return new QueryBuilder<T>(name, this.db);
     }
 
-    async queryById<T>(id: string): Promise<T | undefined> {
-        return await this.table<T>(this.tableName)
+    async queryById(id: string): Promise<T | undefined> {
+        return await this.table(this.tableName)
             .where('id = ?', id)
             .first();
     }
 
-    async queryAll<T>(): Promise<T[]> {
-        return await this.table<T>(this.tableName)
+    async queryAll(): Promise<T[]> {
+        return await this.table(this.tableName)
             .orderBy('created_at', 'DESC')
             .query();
     }
 
-    async queryBy<T>(column: string, value: string | number): Promise<T[]> {
-        return await this.table<T>(this.tableName)
+    async queryBy(column: string, value: string | number): Promise<T[]> {
+        return await this.table(this.tableName)
             .where(`${column} = ?`, value)
             .query();
     }
 
-    async queryFirstBy<T>(column: string, value: string | number): Promise<T | undefined> {
-        return await this.table<T>(this.tableName)
+    async queryFirstBy(column: string, value: string | number): Promise<T | undefined> {
+        return await this.table(this.tableName)
             .where(`${column} = ?`, value)
             .first();
     }
@@ -47,23 +47,31 @@ export abstract class APIAbc {
             .execute();
     }
 
-    async update<T>(data: EnsureId<T>) {
-        await this.table<T>(this.tableName)
+    async update(data: EnsureId<T>) {
+        await this.table(this.tableName)
             .update(data)
             .where('id = ?', data.id)
             .execute();
     }
 
-    async insert<T>(data: Partial<T>): Promise<string> {
-        return (await this.table<T>(this.tableName)
+    async insert(data: Partial<T>): Promise<string> {
+        return (await this.table(this.tableName)
             .insert(data)
             .execute())!!;
     }
 
-    async bulkInsert<T>(data: Partial<T>[])  {
+    async bulkInsert(data: Partial<T>[]) {
         if (data.length === 0) return;
-        await this.table<T>(this.tableName)
+        await this.table(this.tableName)
             .bulkInsert(data)
             .execute();
+    }
+
+    async count(): Promise<number> {
+        const countResult = await new QueryBuilder<{count: number}>(this.tableName, this.db)
+            .select("COUNT(*) as count")
+            .first()
+
+        return countResult?.count ?? 0
     }
 }

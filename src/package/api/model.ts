@@ -17,18 +17,18 @@ export type LLMModelInsert = Partial<LLMModel>
 export type ModelType = "llm" | "embedding"
 
 
-export class ModelAPI extends APIAbc {
+export class ModelAPI extends APIAbc<LLMModel> {
     protected tableName: string = 'model';
 
     async queryAllWithProvider() {
-        return await this.table<LLMModel>('model').as('m')
+        return await this.table('model').as('m')
             .select(['m.*', 'mp.name as provider', 'mp.url', 'mp.api_key'])
             .leftJoin('model_provider', 'm.provider_id = mp.id', 'mp')
             .query();
     }
 
     async activeModel(id: string, active: boolean) {
-        await this.table<LLMModel>('model')
+        await this.table('model')
             .update({ active })
             .where('id = ?', id)
             .execute();

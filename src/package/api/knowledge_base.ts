@@ -8,6 +8,6 @@ export type KnowledgeBase = {
     created_at: Date
 }
 
-export class KnowledgeBaseAPI extends APIAbc {
+export class KnowledgeBaseAPI extends APIAbc<KnowledgeBase> {
     protected tableName: string = 'knowledge_base';
 }
