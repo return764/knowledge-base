@@ -25,26 +25,34 @@ export const queryAllModels = async (url: string, key: string): Promise<OpenAIMo
     return (await response.json())["data"];
 }
 
-export const saveAndUpdateModels = async (models: OpenAIModel[], providerId: string) => {
-    // 获取所有已存在的模型
-    const existingModels = await API.model.queryAll<LLMModel>()
-    const insertedModels: LLMModelInsert[] = []
+// export const saveAndUpdateModels = async (models: OpenAIModel[], providerId: string) => {
+//     // 获取所有已存在的模型
+//     const existingModels = await API.model.queryAll<LLMModel>()
+//     const insertedModels: LLMModelInsert[] = []
+//
+//     // 处理每个模型
+//     for (const model of models) {
+//         // 检查模型是否已存在
+//         const existingModel = existingModels.find(m => m.name === model.id);
+//         if (!existingModel) {
+//             insertedModels.push({
+//                 name: model.id,
+//                 type: getModelType(model.id),
+//                 active: false,
+//                 provider_id: providerId
+//             })
+//         }
+//     }
+//     await API.model.bulkInsert(insertedModels);
+// }
 
-    // 处理每个模型
-    for (const model of models) {
-        // 检查模型是否已存在
-        const existingModel = existingModels.find(m => m.name === model.id);
-        if (!existingModel) {
-            insertedModels.push({
-                name: model.id,
-                type: getModelType(model.id),
-                active: false,
-                provider_id: providerId
-            })
-        }
-    }
-    // TODO 处理删除逻辑
-    await API.model.bulkInsert(insertedModels);
+export const saveModel = async (model: string, providerId: string) => {
+    await API.model.insert({
+        name: model,
+        type: getModelType(model),
+        active: true,
+        provider_id: providerId
+    })
 }
 
 const getModelType = (name: string) => {

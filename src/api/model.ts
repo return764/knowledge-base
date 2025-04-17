@@ -20,11 +20,10 @@ export type ModelType = "llm" | "embedding"
 export class ModelAPI extends APIAbc {
     protected tableName: string = 'model';
 
-    async queryAllByProviderName(name: string) {
+    async queryAllWithProvider() {
         return await this.table<LLMModel>('model').as('m')
             .select(['m.*', 'mp.name as provider', 'mp.url', 'mp.api_key'])
             .leftJoin('model_provider', 'm.provider_id = mp.id', 'mp')
-            .where("mp.name = ?", name)
             .query();
     }
 
