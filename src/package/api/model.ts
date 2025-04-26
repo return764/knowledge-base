@@ -27,6 +27,14 @@ export class ModelAPI extends APIAbc<LLMModel> {
             .query();
     }
 
+    async queryByIdWithProvider(id: string) {
+        return await this.table('model').as('m')
+            .select(['m.*', 'mp.name as provider', 'mp.url', 'mp.api_key'])
+            .leftJoin('model_provider', 'm.provider_id = mp.id', 'mp')
+            .where("m.id = ?", id)
+            .first();
+    }
+
     async activeModel(id: string, active: boolean) {
         await this.table('model')
             .update({ active })

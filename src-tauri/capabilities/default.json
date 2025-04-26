@@ -13,9 +13,9 @@
     "core:menu:default",
     "core:tray:default",
     "shell:allow-open",
-    "sql:allow-load",
-    "sql:default",
-    "sql:allow-execute",
+    "sqlite:allow-load",
+    "sqlite:default",
+    "sqlite:allow-execute",
     "core:window:allow-start-dragging"
   ]
 }

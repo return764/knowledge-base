@@ -9,11 +9,12 @@ import Form, {useForm} from "../components/basic/form/form.tsx";
 import FormItem from "../components/basic/form/form_item.tsx";
 import Textarea from "../components/basic/form/components/textarea.tsx";
 import Table, {Column} from "../components/basic/table/table.tsx";
-import {Channel, invoke} from "@tauri-apps/api/core";
+import {Channel} from "@tauri-apps/api/core";
 import {KnowledgeBase} from "../package/api/knowledge_base.ts";
 import {API} from "../package/api";
-import {Dataset, ProgressEvent} from "../package/api/dataset.ts";
+import {ProgressEvent} from "../package/api/dataset.ts";
 import toast from "react-hot-toast";
+import {importText} from "../package/assistant";
 
 type UploadTable = {
     name: string,
@@ -40,7 +41,7 @@ function KnowledgeBaseImport() {
 
     const handleComplete = async () => {
         const onEvent = new Channel<ProgressEvent>()
-        const datasetId = await API.dataset.insert<Dataset>({name: form.getFieldValue("name"), kb_id: knowledgeBase.id})
+        const datasetId = await API.dataset.insert({name: form.getFieldValue("name"), kb_id: knowledgeBase.id})
 
         onEvent.onmessage = (message: ProgressEvent) => {
             if (message.event === 'started') {
@@ -51,7 +52,7 @@ function KnowledgeBaseImport() {
         }
 
         try {
-            await invoke('import_text', {datasetId, kbId: knowledgeBase.id, text: form.getFieldValue("value"), onEvent: onEvent})
+            await importText(form.getFieldValue("value"), knowledgeBase.id, datasetId)
         } catch (e) {
             toast.error("导入失败")
             await API.dataset.delete(datasetId)

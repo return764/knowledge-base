@@ -15,11 +15,11 @@ use langchain_rust::vectorstore::VectorStore;
 use langchain_rust::{fmt_template, message_formatter, prompt_args, template_fstring};
 use serde_json::json;
 use std::collections::HashMap;
-use std::fmt::Debug;
 use tauri::ipc::Channel;
 use tauri::State;
 use uuid::Uuid;
 use crate::llm::prompt::CHAT_TITLE_PROMPT;
+
 
 #[tauri::command]
 pub async fn init_vec_db(state: State<'_, SqlPoolContext>) -> Result<(), ()> {
@@ -112,73 +112,3 @@ pub async fn send_chat_message(state: State<'_, SqlPoolContext>,
 pub fn uuid() -> String {
     Uuid::new_v4().to_string()
 }
-
-#[tauri::command]
-pub async fn import_text(state: State<'_, SqlPoolContext>,
-                         _app: tauri::AppHandle,
-                         text: String,
-                         kb_id: String,
-                         dataset_id: String,
-                         on_event: Channel<ProgressEvent>) -> Result<(), String> {
-    // 这个方法应该有输入数据集的名称，大文本
-    // 创建数据集
-    // 对大文本进行分词，512个字符为一个单元，分批进入embed模型进行训练
-    // 将训练之后的vec保存到数据库中，其中包括文本/文件，数据集的id，向量，
-    let kb = chat::get_knowledge_base(&state.pool, &kb_id).await;
-
-    let text_loader = TextLoader::new(&text);
-    let splitter = TokenSplitter::new(SplitterOptions::default());
-    let mut doc_stream = text_loader.load_and_split(splitter).await.unwrap();
-    let mut documents: Vec<Document> = vec![];
-    while let Some(doc) = doc_stream.next().await {
-        match doc {
-            Ok(value) => {
-                documents.push(value);
-            },
-            Err(e) => {
-                println!("Error when split documents: {:?}", e)
-            },
-        }
-    }
-
-    let count = documents.len();
-
-    sqlx::query(&format!("UPDATE dataset SET count = {count} WHERE id = '{dataset_id}'"))
-        .execute(&state.pool)
-        .await.map_err(|e| e.to_string())?;
-
-    on_event.send(ProgressEvent::Started {
-        progress_id: 1,
-        content_length: count,
-    }).unwrap();
-
-    let final_docs: Vec<Document> = documents.iter().map(|item| {
-        return item.clone().with_metadata(HashMap::from([
-            ("kb_id".to_string(), json!(kb_id)),
-            ("dataset_id".to_string(), json!(dataset_id)),
-            ("id".to_string(), json!(uuid())),
-        ]));
-    }).collect();
-
-    let model = model::get_model(&state.pool, &kb.embedding_model_id.unwrap()).await;
-
-    let embedder = model::build_embedding_model(model.unwrap());
-
-    let store = StoreBuilder::new()
-        .embedder(embedder)
-        .connection_url(&state.db_path)
-        .vector_dimensions(768)
-        .build()
-        .await.unwrap();
-
-    store
-        .add_documents(&final_docs, &SqliteOptions::default())
-        .await.map_err(|e| e.to_string())?;
-
-    on_event.send(ProgressEvent::Finished {
-        progress_id: 1,
-    }).unwrap();
-
-    Ok(())
-}
-

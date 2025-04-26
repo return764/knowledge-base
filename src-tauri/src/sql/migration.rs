@@ -1,4 +1,4 @@
-use tauri_plugin_sql::{Migration, MigrationKind};
+use tauri_plugin_sqlite::{Migration, MigrationKind};
 
 pub fn init() -> Vec<Migration> {
     vec![

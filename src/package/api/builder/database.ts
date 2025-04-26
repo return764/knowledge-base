@@ -1,4 +1,4 @@
-import Database from '@tauri-apps/plugin-sql';
+import Database from "tauri-plugin-sqlite-api";
 
 export interface DatabaseDriver {
     select<T>(sql: string, bindValues?: unknown[]): Promise<T[]>;
@@ -17,7 +17,10 @@ export class SqliteDriver implements DatabaseDriver {
         if (this.conn) {
             return this.conn;
         }
-        this.conn = await Database.load(`sqlite:${this.dbPath}`);
+        this.conn = await Database.load({
+            db_url: `sqlite:${this.dbPath}`,
+            extensions: ["vec0"]
+        });
         return this.conn;
     }
 

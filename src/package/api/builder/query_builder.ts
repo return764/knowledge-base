@@ -77,9 +77,9 @@ export class QueryBuilder<T> {
         return this;
     }
 
-    insert(data: Partial<T>): QueryBuilder<T> {
+    insert(data: Partial<T>, opt?: {ignoreId: boolean}): QueryBuilder<T> {
         this.operationType = "INSERT"
-        if (!('id' in data)) {
+        if (!('id' in data) && !opt?.ignoreId) {
             data = {
                 id: uuidv4(),
                 ...data,
@@ -92,11 +92,11 @@ export class QueryBuilder<T> {
         return this;
     }
 
-    bulkInsert(data: Partial<T>[]): QueryBuilder<T> {
+    bulkInsert(data: Partial<T>[], opt?: {ignoreId: boolean}): QueryBuilder<T> {
         if (data.length === 0) return this;
         this.operationType = "INSERT"
-        this.insertColumns = ["id", ...Object.keys(data[0])];
-        this.insertValues = data.map(item => [uuidv4(), ...Object.values(item)]);
+        this.insertColumns = opt?.ignoreId ? [...Object.keys(data[0])] : ["id", ...Object.keys(data[0])];
+        this.insertValues = data.map(item => opt?.ignoreId ? [...Object.values(item)] : [uuidv4(), ...Object.values(item)]);
         return this;
     }
 
