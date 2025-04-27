@@ -23,7 +23,7 @@ type VecResult = {
     distance: number
 }
 
-class SqliteFilter {
+export class SqliteFilter {
     private type: string;
     private key?: string;
     private value?: string | string[];
@@ -79,7 +79,7 @@ class SqliteFilter {
 }
 
 export class SqliteVecStore extends VectorStore {
-    FilterType = SqliteFilter
+    declare FilterType: SqliteFilter
     tableName: string = 'documents'
     pool: DatabaseDriver
     dimensions: number

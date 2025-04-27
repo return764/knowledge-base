@@ -4,11 +4,12 @@ import {Channel, invoke} from "@tauri-apps/api/core";
 import {buildAiMessage, buildHumanMessage, combineMessage} from "../utils/chat.ts";
 import { ChatSettings } from "../package/api/chat.ts";
 import { API } from "../package/api";
+import {sendChatMessage} from "../package/assistant";
 
-type StreamMessageResponse =
-    | { event: "appendMessage", data: { content: string } }
-    | { event: "error", data: { message: string } }
-    | { event: "done" }
+// type StreamMessageResponse =
+//     | { event: "appendMessage", data: { content: string } }
+//     | { event: "error", data: { message: string } }
+//     | { event: "done" }
 
 // type MessageStatus = StreamMessageResponse["event"]
 
@@ -19,30 +20,31 @@ export const useChatHelper = () => {
         const message = buildHumanMessage(content)
         updateChatMessage(message, "ok")
 
-        const onEvent = new Channel<StreamMessageResponse>()
-        onEvent.onmessage = handleMessage()
-        await invoke("send_chat_message", {message, onEvent, chatId: chat!!.id})
+        // const onEvent = new Channel<StreamMessageResponse>()
+        // onEvent.onmessage = handleMessage()
+        //await invoke("send_chat_message", {message, onEvent, chatId: chat!!.id})
+        await sendChatMessage(updateChatMessage, chat!!.id, message)
     }
 
-    const handleMessage = () => {
-        let msg = buildAiMessage("")
-        updateChatMessage(msg, "processing")
-        return (message: StreamMessageResponse) => {
-            switch (message.event) {
-                case "appendMessage":
-                    combineMessage(msg, message.data.content)
-                    updateChatMessage(msg, "processing")
-                    break
-                case "error":
-                    updateChatMessage(msg, "failed")
-                    break
-                case "done":
-                    updateChatMessage(msg, "ok")
-                    break
-            }
-
-        }
-    }
+    // const handleMessage = () => {
+    //     let msg = buildAiMessage("")
+    //     updateChatMessage(msg, "processing")
+    //     return (message: StreamMessageResponse) => {
+    //         switch (message.event) {
+    //             case "appendMessage":
+    //                 combineMessage(msg, message.data.content)
+    //                 updateChatMessage(msg, "processing")
+    //                 break
+    //             case "error":
+    //                 updateChatMessage(msg, "failed")
+    //                 break
+    //             case "done":
+    //                 updateChatMessage(msg, "ok")
+    //                 break
+    //         }
+    //
+    //     }
+    // }
 
     const updateSettings = async (settings: ChatSettings) => {
         await API.chat.saveSettings(chat?.id!!, settings)

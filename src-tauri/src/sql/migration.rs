@@ -64,9 +64,9 @@ pub fn init() -> Vec<Migration> {
             kind: MigrationKind::Up,
         },
         Migration {
-          version: 6,
-          description: "create_model_table",
-          sql: "CREATE TABLE model (\
+            version: 6,
+            description: "create_model_table",
+            sql: "CREATE TABLE model (\
               id TEXT PRIMARY KEY,\
               name TEXT NOT NULL,\
               provider_id TEXT NOT NULL,\
@@ -74,8 +74,8 @@ pub fn init() -> Vec<Migration> {
               active INTEGER CHECK(active IN (0, 1)) DEFAULT 0,\
               created_at DATETIME DEFAULT current_timestamp\
             );",
-          kind: MigrationKind::Up,
-      },
+            kind: MigrationKind::Up,
+        },
         Migration {
             version: 7,
             description: "create_model_provider_table",
@@ -87,6 +87,6 @@ pub fn init() -> Vec<Migration> {
               created_at DATETIME DEFAULT current_timestamp\
             );",
             kind: MigrationKind::Up,
-        }
+        },
     ]
 }

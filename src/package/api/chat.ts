@@ -23,6 +23,12 @@ export class ChatAPI extends APIAbc<Chat> {
         await this.update({ id, settings: JSON.stringify(settings) })
     }
 
+    // TODO optimize extract settings to other table
+    async getSettings(id: string) {
+        const chat = await this.queryById(id)
+        return JSON.parse(chat?.settings!!) as ChatSettings
+    }
+
     async newChat() {
         const models = await API.model.queryAllActiveModel();
         const defaultModel = models.find(it => it.type === "llm");

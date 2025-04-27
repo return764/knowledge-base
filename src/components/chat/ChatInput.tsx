@@ -31,12 +31,12 @@ function ChatInput(props: ChatInputProps) {
 
     return (
         <div className={`${props.className} min-h-32 rounded shadow p-2`}>
-            <Textarea 
-                placeholder="输入问题" 
-                value={text} 
-                onChange={handleChange} 
+            <Textarea
+                placeholder="输入问题"
+                value={text}
+                onChange={handleChange}
                 onKeyDown={handleKeyDown}
-                className="outline-none h-24 w-full" 
+                className="outline-none h-24 w-full"
                 resize={false}
             />
             <div className="flex justify-end">

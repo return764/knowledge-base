@@ -29,7 +29,7 @@ function KnowledgeBasePage() {
 
 
     const handleSubmitNewKB = async () => {
-        await API.knowledgeBase.insert<KnowledgeBase>({
+        await API.knowledgeBase.insert({
             name: form.getFieldValue("name"),
             embedding_model_id: form.getFieldValue('embedding_model_id')
         })

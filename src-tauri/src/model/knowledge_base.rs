@@ -7,4 +7,4 @@ pub struct KnowledgeBase {
     pub name: String,
     pub description: Option<String>,
     pub embedding_model_id: Option<String>,
-} 
+}

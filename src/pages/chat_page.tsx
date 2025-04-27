@@ -41,7 +41,7 @@ function ChatPage() {
         if (messages.length >= 2 && chat?.name === DEFAULT_CHAT_TITLE) {
             invoke("generate_chat_title", {messages , chatId: chat.id})
                 .then(res => {
-                    API.chat.update<Chat>({
+                    API.chat.update({
                         id: chat.id,
                         name: res as string
                     })

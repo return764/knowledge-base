@@ -5,7 +5,7 @@ use sqlx::{Database, Decode, FromRow, Sqlite, Type};
 #[derive(Clone, FromRow, Deserialize, Serialize, Debug)]
 pub struct ChatMessage {
     pub content: String,
-    role: MessageType
+    role: MessageType,
 }
 
 impl From<&ChatMessage> for Message {
@@ -30,8 +30,12 @@ impl Type<Sqlite> for MessageType {
 }
 
 impl<'r, DB: Database> Decode<'r, DB> for MessageType
-where &'r str: Decode<'r, DB> {
-    fn decode(value: <DB as Database>::ValueRef<'r>) -> Result<MessageType, sqlx::error::BoxDynError> {
+where
+    &'r str: Decode<'r, DB>,
+{
+    fn decode(
+        value: <DB as Database>::ValueRef<'r>,
+    ) -> Result<MessageType, sqlx::error::BoxDynError> {
         let value = <&str as Decode<DB>>::decode(value)?;
         match value {
             "system" => Ok(MessageType(RawMessageType::SystemMessage)),
@@ -54,7 +58,7 @@ pub struct Chat {
     id: String,
     name: String,
     prompts: String,
-    pub settings: ChatSettings
+    pub settings: ChatSettings,
 }
 
 #[derive(Clone, Deserialize, FromRow, Debug)]
@@ -67,7 +71,7 @@ impl Default for ChatSettings {
     fn default() -> Self {
         Self {
             knowledge_base: Some(Vec::new()),
-            chat_model: Some(String::new())
+            chat_model: Some(String::new()),
         }
     }
 }
@@ -79,8 +83,12 @@ impl Type<Sqlite> for ChatSettings {
 }
 
 impl<'r, DB: Database> Decode<'r, DB> for ChatSettings
-where &'r str: Decode<'r, DB> {
-    fn decode(value: <DB as Database>::ValueRef<'r>) -> Result<ChatSettings, sqlx::error::BoxDynError> {
+where
+    &'r str: Decode<'r, DB>,
+{
+    fn decode(
+        value: <DB as Database>::ValueRef<'r>,
+    ) -> Result<ChatSettings, sqlx::error::BoxDynError> {
         let value = <&str as Decode<DB>>::decode(value)?;
         if value.len() == 0 {
             return Ok(ChatSettings::default());

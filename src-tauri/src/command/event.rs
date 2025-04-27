@@ -14,22 +14,16 @@ pub enum ProgressEvent {
     //     chunk_length: usize,
     // },
     #[serde(rename_all = "camelCase")]
-    Finished {
-        progress_id: usize,
-    },
+    Finished { progress_id: usize },
 }
 
 #[derive(Clone, Serialize)]
 #[serde(rename_all = "camelCase", tag = "event", content = "data")]
 pub enum StreamMessageResponse {
     #[serde(rename_all = "camelCase")]
-    AppendMessage {
-        content: String,
-    },
+    AppendMessage { content: String },
     #[serde(rename_all = "camelCase")]
-    Error {
-        message: String,
-    },
+    Error { message: String },
     #[serde(rename_all = "camelCase")]
     Done,
 }

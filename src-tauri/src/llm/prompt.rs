@@ -1,4 +1,3 @@
-
 pub const CHAT_PROMPT: &str = "
                     # Role
                     你是有严格知识边界的内容助手

@@ -1,14 +1,14 @@
-mod sql;
 mod command;
 mod llm;
-mod states;
 mod model;
 mod service;
+mod sql;
+mod states;
 
-use tokio::runtime::Runtime;
-use tauri::{Manager, WebviewUrl, WebviewWindowBuilder};
-use command::commands::{uuid, send_chat_message, init_vec_db, generate_chat_title};
+use command::commands::{generate_chat_title, init_vec_db, send_chat_message, uuid};
 use states::SqlPoolContext;
+use tauri::{Manager, WebviewUrl, WebviewWindowBuilder};
+use tokio::runtime::Runtime;
 
 #[cfg_attr(mobile, tauri::mobile_entry_point)]
 pub fn run() {
@@ -28,22 +28,35 @@ pub fn run() {
     //     }
     // }
 
-
     tauri::Builder::default()
+        .plugin(tauri_plugin_http::init())
         .plugin(tauri_plugin_shell::init())
-        .invoke_handler(tauri::generate_handler![uuid, send_chat_message, init_vec_db, generate_chat_title])
-        .plugin(tauri_plugin_sqlite::Builder::default().add_migrations("sqlite:knowledge_keeper.db", sql::migration::init()).build())
+        .invoke_handler(tauri::generate_handler![
+            uuid,
+            send_chat_message,
+            init_vec_db,
+            generate_chat_title
+        ])
+        .plugin(
+            tauri_plugin_sqlite::Builder::default()
+                .add_migrations("sqlite:knowledge_keeper.db", sql::migration::init())
+                .build(),
+        )
         .setup(|app| {
-            let db_path = &format!("sqlite:{}/knowledge_keeper.db", app.path().app_config_dir().unwrap().to_str().unwrap());
-            let sqlconext = Runtime::new().unwrap().block_on(SqlPoolContext::new(db_path));
+            let db_path = &format!(
+                "sqlite:{}/knowledge_keeper.db",
+                app.path().app_config_dir().unwrap().to_str().unwrap()
+            );
+            let sqlconext = Runtime::new()
+                .unwrap()
+                .block_on(SqlPoolContext::new(db_path));
             app.manage(sqlconext);
 
-            let mut win_builder =
-                WebviewWindowBuilder::new(app, "main", WebviewUrl::default())
-                    .resizable(true)
-                    .fullscreen(false)
-                    .min_inner_size(400.0, 300.0)
-                    .inner_size(800.0, 600.0);
+            let mut win_builder = WebviewWindowBuilder::new(app, "main", WebviewUrl::default())
+                .resizable(true)
+                .fullscreen(false)
+                .min_inner_size(400.0, 300.0)
+                .inner_size(800.0, 600.0);
 
             #[cfg(target_os = "macos")]
             {
@@ -70,10 +83,7 @@ pub fn run() {
                 let ns_window = window.ns_window().unwrap() as id;
                 unsafe {
                     let mut style_mask = ns_window.styleMask();
-                    style_mask.set(
-                        NSWindowStyleMask::NSFullSizeContentViewWindowMask,
-                        true,
-                    );
+                    style_mask.set(NSWindowStyleMask::NSFullSizeContentViewWindowMask, true);
                     ns_window.setStyleMask_(style_mask);
                     ns_window.setTitleVisibility_(NSWindowTitleVisibility::NSWindowTitleHidden);
                     ns_window.setTitlebarAppearsTransparent_(YES);

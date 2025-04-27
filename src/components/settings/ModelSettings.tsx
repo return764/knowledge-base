@@ -102,7 +102,7 @@ function ModelSettings() {
             const apiURL = form.getFieldValue('url')
             const apiKey = form.getFieldValue('api_key')
             const model = form.getFieldValue('model')
-            await API.modelProvider.update<LLMProvider>({
+            await API.modelProvider.update({
                 ...provider!!,
                 api_key: apiKey,
                 url: apiURL

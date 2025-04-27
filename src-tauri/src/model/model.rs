@@ -8,7 +8,7 @@ pub struct Model {
     pub name: String,
     pub r#type: String, // 使用type_因为type是Rust关键字
     pub api_key: String,
-    pub active: bool   // SQLite的INTEGER 0/1 映射到Rust的bool
+    pub active: bool, // SQLite的INTEGER 0/1 映射到Rust的bool
 }
 
 impl Model {

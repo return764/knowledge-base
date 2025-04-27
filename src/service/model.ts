@@ -1,5 +1,4 @@
 import {combineURLs} from "../utils/utils.ts";
-import {LLMModel, LLMModelInsert} from "../package/api/model.ts";
 import {API} from "../package/api";
 
 type OpenAIModel = {
