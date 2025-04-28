@@ -19,13 +19,12 @@ export const importText = async (text: string, kbId: string, datasetId: string) 
     });
 
     const texts = await splitter.splitText(text)
-    const documents = await splitter.createDocuments(texts, [
-        {
-            "kb_id": kbId,
-            "dataset_id": datasetId,
-            "id": uuidv4(),
-        }
-    ])
+    const metadata = texts.map(() => ({
+        "kb_id": kbId,
+        "dataset_id": datasetId,
+        "id": uuidv4(),
+    }))
+    const documents = await splitter.createDocuments(texts, metadata)
 
     const kb = await API.knowledgeBase.queryById(kbId);
     const model = await API.model.queryByIdWithProvider(kb!!.embedding_model_id)
@@ -67,8 +66,6 @@ export const sendChatMessage = async (updateChatMessage: (message: ChatMessage, 
         HumanMessagePromptTemplate.fromTemplate("{input}")
     ])
 
-    console.log(chatSettings)
-    console.log(message)
     let retriever = null
     if (chatSettings.knowledge_base && chatSettings.knowledge_base.length > 0) {
         const kb = await API.knowledgeBase.queryById(chatSettings.knowledge_base[0]);
@@ -80,17 +77,13 @@ export const sendChatMessage = async (updateChatMessage: (message: ChatMessage, 
                 baseURL: model?.url,
             }
         })
-        console.log(embedding)
         const store = new SqliteVecStore(embedding, {
             pool: defaultDriver
         })
         retriever = store.asRetriever({
             filter: SqliteFilter.In("kb_id", chatSettings.knowledge_base)
         });
-        console.log(await embedding.embedQuery(message.content))
     }
-
-    console.log(openAI)
 
 
     const chain = RunnableSequence.from([
@@ -102,7 +95,6 @@ export const sendChatMessage = async (updateChatMessage: (message: ChatMessage, 
         prompt,
         openAI
     ])
-    console.log(chain.toJSON())
 
     const stream = await chain.stream(message.content)
     let assistantMsg = buildAiMessage("")
