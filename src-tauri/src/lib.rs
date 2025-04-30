@@ -1,11 +1,10 @@
 mod command;
-mod llm;
 mod model;
 mod service;
 mod sql;
 mod states;
 
-use command::commands::{generate_chat_title, init_vec_db, send_chat_message, uuid};
+use command::commands::init_vec_db;
 use states::SqlPoolContext;
 use tauri::{Manager, WebviewUrl, WebviewWindowBuilder};
 use tokio::runtime::Runtime;
@@ -32,10 +31,7 @@ pub fn run() {
         .plugin(tauri_plugin_http::init())
         .plugin(tauri_plugin_shell::init())
         .invoke_handler(tauri::generate_handler![
-            uuid,
-            send_chat_message,
-            init_vec_db,
-            generate_chat_title
+            init_vec_db
         ])
         .plugin(
             tauri_plugin_sqlite::Builder::default()

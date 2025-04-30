@@ -1,7 +1,7 @@
 import {CharacterTextSplitter} from "langchain/text_splitter";
 import {v4 as uuidv4} from 'uuid';
 import {API} from "../api";
-import {OpenAI, OpenAIEmbeddings} from "@langchain/openai";
+import {ChatOpenAI, OpenAI, OpenAIEmbeddings} from "@langchain/openai";
 import {SqliteFilter, SqliteVecStore} from "./vector_store.ts";
 import {defaultDriver} from "../api/builder/database.ts";
 import {ChatMessage, ChatStatus} from "../../components/chat/ChatContext.tsx";
@@ -56,7 +56,7 @@ export const sendChatMessage = async (updateChatMessage: (message: ChatMessage, 
         throw Error("There must be at least one llm model")
     }
 
-    const openAI = new OpenAI({
+    const openAI = new ChatOpenAI({
         model: chatModel.name,
         configuration: {
             baseURL: chatModel.url,
@@ -105,8 +105,7 @@ export const sendChatMessage = async (updateChatMessage: (message: ChatMessage, 
     let assistantMsg = buildAiMessage("")
     try {
         for await (let chunk of stream) {
-            console.log(chunk)
-            combineMessage(assistantMsg, chunk)
+            combineMessage(assistantMsg, chunk.text)
             updateChatMessage(assistantMsg, "processing")
         }
     } catch (e) {
@@ -125,6 +124,7 @@ export const generateChatTitle = async (chatId: string, messages: ChatMessage[])
 
     const openAI = new OpenAI({
         model: chatModel.name,
+        maxTokens: 50,
         configuration: {
             baseURL: chatModel.url,
             apiKey: chatModel.api_key
