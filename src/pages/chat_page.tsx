@@ -16,6 +16,7 @@ import {Chat, DEFAULT_CHAT_TITLE} from "../package/api/chat.ts";
 import {invoke} from "@tauri-apps/api/core";
 import {API} from "../package/api";
 import AnimatedTitle from "../components/basic/animated_title.tsx";
+import {generateChatTitle} from "../package/assistant";
 
 function ChatPage() {
     const navigate = useNavigate()
@@ -39,8 +40,9 @@ function ChatPage() {
 
     useEffect(() => {
         if (messages.length >= 2 && chat?.name === DEFAULT_CHAT_TITLE) {
-            invoke("generate_chat_title", {messages , chatId: chat.id})
+            generateChatTitle(chat.id, messages)
                 .then(res => {
+                    console.log(res)
                     API.chat.update({
                         id: chat.id,
                         name: res as string

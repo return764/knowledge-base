@@ -1,12 +1,17 @@
-import { CharacterTextSplitter } from "langchain/text_splitter";
-import { v4 as uuidv4 } from 'uuid';
+import {CharacterTextSplitter} from "langchain/text_splitter";
+import {v4 as uuidv4} from 'uuid';
 import {API} from "../api";
 import {OpenAI, OpenAIEmbeddings} from "@langchain/openai";
 import {SqliteFilter, SqliteVecStore} from "./vector_store.ts";
 import {defaultDriver} from "../api/builder/database.ts";
 import {ChatMessage, ChatStatus} from "../../components/chat/ChatContext.tsx";
-import {ChatPromptTemplate, HumanMessagePromptTemplate, SystemMessagePromptTemplate} from "@langchain/core/prompts";
-import {CHAT_PROMPT} from "./prompt.ts";
+import {
+    ChatPromptTemplate,
+    HumanMessagePromptTemplate,
+    PromptTemplate,
+    SystemMessagePromptTemplate
+} from "@langchain/core/prompts";
+import {CHAT_PROMPT, CHAT_TITLE_PROMPT} from "./prompt.ts";
 import {RunnablePassthrough, RunnableSequence} from "@langchain/core/runnables";
 import {ChatHistory} from "../api/chat_history.ts";
 import {buildAiMessage, combineMessage} from "../../utils/chat.ts";
@@ -109,6 +114,29 @@ export const sendChatMessage = async (updateChatMessage: (message: ChatMessage, 
         updateChatMessage(assistantMsg, "failed")
     }
     updateChatMessage(assistantMsg, "ok")
+}
+
+export const generateChatTitle = async (chatId: string, messages: ChatMessage[]) => {
+    const chatSettings = await API.chat.getSettings(chatId)
+    const chatModel = await API.model.queryByIdWithProvider(chatSettings.chat_model!!)
+    if (!chatModel) {
+        throw Error("There must be at least one llm model")
+    }
+
+    const openAI = new OpenAI({
+        model: chatModel.name,
+        configuration: {
+            baseURL: chatModel.url,
+            apiKey: chatModel.api_key
+        }
+    })
+
+    const prompt = PromptTemplate.fromTemplate(CHAT_TITLE_PROMPT)
+    const chain = prompt.pipe(openAI)
+
+    return await chain.invoke({
+        input: messages
+    })
 }
 
 const formatHistoryMessage = (histories: ChatHistory[]): string => {

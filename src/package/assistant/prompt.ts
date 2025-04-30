@@ -26,6 +26,6 @@ Just provide the name, nothing else.
 Here's the conversation:
 
 \`\`\`
-{}
+{input}
 \`\`\`
 `
