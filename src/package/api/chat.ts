@@ -1,6 +1,7 @@
 import {APIAbc} from "./api.ts";
-import {ChatMessage} from "../../components/chat/ChatContext.tsx";
 import {API} from "./index.ts";
+import {ChatSettings} from "./chat_settings.ts";
+import toast from "react-hot-toast";
 
 export type Chat = {
     id: string,
@@ -10,37 +11,28 @@ export type Chat = {
     createdAt: string
 }
 
-export type ChatSettings = {
-    knowledge_base?: string[],
-    chat_model?: string,
-}
-
 export const DEFAULT_CHAT_TITLE = "未命名聊天"
 
 export class ChatAPI extends APIAbc<Chat> {
     protected tableName: string = 'chat';
-    async saveSettings(id: string, settings: ChatSettings) {
-        await this.update({ id, settings: JSON.stringify(settings) })
-    }
-
-    // TODO optimize extract settings to other table
-    async getSettings(id: string) {
-        const chat = await this.queryById(id)
-        return JSON.parse(chat?.settings!!) as ChatSettings
-    }
 
     async newChat() {
         const models = await API.model.queryAllActiveModel();
         const defaultModel = models.find(it => it.type === "llm");
 
-        const defaultSettings: ChatSettings = {
-            knowledge_base: [],
-            chat_model: defaultModel?.id
-        };
+        if (!defaultModel) {
+            toast.error("You must have one model in system")
+            return
+        }
 
-        await this.insert({
-                name: DEFAULT_CHAT_TITLE,
-                settings: JSON.stringify(defaultSettings)
-            });
+        const id = await this.insert({
+            name: DEFAULT_CHAT_TITLE
+        });
+
+        await API.chatSettings.insert({
+            id,
+            kb_ids: [],
+            chat_model_id: defaultModel?.id
+        })
     }
 }

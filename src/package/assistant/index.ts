@@ -50,8 +50,8 @@ export const importText = async (text: string, kbId: string, datasetId: string) 
 }
 
 export const sendChatMessage = async (updateChatMessage: (message: ChatMessage, status: ChatStatus) => void, chatId: string, message: ChatMessage) => {
-    const chatSettings = await API.chat.getSettings(chatId)
-    const chatModel = await API.model.queryByIdWithProvider(chatSettings.chat_model!!)
+    const chatSettings = await API.chatSettings.getSettings(chatId)
+    const chatModel = await API.model.queryByIdWithProvider(chatSettings.chat_model_id!!)
     if (!chatModel) {
         throw Error("There must be at least one llm model")
     }
@@ -72,8 +72,8 @@ export const sendChatMessage = async (updateChatMessage: (message: ChatMessage, 
     ])
 
     let retriever = null
-    if (chatSettings.knowledge_base && chatSettings.knowledge_base.length > 0) {
-        const kb = await API.knowledgeBase.queryById(chatSettings.knowledge_base[0]);
+    if (chatSettings.kb_ids && chatSettings.kb_ids.length > 0) {
+        const kb = await API.knowledgeBase.queryById(chatSettings.kb_ids[0]);
         const model = await API.model.queryByIdWithProvider(kb!!.embedding_model_id)
         const embedding = new OpenAIEmbeddings({
             model: model?.name,
@@ -86,7 +86,7 @@ export const sendChatMessage = async (updateChatMessage: (message: ChatMessage, 
             pool: defaultDriver
         })
         retriever = store.asRetriever({
-            filter: SqliteFilter.In("kb_id", chatSettings.knowledge_base)
+            filter: SqliteFilter.In("kb_id", chatSettings.kb_ids)
         });
     }
 
@@ -116,8 +116,8 @@ export const sendChatMessage = async (updateChatMessage: (message: ChatMessage, 
 }
 
 export const generateChatTitle = async (chatId: string, messages: ChatMessage[]) => {
-    const chatSettings = await API.chat.getSettings(chatId)
-    const chatModel = await API.model.queryByIdWithProvider(chatSettings.chat_model!!)
+    const chatSettings = await API.chatSettings.getSettings(chatId)
+    const chatModel = await API.model.queryByIdWithProvider(chatSettings.chat_model_id!!)
     if (!chatModel) {
         throw Error("There must be at least one llm model")
     }

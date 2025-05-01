@@ -34,7 +34,6 @@ pub fn init() -> Vec<Migration> {
                 id TEXT PRIMARY KEY,\
                 name TEXT NOT NULL,\
                 prompts TEXT,\
-                settings BLOB,\
                 created_at DATETIME DEFAULT current_timestamp\
               );",
             kind: MigrationKind::Up,
@@ -88,5 +87,16 @@ pub fn init() -> Vec<Migration> {
             );",
             kind: MigrationKind::Up,
         },
+        Migration {
+          version: 8,
+          description: "create_chat_settings_table",
+          sql: "CREATE TABLE chat_settings (\
+            id TEXT PRIMARY KEY,\
+            kb_ids TEXT NULL,\
+            chat_model_id TEXT NOT NULL,\
+            created_at DATETIME DEFAULT current_timestamp\
+          );",
+          kind: MigrationKind::Up,
+      }
     ]
 }

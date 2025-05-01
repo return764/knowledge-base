@@ -30,7 +30,10 @@ function ChatPage() {
 
     const saveSettings = async () => {
         try {
-            await updateSettings(form.getFieldValues())
+            await updateSettings({
+                id: chat?.id!!,
+                ...form.getFieldValues()
+            })
             toast.success("保存设置成功")
         } catch (e) {
             toast.error("保存设置失败")

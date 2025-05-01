@@ -8,7 +8,7 @@ import {FormInstance} from "../basic/form/interface.ts";
 import {LLMModel} from "../../package/api/model.ts";
 import Combobox from "../basic/form/components/combobox.tsx";
 import {ChatContext} from "./ChatContext.tsx";
-import {ChatSettings as ChatSettingsModel} from "../../package/api/chat.ts";
+import {ChatSettings as ChatSettingsModel} from "../../package/api/chat_settings.ts";
 
 
 function ChatSettings(props: {form: FormInstance}) {
@@ -40,12 +40,12 @@ function ChatSettings(props: {form: FormInstance}) {
     return (
         <>
             <Form form={form}>
-                <FormItem name={"knowledge_base"} label={"关联知识库"}>
+                <FormItem name={"kb_ids"} label={"关联知识库"}>
                     <Combobox
                         options={knowledgeBaseOptions}
                     />
                 </FormItem>
-                <FormItem name={"chat_model"} label={"聊天模型"}>
+                <FormItem name={"chat_model_id"} label={"聊天模型"}>
                     <Select
                         options={modelOptions}
                     />

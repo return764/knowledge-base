@@ -1,5 +1,4 @@
 import {PropsWithChildren, useEffect, useMemo, useState} from "react";
-import {ChatSettings} from "../../package/api/chat.ts";
 import {useQuery} from "../../hooks/useQuery.ts";
 import {ChatContext, ChatMessage, ChatStatus} from "./ChatContext.tsx";
 import {buildMessage, buildOkBlocks} from "../../utils/chat.ts";
@@ -21,9 +20,9 @@ export class ChatBlock {
 export const ChatContextProvider = (props: PropsWithChildren<{chatId: string}>) => {
     const {chatId} = props
     const {data: chat, mutate} = useQuery("chat", "queryById", chatId)
+    const {data: settings, mutate: mutateSettings} = useQuery("chatSettings", "getSettings", chatId)
     const {id} = useParams()
     const {data, isLoading, error} = useQuery<ChatHistory[]>('chatHistory', 'queryByChatId', id, {refreshInterval: 0})
-    const [settings, setSettings] = useState<ChatSettings>(JSON.parse(chat?.settings ?? "{}"));
     const [chatBlocks, setChatBlocks] = useState<ChatBlock[]>([]);
     const [isReady, setIsReady] = useState<boolean>(false)
 
@@ -53,8 +52,8 @@ export const ChatContextProvider = (props: PropsWithChildren<{chatId: string}>) 
         return chatBlocks.map(it => it.message)
     }, [chatBlocks])
 
-    const saveSettings = (settings: ChatSettings) => {
-        setSettings({...settings})
+    const refreshSettings = () => {
+        mutateSettings()
     }
 
     const updateChatMessage = (message: ChatMessage, status: ChatStatus = "processing") => {
@@ -82,7 +81,7 @@ export const ChatContextProvider = (props: PropsWithChildren<{chatId: string}>) 
             chatBlocks,
             updateChatMessage,
             settings,
-            saveSettings,
+            refreshSettings,
             isReady
         }}>
             {props.children}

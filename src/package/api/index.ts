@@ -5,11 +5,13 @@ import {PreferenceAPI} from "./preference.ts";
 import {ModelAPI} from "./model.ts";
 import {ModelProviderAPI} from "./model_provider.ts";
 import {ChatHistoryAPI} from "./chat_history.ts";
+import {ChatSettingsAPI} from "./chat_settings.ts";
 
 export const API = {
     'knowledgeBase': new KnowledgeBaseAPI(),
     'dataset': new DatasetAPI(),
     'chat': new ChatAPI(),
+    'chatSettings': new ChatSettingsAPI(),
     'chatHistory': new ChatHistoryAPI(),
     'preference': new PreferenceAPI(),
     'model': new ModelAPI(),
