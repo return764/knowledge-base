@@ -1,7 +1,6 @@
 import {CharacterTextSplitter} from "langchain/text_splitter";
 import {v4 as uuidv4} from 'uuid';
 import {API} from "../api";
-import {ChatOpenAI, OpenAI, OpenAIEmbeddings} from "@langchain/openai";
 import {SqliteFilter, SqliteVecStore} from "./vector_store.ts";
 import {defaultDriver} from "../api/builder/database.ts";
 import {
@@ -15,8 +14,9 @@ import {RunnablePassthrough, RunnableSequence} from "@langchain/core/runnables";
 import {ChatHistory} from "../api/chat_history.ts";
 import {buildAiMessage, combineMessage} from "../../utils/chat.ts";
 import {store} from "../../components/WrapChatContext.tsx";
-import {updateChatMessageAtom} from "../../store/chat.ts";
-import {ChatMessage, ChatStatus} from "../api/chat.ts";
+import {settingsAtom, updateChatMessageAtom} from "../../store/chat.ts";
+import {ChatMessage} from "../api/chat.ts";
+import {getProviderFromChat, getProviderFromKb} from "./provider.ts";
 
 
 export const importText = async (text: string, kbId: string, datasetId: string) => {
@@ -33,15 +33,8 @@ export const importText = async (text: string, kbId: string, datasetId: string) 
     }))
     const documents = await splitter.createDocuments(texts, metadata)
 
-    const kb = await API.knowledgeBase.queryById(kbId);
-    const model = await API.model.queryByIdWithProvider(kb!!.embedding_model_id)
-    const embedding = new OpenAIEmbeddings({
-        model: model?.name,
-        configuration: {
-            apiKey: model?.api_key,
-            baseURL: model?.url,
-        }
-    })
+    const provider = await getProviderFromKb(kbId)
+    const embedding = provider.getEmbeddingModel()
 
     const store = new SqliteVecStore(embedding, {
         pool: defaultDriver
@@ -52,19 +45,8 @@ export const importText = async (text: string, kbId: string, datasetId: string) 
 }
 
 export const sendChatMessage = async (chatId: string, message: ChatMessage) => {
-    const chatSettings = await API.chatSettings.getSettings(chatId)
-    const chatModel = await API.model.queryByIdWithProvider(chatSettings.chat_model_id!!)
-    if (!chatModel) {
-        throw Error("There must be at least one llm model")
-    }
-
-    const openAI = new ChatOpenAI({
-        model: chatModel.name,
-        configuration: {
-            baseURL: chatModel.url,
-            apiKey: chatModel.api_key
-        }
-    })
+    const provider = await getProviderFromChat(chatId)
+    const chatSettings = store.get(settingsAtom)
 
     const histories = await API.chatHistory.queryByChatId(chatId);
 
@@ -75,15 +57,7 @@ export const sendChatMessage = async (chatId: string, message: ChatMessage) => {
 
     let retriever = null
     if (chatSettings.kb_ids && chatSettings.kb_ids.length > 0) {
-        const kb = await API.knowledgeBase.queryById(chatSettings.kb_ids[0]);
-        const model = await API.model.queryByIdWithProvider(kb!!.embedding_model_id)
-        const embedding = new OpenAIEmbeddings({
-            model: model?.name,
-            configuration: {
-                apiKey: model?.api_key,
-                baseURL: model?.url,
-            }
-        })
+        const embedding = provider.getEmbeddingModel()
         const store = new SqliteVecStore(embedding, {
             pool: defaultDriver
         })
@@ -100,7 +74,7 @@ export const sendChatMessage = async (chatId: string, message: ChatMessage) => {
             "input": new RunnablePassthrough()
         },
         prompt,
-        openAI
+        provider.getChatModel()
     ])
 
     const stream = await chain.stream(message.content)
@@ -118,23 +92,11 @@ export const sendChatMessage = async (chatId: string, message: ChatMessage) => {
 }
 
 export const generateChatTitle = async (chatId: string, messages: ChatMessage[]) => {
-    const chatSettings = await API.chatSettings.getSettings(chatId)
-    const chatModel = await API.model.queryByIdWithProvider(chatSettings.chat_model_id!!)
-    if (!chatModel) {
-        throw Error("There must be at least one llm model")
-    }
-
-    const openAI = new OpenAI({
-        model: chatModel.name,
-        maxTokens: 50,
-        configuration: {
-            baseURL: chatModel.url,
-            apiKey: chatModel.api_key
-        }
-    })
+    const provider = await getProviderFromChat(chatId)
+    const model = provider.getModel()
 
     const prompt = PromptTemplate.fromTemplate(CHAT_TITLE_PROMPT)
-    const chain = prompt.pipe(openAI)
+    const chain = prompt.pipe(model)
 
     return await chain.invoke({
         input: messages
