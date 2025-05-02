@@ -3,8 +3,7 @@ import {MdOutlineArrowBackIosNew, MdOutlineSettings} from "react-icons/md";
 import {useNavigate} from "react-router-dom";
 import ChatInput from "../components/chat/ChatInput.tsx";
 import ChatPanel from "../components/chat/ChatPanel.tsx";
-import {useContext, useEffect} from "react";
-import {ChatContext} from "../components/chat/ChatContext.tsx";
+import {useEffect} from "react";
 import Modal from "../components/basic/modal/modal.tsx";
 import { useToggle } from "ahooks";
 import ChatSettings from "../components/chat/ChatSettings.tsx";
@@ -16,10 +15,13 @@ import {DEFAULT_CHAT_TITLE} from "../package/api/chat.ts";
 import {API} from "../package/api";
 import AnimatedTitle from "../components/basic/animated_title.tsx";
 import {generateChatTitle} from "../package/assistant";
+import {useAtom} from "jotai/index";
+import {chatAtom, messagesAtom} from "../store/chat.ts";
 
 function ChatPage() {
     const navigate = useNavigate()
-    const {chat, messages} = useContext(ChatContext)
+    const [messages] = useAtom(messagesAtom)
+    const [chat] = useAtom(chatAtom)
     const [visible, {toggle}] = useToggle();
     const [form] = useForm();
     const {updateSettings} = useChatHelper();

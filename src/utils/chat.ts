@@ -1,5 +1,5 @@
-import {ChatMessage, ChatRole} from "../components/chat/ChatContext.tsx";
-import {ChatBlock} from "../components/chat/ChatContextProvider.tsx";
+import {ChatMessage, ChatRole} from "../package/api/chat.ts";
+import {ChatBlock} from "../store/chat.ts";
 
 export const buildOkBlocks = (messages: ChatMessage[]): ChatBlock[] => {
     return messages.map(it => new ChatBlock(it))

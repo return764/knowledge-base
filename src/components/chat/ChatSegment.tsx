@@ -1,8 +1,7 @@
 import {RiRobot2Line, RiUser3Line} from "react-icons/ri";
 import {useMemo} from "react";
-import {ChatBlock} from "./ChatContextProvider.tsx";
 import MessageMarkdown from "./message/MessageMarkdown.tsx";
-import loadingSvg from "../../assets/loading.svg";
+import {ChatBlock} from "../../store/chat.ts";
 
 type ChatSegmentProps = {
     blockMessage: ChatBlock

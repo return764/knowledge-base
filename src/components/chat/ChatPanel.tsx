@@ -1,9 +1,11 @@
 import {ChatSegment} from "./ChatSegment.tsx";
-import {useContext, useEffect, useMemo, useRef} from "react";
-import {ChatContext} from "./ChatContext.tsx";
+import {useEffect, useMemo, useRef} from "react";
+import {useAtom} from "jotai/index";
+import {chatBlocksAtom, isReadyAtom} from "../../store/chat.ts";
 
 function ChatPanel() {
-    const {chatBlocks, isReady} = useContext(ChatContext)
+    const [chatBlocks] = useAtom(chatBlocksAtom)
+    const [isReady] = useAtom(isReadyAtom)
     const panelRef = useRef<HTMLDivElement>(null)
 
     useEffect(() => {

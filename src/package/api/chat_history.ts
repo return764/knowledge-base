@@ -1,5 +1,6 @@
 import {APIAbc} from "./api.ts";
-import {ChatMessage} from "../../components/chat/ChatContext.tsx";
+
+import {ChatMessage} from "./chat.ts";
 
 export type ChatHistory = {
     id: string

@@ -1,6 +1,5 @@
 import {APIAbc} from "./api.ts";
 import {API} from "./index.ts";
-import {ChatSettings} from "./chat_settings.ts";
 import toast from "react-hot-toast";
 
 export type Chat = {
@@ -29,10 +28,17 @@ export class ChatAPI extends APIAbc<Chat> {
             name: DEFAULT_CHAT_TITLE
         });
 
-        await API.chatSettings.insert({
+        await API.chatSettings.newSettings({
             id,
             kb_ids: [],
             chat_model_id: defaultModel?.id
         })
     }
 }
+
+export type ChatMessage = {
+    content: string,
+    role: ChatRole
+}
+export type ChatRole = 'human' | 'ai' | 'system'
+export type ChatStatus = 'processing' | 'failed' | 'ok'

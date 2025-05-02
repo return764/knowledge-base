@@ -1,4 +1,4 @@
-import {useContext, useEffect, useMemo} from "react";
+import {useEffect, useMemo} from "react";
 import { useQuery } from "../../hooks/useQuery";
 import { KnowledgeBase } from "../../package/api/knowledge_base";
 import Select from "../basic/form/components/select";
@@ -7,15 +7,16 @@ import FormItem from "../basic/form/form_item.tsx";
 import {FormInstance} from "../basic/form/interface.ts";
 import {LLMModel} from "../../package/api/model.ts";
 import Combobox from "../basic/form/components/combobox.tsx";
-import {ChatContext} from "./ChatContext.tsx";
 import {ChatSettings as ChatSettingsModel} from "../../package/api/chat_settings.ts";
+import {useAtom} from "jotai/index";
+import {settingsAtom} from "../../store/chat.ts";
 
 
 function ChatSettings(props: {form: FormInstance}) {
     const {form} = props;
     const {data: knowledgeBases} = useQuery<KnowledgeBase[]>('knowledgeBase', 'queryAll')
     const {data: activeModels} = useQuery<LLMModel[]>('model', 'queryAllActiveModel')
-    const {settings} = useContext(ChatContext)
+    const [settings] = useAtom(settingsAtom)
 
     const knowledgeBaseOptions = useMemo(() => {
         return (knowledgeBases ?? []).map((kb: KnowledgeBase) => ({

@@ -6,7 +6,7 @@ import Settings from "./pages/settings.tsx";
 import BasicPageWrapper from "./pages/basic_page_wrapper.tsx";
 import routes from "./routes/routes.tsx";
 import {API} from "./package/api";
-import PreferenceProvider from "./components/preference/context/PreferenceProvider";
+import PreferenceLoader from "./components/preference/PreferenceLoader.tsx";
 
 // 初始化 preferences
 const initPreferences = async () => {
@@ -75,8 +75,8 @@ initPreferences()
 
 ReactDOM.createRoot(document.getElementById("root") as HTMLElement).render(
     <React.StrictMode>
-        <PreferenceProvider>
+        <PreferenceLoader>
             <RouterProvider router={router} />
-        </PreferenceProvider>
+        </PreferenceLoader>
     </React.StrictMode>,
 );

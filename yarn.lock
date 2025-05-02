@@ -1287,8 +1287,10 @@
     "@tauri-apps/cli-win32-ia32-msvc" "2.2.7"
     "@tauri-apps/cli-win32-x64-msvc" "2.2.7"
 
-"@tauri-apps/plugin-http@file:./tauri-plugin-http":
+"@tauri-apps/plugin-http@^2.4.3":
   version "2.4.3"
+  resolved "https://registry.npmmirror.com/@tauri-apps/plugin-http/-/plugin-http-2.4.3.tgz#95c2c580929e3bc436ea5debd86980c7024fd05c"
+  integrity sha512-Us8X+FikzpaZRNr4kH4HLwyXascHbM42p6LxAqRTQnHPrrqp1usaH4vxWAZalPvTbHJ3gBEMJPHusFJgtjGJjA==
   dependencies:
     "@tauri-apps/api" "^2.0.0"
 
@@ -2892,6 +2894,11 @@ jiti@^1.21.0:
   version "1.21.6"
   resolved "https://registry.npmmirror.com/jiti/-/jiti-1.21.6.tgz#6c7f7398dd4b3142767f9a168af2f317a428d268"
   integrity sha512-2yTgeWTWzMWkHu6Jp9NKgePDaYHbntiwvYuuJLbbN9vl7DC9DvXKOB2BC3ZZ92D3cvV/aflH0osDfwpHepQ53w==
+
+jotai@^2.12.3:
+  version "2.12.3"
+  resolved "https://registry.npmmirror.com/jotai/-/jotai-2.12.3.tgz#517ccfd92b35a3d98b944545166ddeecd29e7784"
+  integrity sha512-DpoddSkmPGXMFtdfnoIHfueFeGP643nqYUWC6REjUcME+PG2UkAtYnLbffRDw3OURI9ZUTcRWkRGLsOvxuWMCg==
 
 js-cookie@^2.x.x:
   version "2.2.1"

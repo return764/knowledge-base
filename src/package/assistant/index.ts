@@ -4,7 +4,6 @@ import {API} from "../api";
 import {ChatOpenAI, OpenAI, OpenAIEmbeddings} from "@langchain/openai";
 import {SqliteFilter, SqliteVecStore} from "./vector_store.ts";
 import {defaultDriver} from "../api/builder/database.ts";
-import {ChatMessage, ChatStatus} from "../../components/chat/ChatContext.tsx";
 import {
     ChatPromptTemplate,
     HumanMessagePromptTemplate,
@@ -15,6 +14,9 @@ import {CHAT_PROMPT, CHAT_TITLE_PROMPT} from "./prompt.ts";
 import {RunnablePassthrough, RunnableSequence} from "@langchain/core/runnables";
 import {ChatHistory} from "../api/chat_history.ts";
 import {buildAiMessage, combineMessage} from "../../utils/chat.ts";
+import {store} from "../../components/WrapChatContext.tsx";
+import {updateChatMessageAtom} from "../../store/chat.ts";
+import {ChatMessage, ChatStatus} from "../api/chat.ts";
 
 
 export const importText = async (text: string, kbId: string, datasetId: string) => {
@@ -49,7 +51,7 @@ export const importText = async (text: string, kbId: string, datasetId: string) 
     await API.dataset.updateDatasetCount(datasetId, documents.length)
 }
 
-export const sendChatMessage = async (updateChatMessage: (message: ChatMessage, status: ChatStatus) => void, chatId: string, message: ChatMessage) => {
+export const sendChatMessage = async (chatId: string, message: ChatMessage) => {
     const chatSettings = await API.chatSettings.getSettings(chatId)
     const chatModel = await API.model.queryByIdWithProvider(chatSettings.chat_model_id!!)
     if (!chatModel) {
@@ -106,13 +108,13 @@ export const sendChatMessage = async (updateChatMessage: (message: ChatMessage, 
     try {
         for await (let chunk of stream) {
             combineMessage(assistantMsg, chunk.text)
-            updateChatMessage(assistantMsg, "processing")
+            await store.set(updateChatMessageAtom, assistantMsg, "processing")
         }
     } catch (e) {
         console.error(e)
-        updateChatMessage(assistantMsg, "failed")
+        await store.set(updateChatMessageAtom, assistantMsg, "failed")
     }
-    updateChatMessage(assistantMsg, "ok")
+    await store.set(updateChatMessageAtom, assistantMsg, "ok")
 }
 
 export const generateChatTitle = async (chatId: string, messages: ChatMessage[]) => {

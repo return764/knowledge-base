@@ -1,6 +1,7 @@
-import {useContext, useEffect, useState} from "react";
+import {useEffect, useState} from "react";
 import {PreferenceEnum} from "../utils/constant.ts";
-import PreferenceContext from "../components/preference/context/PreferenceContext.ts";
+import {useAtom, useSetAtom} from "jotai/index";
+import {getPrefValueAtom, updatePrefsAtom} from "../store/preference.ts";
 
 type PreferenceData = {
     value: string
@@ -8,10 +9,11 @@ type PreferenceData = {
 }
 
 export const usePreference = (key: PreferenceEnum): PreferenceData => {
-    const {getPrefValue, updatePrefs} = useContext(PreferenceContext);
-    const [localValue, setLocalValue] = useState('');
+    const [localValue, setLocalValue] = useState('')
+    const updatePrefs = useSetAtom(updatePrefsAtom)
+    const [getPrefValue] = useAtom(getPrefValueAtom)
 
-    // 同步 context 中的值到本地状态
+    // TODO 同步 jotai 中的值到本地状态
     useEffect(() => {
         const value = getPrefValue(key);
         setLocalValue(value || '');

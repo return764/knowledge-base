@@ -16,6 +16,13 @@ export type ChatSettingsEntity = {
 export class ChatSettingsAPI extends APIAbc<ChatSettingsEntity> {
     protected tableName: string = 'chat_settings';
 
+    async newSettings(settings: ChatSettings) {
+        await this.insert({
+            ...settings,
+            kb_ids: JSON.stringify(settings.kb_ids)
+        })
+    }
+
     async saveSettings(settings: ChatSettings) {
         await this.update({
             ...settings,
