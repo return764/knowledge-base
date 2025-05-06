@@ -42,31 +42,21 @@ const FormStore = (): FormInstance => {
     }
 
     const validate = () => {
-        const err: FormError[] = []
+        const errors: FormError[] = []
         formItems.forEach(item => {
-            const {name, rules} = item.props
-            if (rules && rules.length > 0) {
-                rules.forEach((rule: Rule) => {
-                    const value = getFieldValue(name)
-                    if (isRequiredRule(rule) && rule.required) {
-                        value == null && err.push({
-                            name,
-                            value,
-                            errMessage: rule.message ?? `${name} is required!`
-                        })
-                    }
-                    if (isFunctionRule(rule)) {
-                        err.push({
-                            name,
-                            value,
-                            errMessage: rule(value)
-                        })
-                    }
+            // @ts-ignore
+            const isValid = item.validate()
+            if (!isValid) {
+                const {name} = item.props
+                const value = getFieldValue(name)
+                errors.push({
+                    name,
+                    value,
+                    errMessage: "Validation failed"
                 })
             }
         })
-
-        return err
+        return errors
     }
 
     const registeredItemNames = () => {

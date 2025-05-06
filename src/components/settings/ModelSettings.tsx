@@ -1,7 +1,7 @@
 import {useEffect, useState} from "react";
 import Button from "../basic/button/button.tsx";
 import Table, {Column} from "../basic/table/table.tsx";
-import {queryAllModels, saveModel} from "../../service/model.ts";
+import {saveModel} from "../../service/model.ts";
 import toast from "react-hot-toast";
 import {useQuery} from "../../hooks/useQuery.ts";
 import Switch from "../basic/form/components/switch.tsx";
@@ -15,6 +15,7 @@ import Modal from "../basic/modal/modal.tsx";
 import Select from "../basic/form/components/select.tsx";
 
 import {LLMProviderConfig} from "../../package/assistant/platform/config.ts";
+import {getProviderAPI} from "../../package/assistant/platform";
 
 type SegmentProps = {
     title?: string;
@@ -57,13 +58,18 @@ function ModelSettings() {
 
     const handleLoadModelOptions = async () => {
         try {
-            const apiURL = form.getFieldValue('url')
+            const url = form.getFieldValue('url')
             const apiKey = form.getFieldValue('api_key')
-            const models = await queryAllModels(apiURL, apiKey)
+            const mergedProvider: LLMProvider = {
+                ...provider!!,
+                api_key: apiKey,
+                url
+            }
+            const modelList = await getProviderAPI(mergedProvider).listModels()
 
-            return models.map(it => ({
-                label: it.id,
-                value: it.id
+            return modelList.map(it => ({
+                label: it,
+                value: it
             }))
 
         } catch (e) {
@@ -73,7 +79,8 @@ function ModelSettings() {
     }
 
     const handleSaveModel = async () => {
-        try {
+        const errors = form.validate()
+        if (errors.length === 0) {
             const apiURL = form.getFieldValue('url')
             const apiKey = form.getFieldValue('api_key')
             const model = form.getFieldValue('model')
@@ -84,9 +91,8 @@ function ModelSettings() {
             })
             await saveModel(model, provider!!.id)
             toast.success("保存model成功")
-        } catch (e) {
-            console.error(e)
-            toast.error("保存model失败")
+        } else {
+            throw new Error("表单验证失败")
         }
     }
 
@@ -146,13 +152,21 @@ function ModelSettings() {
                 <Select options={LLMProviderConfig.getProviderOptions()} onChange={setSelectedType} value={selectedType}></Select>
                 <Segment>
                     <Form form={form}>
-                        <FormItem name="url" label="API URL">
+                        <FormItem name="url" label="API URL"
+                            rules={[
+                            { required: true, message: '请输入Provider的URL' }
+                            ]}
+                        >
                             <Input placeholder="https://api.openai.com/v1"/>
                         </FormItem>
                         <FormItem name="api_key" label="API Key">
                             <Input type="password" placeholder="sk-..."/>
                         </FormItem>
-                        <FormItem name="model" label="Model">
+                        <FormItem name="model" label="Model"
+                            rules={[
+                                { required: true, message: '请选择一个模型' }
+                              ]}
+                        >
                             <Select
                                 defaultFirst={false}
                                 onLoadOptions={handleLoadModelOptions}

@@ -1,31 +1,6 @@
 import {API} from "../package/api";
 import {LLMModel} from "../package/api/model.ts";
 
-type OpenAIModel = {
-    id: string,
-    object: string,
-    created: Date,
-    owned_by: string
-}
-
-// TODO 考虑迁移到每个provider都提供一个
-export const queryAllModels = async (url: string, key: string): Promise<OpenAIModel[]> => {
-    console.log(new URL('/v1/models', url).toString())
-    const response = await fetch(new URL('/v1/models', url).toString(), {
-        method: 'GET',
-        headers: {
-            'Authorization': `Bearer ${key}`
-        }
-    });
-
-    if (!response.ok) {
-        console.warn(`请求失败: ${response.status}`)
-        throw new Error("request models error")
-    }
-
-    return (await response.json())["data"];
-}
-
 export const getEmbeddingModelFromKbBind = async (kbId: string): Promise<LLMModel> => {
     const kb = await API.knowledgeBase.queryById(kbId);
     const model = await API.model.queryByIdWithProvider(kb!!.embedding_model_id)

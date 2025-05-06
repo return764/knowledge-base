@@ -17,7 +17,7 @@ const isLLMModel = (obj: any): obj is LLMModel => {
     );
 };
 
-export const getProviderAPI = async (providerName: string) => {
+export const getProviderAPIByProviderName = async (providerName: string) => {
     const provider = await API.modelProvider.queryByName(providerName)
     if (!provider) {
         throw Error("This Provider is not valid")
@@ -26,7 +26,7 @@ export const getProviderAPI = async (providerName: string) => {
     return distributeClient(provider)
 }
 
-export const getProviderAPIModel = async (model: LLMModel) => {
+export const getProviderAPI = (model: LLMModel | LLMProvider) => {
     return distributeClient(model)
 }
 

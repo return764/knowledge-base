@@ -4,6 +4,7 @@ import {Embeddings} from "@langchain/core/embeddings";
 import {LLMModel} from "../../api/model.ts";
 import {LLMProvider} from "../../api/model_provider.ts";
 import {ChatOpenAI, OpenAI, OpenAIEmbeddings} from "@langchain/openai";
+import {combineURLs} from "../../../utils/utils.ts";
 
 type ProviderAPIOptions =
     | { model: LLMModel; provider?: LLMProvider }
@@ -52,6 +53,8 @@ export abstract class LLMProviderAPI {
         return this._getEmbeddingModel(options)
     }
 
+    abstract listModels(): Promise<string[]>
+
     abstract _getModel(options?: ModelOptions): BaseLLM
 
     abstract _getChatModel(options?: ModelOptions): BaseChatModel
@@ -59,7 +62,36 @@ export abstract class LLMProviderAPI {
     abstract _getEmbeddingModel(options?: ModelOptions): Embeddings
 }
 
+export type OpenAIListModelResponse = {
+    object: string;
+    data: Array<{
+        id: string;
+        object: string;
+        owned_by: string;
+        created: number;
+    }>;
+}
+
 export class DefaultOpenAiProviderAPI extends LLMProviderAPI {
+    async listModels(): Promise<string[]> {
+        if (!this.baseUrl) {
+            return []
+        }
+        const response = await fetch(combineURLs(this.baseUrl, 'models'), {
+            method: 'GET',
+            headers: {
+                'Authorization': `Bearer ${this.apiKey}`
+            }
+        });
+
+        if (!response.ok) {
+            console.warn(`请求失败: ${response.status}`)
+            throw new Error("request models error")
+        }
+
+        return ((await response.json()) as OpenAIListModelResponse).data.map(it => it.id)
+    }
+
     _getModel(options?: ModelOptions): BaseLLM {
         this.validateOptions()
         return new OpenAI({

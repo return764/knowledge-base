@@ -9,11 +9,18 @@ interface FormItemProps {
     children: React.ReactNode
 }
 
-class FormItem extends React.PureComponent<FormItemProps> {
+interface FormItemState {
+    error: string | null
+}
 
+class FormItem extends React.PureComponent<FormItemProps, FormItemState> {
     declare context: React.ContextType<typeof FormContext>
     static contextType = FormContext
     private cancelRegistrar: Function = () => {
+    }
+
+    state: FormItemState = {
+        error: null
     }
 
     componentDidMount() {
@@ -23,6 +30,32 @@ class FormItem extends React.PureComponent<FormItemProps> {
 
     componentWillUnmount() {
         this.cancelRegistrar()
+    }
+
+    validate = () => {
+        const {rules, name} = this.props
+        const {form} = this.context
+        const value = form.getFieldValue(name)
+        let error: string | null = null
+
+        if (rules && rules.length > 0) {
+            for (const rule of rules) {
+                if (isRequiredRule(rule) && rule.required && !value) {
+                    error = rule.message || `${name} is required!`
+                    break
+                }
+                if (typeof rule === 'function') {
+                    const result = rule(value)
+                    if (result) {
+                        error = result
+                        break
+                    }
+                }
+            }
+        }
+
+        this.setState({error})
+        return !error
     }
 
     cloneProps() {
@@ -40,6 +73,7 @@ class FormItem extends React.PureComponent<FormItemProps> {
             value: value,
             onChange: (text: any) => {
                 form.setFieldValue(name, text)
+                this.validate()
             }
         }
     }
@@ -57,8 +91,14 @@ class FormItem extends React.PureComponent<FormItemProps> {
         return (
             <div>
                 <label className="block mb-2 text-sm font-light leading-normal text-color"
-                       htmlFor={this.props.name}>{label ?? this.props.name}</label>
+                       htmlFor={this.props.name}>
+                    {label ?? this.props.name}
+                    {required && <span className="text-red-500 ml-1">*</span>}
+                </label>
                 {React.cloneElement(child as ReactElement, this.cloneProps())}
+                {this.state.error && (
+                    <div className="text-red-500/75 text-[10px] mt-1 ml-2">{this.state.error}</div>
+                )}
             </div>
         );
     }

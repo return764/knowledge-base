@@ -9,7 +9,7 @@ import clsx from "clsx";
 type ModalProps = {
     open: boolean,
     onClose: () => void,
-    onConfirm?: () => void,
+    onConfirm?: () => Promise<void> | void,
     size?: "small" | "middle" | "large"
     title?: string,
 }
@@ -29,6 +29,20 @@ function Modal(props: PropsWithChildren<ModalProps>) {
                 return "min-h-[36rem] max-h-[48rem] w-[48rem]"
         }
     }, [size])
+
+    const handleConfirm = async () => {
+        if (props.onConfirm) {
+            try {
+                await props.onConfirm()
+                setVisible(false)
+            } catch (e) {
+                // 如果onConfirm抛出错误，不关闭modal
+                console.error(e)
+            }
+        } else {
+            setVisible(false)
+        }
+    }
 
     return (
         <>
@@ -58,13 +72,10 @@ function Modal(props: PropsWithChildren<ModalProps>) {
                                     {props.children}
                                 </div>
                                 <div className="flex justify-end p-2 gap-2">
-                                    <Button  onClick={() => {
+                                    <Button onClick={() => {
                                         setVisible(false)
                                     }} type={"light"}>关闭</Button>
-                                    <Button onClick={() => {
-                                        props.onConfirm?.()
-                                        setVisible(false)
-                                    }}>确认</Button>
+                                    <Button onClick={handleConfirm}>确认</Button>
                                 </div>
                             </div>
                         </div>
