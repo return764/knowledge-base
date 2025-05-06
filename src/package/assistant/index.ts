@@ -16,7 +16,8 @@ import {buildAiMessage, combineMessage} from "../../utils/chat.ts";
 import {store} from "../../components/WrapChatContext.tsx";
 import {settingsAtom, updateChatMessageAtom} from "../../store/chat.ts";
 import {ChatMessage} from "../api/chat.ts";
-import {getProviderFromChat, getProviderFromKb} from "./provider.ts";
+import {getEmbeddingModelFromKbBind, getModelFromChatBind} from "../../service/model.ts";
+import {getProviderAPIModel} from "./platform";
 
 
 export const importText = async (text: string, kbId: string, datasetId: string) => {
@@ -32,8 +33,9 @@ export const importText = async (text: string, kbId: string, datasetId: string) 
         "id": uuidv4(),
     }))
     const documents = await splitter.createDocuments(texts, metadata)
+    const model = await getEmbeddingModelFromKbBind(kbId)
 
-    const provider = await getProviderFromKb(kbId)
+    const provider = await getProviderAPIModel(model)
     const embedding = provider.getEmbeddingModel()
 
     const store = new SqliteVecStore(embedding, {
@@ -45,7 +47,8 @@ export const importText = async (text: string, kbId: string, datasetId: string) 
 }
 
 export const sendChatMessage = async (chatId: string, message: ChatMessage) => {
-    const provider = await getProviderFromChat(chatId)
+    const model = await getModelFromChatBind(chatId)
+    const provider = await getProviderAPIModel(model)
     const chatSettings = store.get(settingsAtom)
 
     const histories = await API.chatHistory.queryByChatId(chatId);
@@ -92,11 +95,11 @@ export const sendChatMessage = async (chatId: string, message: ChatMessage) => {
 }
 
 export const generateChatTitle = async (chatId: string, messages: ChatMessage[]) => {
-    const provider = await getProviderFromChat(chatId)
-    const model = provider.getModel()
+    const model = await getModelFromChatBind(chatId)
+    const provider = await getProviderAPIModel(model)
 
     const prompt = PromptTemplate.fromTemplate(CHAT_TITLE_PROMPT)
-    const chain = prompt.pipe(model)
+    const chain = prompt.pipe(provider.getModel())
 
     return await chain.invoke({
         input: messages

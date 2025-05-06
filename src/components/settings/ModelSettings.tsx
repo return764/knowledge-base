@@ -6,10 +6,6 @@ import toast from "react-hot-toast";
 import {useQuery} from "../../hooks/useQuery.ts";
 import Switch from "../basic/form/components/switch.tsx";
 import {API} from "../../package/api";
-import {AiFillOpenAI} from "react-icons/ai";
-import SiliconFlowSvg from "../../assets/siliconflow.svg?react";
-import OllamaSvg from "../../assets/ollama.svg?react";
-import QwenSvg from "../../assets/qwen.svg?react";
 import Form, {useForm} from "../basic/form/form.tsx";
 import FormItem from "../basic/form/form_item.tsx";
 import Input from "../basic/form/components/Input.tsx";
@@ -17,6 +13,8 @@ import {LLMProvider} from "../../package/api/model_provider.ts";
 import {useBoolean} from "ahooks";
 import Modal from "../basic/modal/modal.tsx";
 import Select from "../basic/form/components/select.tsx";
+
+import {LLMProviderConfig} from "../../package/assistant/platform/config.ts";
 
 type SegmentProps = {
     title?: string;
@@ -43,29 +41,6 @@ type ModelColumn = {
     name: string,
     active: boolean
 }
-
-const options = [
-    {
-        value: 'OpenAI',
-        icon: AiFillOpenAI,
-        label: 'OpenAI'
-    },
-    {
-        value: 'SiliconFlow',
-        icon: SiliconFlowSvg,
-        label: 'SiliconFlow'
-    },
-    {
-        value: 'Ollama',
-        icon: OllamaSvg,
-        label: 'Ollama'
-    },
-    {
-        value: 'Qwen',
-        icon: QwenSvg,
-        label: 'Qwen'
-    }
-];
 
 function ModelSettings() {
     const [selectedType, setSelectedType] = useState('OpenAI');
@@ -168,7 +143,7 @@ function ModelSettings() {
                    title="添加模型"
                    size="middle"
             >
-                <Select options={options} onChange={setSelectedType} value={selectedType}></Select>
+                <Select options={LLMProviderConfig.getProviderOptions()} onChange={setSelectedType} value={selectedType}></Select>
                 <Segment>
                     <Form form={form}>
                         <FormItem name="url" label="API URL">
@@ -180,7 +155,9 @@ function ModelSettings() {
                         <FormItem name="model" label="Model">
                             <Select
                                 defaultFirst={false}
-                                onLoadOptions={handleLoadModelOptions}/>
+                                onLoadOptions={handleLoadModelOptions}
+                                reloadKey={provider?.id}
+                            />
                         </FormItem>
                     </Form>
                 </Segment>

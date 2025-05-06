@@ -12,8 +12,6 @@ export type LLMModel = {
     api_key: string
 }
 
-export type LLMModelInsert = Partial<LLMModel>
-
 export type ModelType = "llm" | "embedding"
 
 

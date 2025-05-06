@@ -7,6 +7,7 @@ import BasicPageWrapper from "./pages/basic_page_wrapper.tsx";
 import routes from "./routes/routes.tsx";
 import {API} from "./package/api";
 import PreferenceLoader from "./components/preference/PreferenceLoader.tsx";
+import { PROVIDER_CONFIGS } from "./package/assistant/platform/config.ts";
 
 // 初始化 preferences
 const initPreferences = async () => {
@@ -28,25 +29,11 @@ const initPreferences = async () => {
 
         const providers = await API.modelProvider.queryAll();
         if (providers.length === 0) {
-            await API.modelProvider.bulkInsert([
-                {
-                    name: 'Ollama',
-                    url: 'http://localhost:11434/v1',
-                    api_key: ''
-                }, {
-                    name: 'SiliconFlow',
-                    url: 'https://api.siliconflow.cn/v1',
-                    api_key: ''
-                }, {
-                    name: 'OpenAI',
-                    url: 'https://api.openai.com/v1',
-                    api_key: ''
-                }, {
-                    name: 'Qwen',
-                    url: 'https://dashscope.aliyuncs.com/compatible-mode/v1',
-                    api_key: ''
-                }
-            ])
+            await API.modelProvider.bulkInsert(PROVIDER_CONFIGS.map(config => ({
+                name: config.name,
+                url: config.url,
+                api_key: config.api_key
+            })));
         }
     } catch (e) {
         console.error('Failed to initialize preferences:', e)

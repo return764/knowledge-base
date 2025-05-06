@@ -46,7 +46,6 @@ function ChatPage() {
         if (messages.length >= 2 && chat?.name === DEFAULT_CHAT_TITLE) {
             generateChatTitle(chat.id, messages)
                 .then(res => {
-                    console.log(res)
                     API.chat.update({
                         id: chat.id,
                         name: res as string

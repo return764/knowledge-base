@@ -1,5 +1,5 @@
-import {combineURLs} from "../utils/utils.ts";
 import {API} from "../package/api";
+import {LLMModel} from "../package/api/model.ts";
 
 type OpenAIModel = {
     id: string,
@@ -8,8 +8,10 @@ type OpenAIModel = {
     owned_by: string
 }
 
+// TODO 考虑迁移到每个provider都提供一个
 export const queryAllModels = async (url: string, key: string): Promise<OpenAIModel[]> => {
-    const response = await fetch(combineURLs(url, 'models'), {
+    console.log(new URL('/v1/models', url).toString())
+    const response = await fetch(new URL('/v1/models', url).toString(), {
         method: 'GET',
         headers: {
             'Authorization': `Bearer ${key}`
@@ -24,26 +26,25 @@ export const queryAllModels = async (url: string, key: string): Promise<OpenAIMo
     return (await response.json())["data"];
 }
 
-// export const saveAndUpdateModels = async (models: OpenAIModel[], providerId: string) => {
-//     // 获取所有已存在的模型
-//     const existingModels = await API.model.queryAll<LLMModel>()
-//     const insertedModels: LLMModelInsert[] = []
-//
-//     // 处理每个模型
-//     for (const model of models) {
-//         // 检查模型是否已存在
-//         const existingModel = existingModels.find(m => m.name === model.id);
-//         if (!existingModel) {
-//             insertedModels.push({
-//                 name: model.id,
-//                 type: getModelType(model.id),
-//                 active: false,
-//                 provider_id: providerId
-//             })
-//         }
-//     }
-//     await API.model.bulkInsert(insertedModels);
-// }
+export const getEmbeddingModelFromKbBind = async (kbId: string): Promise<LLMModel> => {
+    const kb = await API.knowledgeBase.queryById(kbId);
+    const model = await API.model.queryByIdWithProvider(kb!!.embedding_model_id)
+    if (!model) {
+        throw Error("There must be at least one llm model")
+    }
+
+    return model!!
+}
+
+export const getModelFromChatBind = async (chatId: string): Promise<LLMModel> => {
+    const chatSettings = await API.chatSettings.getSettings(chatId)
+    const chatModel = await API.model.queryByIdWithProvider(chatSettings.chat_model_id!!)
+    if (!chatModel) {
+        throw Error("There must be at least one llm model")
+    }
+
+    return chatModel
+}
 
 export const saveModel = async (model: string, providerId: string) => {
     await API.model.insert({

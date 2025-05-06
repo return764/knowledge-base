@@ -11,6 +11,7 @@ type SelectProps = {
     options?: SelectItem[],
     label?: string,
     onLoadOptions?: () => Promise<SelectItem[]>,
+    reloadKey?: any,
 } & OnChangeAndValue
 
 type SelectItem = {
@@ -19,7 +20,7 @@ type SelectItem = {
 }
 
 function Select(props: SelectProps) {
-    const { options: initialOptions = [], value, onChange, label, defaultFirst = true, onLoadOptions } = props;
+    const { options: initialOptions = [], value, onChange, label, defaultFirst = true, onLoadOptions, reloadKey } = props;
     const [isOpen, setIsOpen] = useState(false);
     const [isLoading, setIsLoading] = useState(false);
     const [options, setOptions] = useState<SelectItem[]>(initialOptions);
@@ -29,6 +30,12 @@ function Select(props: SelectProps) {
     useUpdateEffect(() => {
         setOptions(stableOptions);
     }, [stableOptions]);
+
+    useEffect(() => {
+        if (onLoadOptions && reloadKey && isOpen) {
+            dynamicLoadOptions()
+        }
+    }, [reloadKey, onLoadOptions]);
 
     const selected = useMemo(() => {
         let option = options.find(option => option.value === value) ?? null
@@ -49,7 +56,14 @@ function Select(props: SelectProps) {
     }
 
     const handleOpen = async () => {
-        if (!isOpen && onLoadOptions && options.length === 0) {
+        if (!isOpen && options.length === 0) {
+            await dynamicLoadOptions()
+        }
+        setIsOpen(true);
+    }
+
+    const dynamicLoadOptions = async () => {
+        if (onLoadOptions) {
             setIsLoading(true);
             try {
                 const loadedOptions = await onLoadOptions();
@@ -58,7 +72,6 @@ function Select(props: SelectProps) {
                 setIsLoading(false);
             }
         }
-        setIsOpen(true);
     }
 
     return (
