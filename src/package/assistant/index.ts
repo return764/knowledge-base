@@ -14,7 +14,7 @@ import {RunnablePassthrough, RunnableSequence} from "@langchain/core/runnables";
 import {ChatHistory} from "../api/chat_history.ts";
 import {combineMessage, emptyAssistantMessage} from "../../utils/chat.ts";
 import {store} from "../../components/WrapChatContext.tsx";
-import {settingsAtom, updateChatMessageAtom} from "../../store/chat.ts";
+import {abortControllerActions, settingsAtom, updateChatMessageAtom} from "../../store/chat.ts";
 import {ChatMessage} from "../api/chat.ts";
 import {getEmbeddingModelFromKbBind, getModelFromChatBind} from "../../service/model.ts";
 import {getProviderAPI} from "./platform";
@@ -35,7 +35,7 @@ export const importText = async (text: string, kbId: string, datasetId: string) 
     const documents = await splitter.createDocuments(texts, metadata)
     const model = await getEmbeddingModelFromKbBind(kbId)
 
-    const provider = await getProviderAPI(model)
+    const provider = getProviderAPI(model)
     const embedding = provider.getEmbeddingModel()
 
     const store = new SqliteVecStore(embedding, {
@@ -48,7 +48,7 @@ export const importText = async (text: string, kbId: string, datasetId: string) 
 
 export const sendChatMessage = async (chatId: string, message: ChatMessage) => {
     const model = await getModelFromChatBind(chatId)
-    const provider = await getProviderAPI(model)
+    const provider = getProviderAPI(model)
     const chatSettings = store.get(settingsAtom)
 
     const histories = await API.chatHistory.queryByChatId(chatId);
@@ -84,6 +84,8 @@ export const sendChatMessage = async (chatId: string, message: ChatMessage) => {
     const stream = await chain.stream(message.content, {
         signal: controller.signal
     })
+
+    store.set(abortControllerActions.add, {key: chatId, controller: controller})
     let assistantMsg = emptyAssistantMessage()
     try {
         await store.set(updateChatMessageAtom, assistantMsg)
@@ -92,17 +94,18 @@ export const sendChatMessage = async (chatId: string, message: ChatMessage) => {
             await store.set(updateChatMessageAtom, assistantMsg)
         }
         assistantMsg.status = 'ok'
-        await store.set(updateChatMessageAtom, assistantMsg)
     } catch (e) {
         console.error(e)
         assistantMsg.status = 'failed'
+    } finally {
         await store.set(updateChatMessageAtom, assistantMsg)
+        store.set(abortControllerActions.remove, chatId)
     }
 }
 
 export const generateChatTitle = async (chatId: string, messages: ChatMessage[]) => {
     const model = await getModelFromChatBind(chatId)
-    const provider = await getProviderAPI(model)
+    const provider = getProviderAPI(model)
 
     const prompt = PromptTemplate.fromTemplate(CHAT_TITLE_PROMPT)
     const chain = prompt.pipe(provider.getModel())

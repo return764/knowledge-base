@@ -1,7 +1,9 @@
 import Textarea from "../basic/form/components/textarea.tsx";
-import Button from "../basic/button/button.tsx";
 import {KeyboardEvent, useState} from "react";
 import {useChatHelper} from "../../hooks/useChatHelper.ts";
+import {useAtom} from "jotai/index";
+import {abortControllerAtom, chatAtom} from "../../store/chat.ts";
+import ChatSendButton from "./ChatSendButton.tsx";
 
 type ChatInputProps = {
     className?: string,
@@ -10,6 +12,8 @@ type ChatInputProps = {
 function ChatInput(props: ChatInputProps) {
     const [text, setText] = useState<string>()
     const {sendMessage} = useChatHelper()
+    const [abortController] = useAtom(abortControllerAtom)
+    const [chat] = useAtom(chatAtom)
 
     const handleChange = (v: string) => {
         setText(v)
@@ -20,6 +24,11 @@ function ChatInput(props: ChatInputProps) {
             setText('')
             await sendMessage(text)
         }
+    }
+
+    const handleAbortSend = async () => {
+        const controller = abortController[chat?.id!!]
+        controller.abort()
     }
 
     const handleKeyDown = (e: KeyboardEvent<HTMLTextAreaElement>) => {
@@ -40,7 +49,11 @@ function ChatInput(props: ChatInputProps) {
                 resize={false}
             />
             <div className="flex justify-end">
-                <Button disabled={text?.length === 0} onClick={handleSendMessage}>发送</Button>
+                <ChatSendButton
+                    disabled={text?.length === 0}
+                    inProgress={!!abortController[chat?.id!!]}
+                    onAbort={handleAbortSend}
+                    onClick={handleSendMessage}></ChatSendButton>
             </div>
         </div>
     );
