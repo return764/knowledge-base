@@ -1,12 +1,13 @@
 import {APIAbc} from "./api.ts";
 
-import {ChatMessage} from "./chat.ts";
+import {ChatMessage, ChatRole, ChatStatus} from "./chat.ts";
 
 export type ChatHistory = {
     id: string
     chat_id: string
     content: string
-    role: 'ai' | 'human' | 'system'
+    role: ChatRole,
+    status: ChatStatus,
     createdAt: string
 }
 
@@ -20,13 +21,15 @@ export class ChatHistoryAPI extends APIAbc<ChatHistory> {
             .query();
     }
 
-    async insertHistory(chatId: string, message: ChatMessage) {
-        await this.table('chat_history')
-            .insert({
+    async upsertHistory(chatId: string, message: ChatMessage) {
+        const dbMessage = await this.queryById(message.id)
+        if (dbMessage) {
+            await this.update(message)
+        } else {
+            await this.insert({
                 chat_id: chatId,
-                content: message.content,
-                role: message.role
+                ...message
             })
-            .execute();
+        }
     }
 }

@@ -1,23 +1,23 @@
 import {RiRobot2Line, RiUser3Line} from "react-icons/ri";
 import {useMemo} from "react";
 import MessageMarkdown from "./message/MessageMarkdown.tsx";
-import {ChatBlock} from "../../store/chat.ts";
+import {ChatMessage} from "../../package/api/chat.ts";
 
 type ChatSegmentProps = {
-    blockMessage: ChatBlock
+    message: ChatMessage
 }
 
 export function ChatSegment(props: ChatSegmentProps) {
-    const {blockMessage} = props
+    const {message} = props
 
-    const isAI = useMemo(() => blockMessage.message.role === 'ai', [blockMessage.message.role])
-    const isProcessing = useMemo(() => blockMessage.status === 'processing', [blockMessage.status])
-    const isFailed = useMemo(() => blockMessage.status === 'failed', [blockMessage.status])
+    const isAI = useMemo(() => message.role === 'assistant', [message.role])
+    const isInProgress = useMemo(() => message.status === 'in_progress', [message.status])
+    const isFailed = useMemo(() => message.status === 'failed', [message.status])
 
-    let message = blockMessage.message.content;
+    let content = message.content;
 
-    if (isProcessing) {
-        message = message + '...'
+    if (isInProgress) {
+        content = content + '...'
     }
 
     return (
@@ -30,8 +30,8 @@ export function ChatSegment(props: ChatSegmentProps) {
                 }
             </div>
             <div
-                className={`inline-block select-auto rounded-md shadow p-2 ${isAI ? '' : 'w-fit float-right bg-primary text-white'} ${isProcessing && 'border border-primary'} ${isFailed && 'border border-red-500'}`}>
-                <MessageMarkdown content={message}/>
+                className={`inline-block select-auto rounded-md shadow p-2 ${isAI ? '' : 'w-fit float-right bg-primary text-white'} ${isInProgress && 'border border-primary'} ${isFailed && 'border border-red-500'}`}>
+                <MessageMarkdown content={content}/>
             </div>
         </div>
     )

@@ -13,7 +13,7 @@ export const useChatHelper = () => {
 
     const sendMessage = async (content: string) => {
         const message = buildHumanMessage(content)
-        await updateChatMessage(message, "ok")
+        await updateChatMessage(message)
 
         await sendChatMessage(chat!!.id, message)
     }

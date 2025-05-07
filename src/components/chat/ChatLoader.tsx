@@ -1,23 +1,23 @@
 import {PropsWithChildren, useEffect} from "react";
 import {useQuery} from "../../hooks/useQuery.ts";
 import {ChatHistory} from "../../package/api/chat_history.ts";
-import {buildMessage, buildOkBlocks} from "../../utils/chat.ts";
+import {buildSystemMessage, toChatMessage} from "../../utils/chat.ts";
 import {useAtom, useSetAtom} from "jotai";
 import {
     chatAtom,
-    chatBlocksAtom,
     settingsAtom,
     isReadyAtom,
+    messagesAtom,
 } from "../../store/chat";
 
 export const ChatLoader = (props: PropsWithChildren<{chatId: string}>) => {
     const {chatId} = props
     const {data: chat, mutate} = useQuery("chat", "queryById", chatId)
     const {data: settings, mutate: mutateSettings} = useQuery("chatSettings", "getSettings", chatId)
-    const {data, isLoading, error} = useQuery<ChatHistory[]>('chatHistory', 'queryByChatId', chatId, {refreshInterval: 0})
+    const {data: history, isLoading, error} = useQuery<ChatHistory[]>('chatHistory', 'queryByChatId', chatId, {refreshInterval: 0})
 
     const [chatAtomValue, setChatAtom] = useAtom(chatAtom)
-    const setChatBlocks = useSetAtom(chatBlocksAtom)
+    const setMessages = useSetAtom(messagesAtom)
     const setSettings = useSetAtom(settingsAtom)
     const setIsReady = useSetAtom(isReadyAtom)
 
@@ -42,17 +42,18 @@ export const ChatLoader = (props: PropsWithChildren<{chatId: string}>) => {
     }, [isLoading, error]);
 
     useEffect(() => {
-        if (data) {
+        if (history) {
             const result = []
+            // TODO prompts的位置有待确认
             if (chat?.prompts) {
-                result.push(buildMessage(chat.prompts, 'system'))
+                result.push(buildSystemMessage(chat.prompts))
             }
-            data?.forEach(it => {
-                result.push(buildMessage(it.content, it.role))
+            history?.forEach(it => {
+                result.push(toChatMessage(it))
             })
-            setChatBlocks(buildOkBlocks(result))
+            setMessages(result)
         }
-    }, [data]);
+    }, [history]);
 
     return (
         <>

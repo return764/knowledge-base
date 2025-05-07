@@ -12,7 +12,7 @@ import {
 import {CHAT_PROMPT, CHAT_TITLE_PROMPT} from "./prompt.ts";
 import {RunnablePassthrough, RunnableSequence} from "@langchain/core/runnables";
 import {ChatHistory} from "../api/chat_history.ts";
-import {buildAiMessage, combineMessage} from "../../utils/chat.ts";
+import {combineMessage, emptyAssistantMessage} from "../../utils/chat.ts";
 import {store} from "../../components/WrapChatContext.tsx";
 import {settingsAtom, updateChatMessageAtom} from "../../store/chat.ts";
 import {ChatMessage} from "../api/chat.ts";
@@ -80,18 +80,24 @@ export const sendChatMessage = async (chatId: string, message: ChatMessage) => {
         provider.getChatModel()
     ])
 
-    const stream = await chain.stream(message.content)
-    let assistantMsg = buildAiMessage("")
+    const controller = new AbortController()
+    const stream = await chain.stream(message.content, {
+        signal: controller.signal
+    })
+    let assistantMsg = emptyAssistantMessage()
     try {
+        await store.set(updateChatMessageAtom, assistantMsg)
         for await (let chunk of stream) {
             combineMessage(assistantMsg, chunk.text)
-            await store.set(updateChatMessageAtom, assistantMsg, "processing")
+            await store.set(updateChatMessageAtom, assistantMsg)
         }
+        assistantMsg.status = 'ok'
+        await store.set(updateChatMessageAtom, assistantMsg)
     } catch (e) {
         console.error(e)
-        await store.set(updateChatMessageAtom, assistantMsg, "failed")
+        assistantMsg.status = 'failed'
+        await store.set(updateChatMessageAtom, assistantMsg)
     }
-    await store.set(updateChatMessageAtom, assistantMsg, "ok")
 }
 
 export const generateChatTitle = async (chatId: string, messages: ChatMessage[]) => {

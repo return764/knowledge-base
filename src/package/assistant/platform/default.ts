@@ -33,7 +33,7 @@ export abstract class LLMProviderAPI {
     }
 
     validateOptions() {
-        if (this.options.model?.provider !== this.options.provider?.name) {
+        if (this.options.model && this.options.provider && this.options.model?.provider !== this.options.provider?.name) {
             throw new Error('provider must associate with model')
         }
     }

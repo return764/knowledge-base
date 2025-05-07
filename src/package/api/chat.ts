@@ -37,8 +37,10 @@ export class ChatAPI extends APIAbc<Chat> {
 }
 
 export type ChatMessage = {
+    id: string,
     content: string,
-    role: ChatRole
+    role: ChatRole,
+    status: ChatStatus
 }
-export type ChatRole = 'human' | 'ai' | 'system'
-export type ChatStatus = 'processing' | 'failed' | 'ok'
+export type ChatRole = 'human' | 'assistant' | 'system'
+export type ChatStatus = 'in_progress' | 'failed' | 'ok' | 'aborted'

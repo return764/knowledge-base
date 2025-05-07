@@ -46,6 +46,7 @@ pub fn init() -> Vec<Migration> {
                 chat_id TEXT NOT NULL,\
                 content TEXT,\
                 role TEXT NOT NULL,\
+                status TEXT NOT NULL,
                 created_at DATETIME DEFAULT (strftime('%Y-%m-%d %H:%M:%S.%f', 'now'))\
               );",
             kind: MigrationKind::Up,
