@@ -30,7 +30,7 @@ export function ChatSegment(props: ChatSegmentProps) {
                 }
             </div>
             <div
-                className={`inline-block select-auto rounded-md shadow p-2 ${isAI ? '' : 'w-fit float-right bg-primary text-white'} ${isInProgress && 'border border-primary'} ${isFailed && 'border border-red-500'}`}>
+                className={`select-auto rounded-md shadow p-2 flex flex-col w-fit ${isAI ? '' : 'float-right bg-primary text-white'} ${isInProgress && 'border border-primary'} ${isFailed && 'border border-red-500'}`}>
                 <MessageMarkdown content={content}/>
             </div>
         </div>

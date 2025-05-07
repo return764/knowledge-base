@@ -69,7 +69,6 @@ export const sendChatMessage = async (chatId: string, message: ChatMessage) => {
         });
     }
 
-
     const chain = RunnableSequence.from([
         {
             "documents": () => retriever ?? "NO DOCUMENTS",
@@ -81,22 +80,24 @@ export const sendChatMessage = async (chatId: string, message: ChatMessage) => {
     ])
 
     const controller = new AbortController()
+    let assistantMsg = emptyAssistantMessage()
+    await store.set(updateChatMessageAtom, assistantMsg)
     const stream = await chain.stream(message.content, {
         signal: controller.signal
     })
 
     store.set(abortControllerActions.add, {key: chatId, controller: controller})
-    let assistantMsg = emptyAssistantMessage()
     try {
-        await store.set(updateChatMessageAtom, assistantMsg)
         for await (let chunk of stream) {
             combineMessage(assistantMsg, chunk.text)
             await store.set(updateChatMessageAtom, assistantMsg)
         }
         assistantMsg.status = 'ok'
     } catch (e) {
-        console.error(e)
         assistantMsg.status = 'failed'
+        if (e instanceof Error && e.message === 'Aborted') {
+            assistantMsg.status = 'aborted'
+        }
     } finally {
         await store.set(updateChatMessageAtom, assistantMsg)
         store.set(abortControllerActions.remove, chatId)
@@ -110,14 +111,15 @@ export const generateChatTitle = async (chatId: string, messages: ChatMessage[])
     const prompt = PromptTemplate.fromTemplate(CHAT_TITLE_PROMPT)
     const chain = prompt.pipe(provider.getModel())
 
+    // TODO 这里使用一些模型的api时是有问题的例如, Qwen系列只有Coder的模型支持generation，普通模型只支持chat
     return await chain.invoke({
-        input: messages
-    })
+            input: messages
+        })
 }
 
 const formatHistoryMessage = (histories: ChatHistory[]): string => {
     return histories.map(it => `
         Role: ${it.role}
-        Content: ${it.content}    
+        Content: ${it.content}
     `).join('\n')
 }

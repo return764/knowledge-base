@@ -88,7 +88,7 @@ export const MessageCodeBlock: FC<MessageCodeBlockProps> = memo(
         return (
             <div className="codeblock relative rounded-md w-full font-sans bg-zinc-950">
                 <div className="sticky left-0 top-0 flex rounded-t-md w-full items-center justify-between bg-zinc-700 px-4 text-white">
-                    <span className="text-xs lowercase">{language}</span>
+                    <span className="text-xs lowercase select-none">{language}</span>
                     <div className="flex items-center space-x-1">
                         <Button
                             type="icon"
