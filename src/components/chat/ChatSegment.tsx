@@ -29,9 +29,20 @@ export function ChatSegment(props: ChatSegmentProps) {
                         <RiUser3Line size={32} className="text-zinc-600 rounded-full border p-1"/>
                 }
             </div>
-            <div
-                className={`select-auto rounded-md shadow p-2 flex flex-col w-fit ${isAI ? '' : 'float-right bg-primary text-white'} ${isInProgress && 'border border-primary'} ${isFailed && 'border border-red-500'}`}>
-                <MessageMarkdown content={content}/>
+            <div className={`w-full flex flex-col ${!isAI && 'items-end'}`}>
+                {
+                    isAI ?
+                        <div
+                            className={`rounded-md shadow px-4 py-2 w-fit ${isInProgress && 'border border-primary'} ${isFailed && 'border border-red-500'}`}>
+                            <MessageMarkdown content={content}/>
+                        </div>
+                        :
+                        <div className="rounded-md shadow px-4 py-2 w-fit relative bg-primary text-white max-w-[70%]">
+                            <div className="whitespace-pre-wrap select-text">
+                                {content}
+                            </div>
+                        </div>
+                }
             </div>
         </div>
     )

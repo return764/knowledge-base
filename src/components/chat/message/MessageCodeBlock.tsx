@@ -2,8 +2,8 @@ import Button from "../../basic/button/button.tsx";
 import {FC, memo} from "react";
 import {MdCheck, MdContentCopy, MdOutlineFileDownload} from "react-icons/md";
 import SyntaxHighlighter from "react-syntax-highlighter";
-import { darcula } from "react-syntax-highlighter/dist/cjs/styles/hljs"
 import {useCopyToClipboard} from "../../../hooks/useCopyToClipboard.ts";
+import { atomOneLight } from 'react-syntax-highlighter/dist/esm/styles/hljs';
 
 interface MessageCodeBlockProps {
     language: string
@@ -86,29 +86,29 @@ export const MessageCodeBlock: FC<MessageCodeBlockProps> = memo(
         }
 
         return (
-            <div className="codeblock relative rounded-md w-full font-sans bg-zinc-950">
-                <div className="sticky left-0 top-0 flex rounded-t-md w-full items-center justify-between bg-zinc-700 px-4 text-white">
+            <div className="codeblock relative rounded-md w-full font-sans bg-[#FAFAFA]">
+                <div className="sticky left-0 top-0 flex rounded-t-md w-full items-center justify-between px-2 text-zinc-500 bg-[#FAFAFA]">
                     <span className="text-xs lowercase select-none">{language}</span>
                     <div className="flex items-center space-x-1">
                         <Button
                             type="icon"
                             icon={MdOutlineFileDownload}
-                            className="hover:bg-zinc-800 focus-visible:ring-1 focus-visible:ring-slate-700 focus-visible:ring-offset-0"
                             onClick={downloadAsFile}
+                            title="Download"
                         >
                         </Button>
                         <Button
                             type="icon"
                             icon={isCopied ? MdCheck : MdContentCopy}
-                            className="text-xs hover:bg-zinc-800 focus-visible:ring-1 focus-visible:ring-slate-700 focus-visible:ring-offset-0"
                             onClick={onCopy}
+                            title="Copy"
                         >
                         </Button>
                     </div>
                 </div>
                 <SyntaxHighlighter
                     language={language}
-                    style={darcula}
+                    style={atomOneLight}
                     // showLineNumbers
                     customStyle={{
                         margin: 0,
@@ -117,9 +117,9 @@ export const MessageCodeBlock: FC<MessageCodeBlockProps> = memo(
                     }}
                     wrapLongLines={true}
                     codeTagProps={{
+                        className: "text-xs leading-none",
                         style: {
-                            fontSize: "14px",
-                            fontFamily: "var(--font-mono)"
+                            fontFamily: 'Consolas, Monaco, "Andale Mono", "Ubuntu Mono", monospace'
                         }
                     }}
                 >

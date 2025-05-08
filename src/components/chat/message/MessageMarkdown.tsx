@@ -12,11 +12,11 @@ interface MessageMarkdownProps {
 export const MessageMarkdown: FC<MessageMarkdownProps> = ({ content }) => {
     return (
         <MessageMarkdownMemoized
-            className="min-w-full space-y-6 break-words"
+            className="markdown select-none prose dark:prose-invert min-w-full break-words"
             remarkPlugins={[remarkGfm, remarkMath]}
             components={{
                 p({ children }) {
-                    return <p className="mb-2 last:mb-0">{children}</p>
+                    return <p>{children}</p>
                 },
                 img({ node, ...props }) {
                     return <img className="max-w-[67%]" {...props}/>
@@ -57,7 +57,10 @@ export const MessageMarkdown: FC<MessageMarkdownProps> = ({ content }) => {
                             {...props}
                         />
                     )
-                }
+                },
+                pre({ children }) {
+                    return <pre className="not-prose">{children}</pre>
+                },
             }}
         >
         {content}
