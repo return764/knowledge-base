@@ -4,12 +4,15 @@ import ChatCard from "../components/chat/ChatCard.tsx";
 import {useQuery} from "../hooks/useQuery.ts";
 import {Chat} from "../package/api/chat.ts";
 import {API} from "../package/api";
+import {useNavigate} from "react-router-dom";
 
 function Chats() {
     const {data} = useQuery<Chat[]>('chat', 'queryAll')
+    const navigate = useNavigate();
 
     const handleNewChat = async () => {
-        await API.chat.newChat()
+        const chatId = await API.chat.newChat()
+        chatId && navigate(chatId)
     }
 
     return (
@@ -23,13 +26,6 @@ function Chats() {
                     data?.map(it => <ChatCard key={it.id} chat={it}/>)
                 }
             </div>
-            {/*<Modal title={"新聊天"} onClose={toggle} open={visible} onConfirm={handleNewChat}>*/}
-            {/*    <Form form={form}>*/}
-            {/*        <FormItem name={"kbName"} label={"关联知识库"}>*/}
-            {/*            <Input size={"small"}/>*/}
-            {/*        </FormItem>*/}
-            {/*    </Form>*/}
-            {/*</Modal>*/}
         </div>
     )
 }

@@ -15,7 +15,7 @@ export const DEFAULT_CHAT_TITLE = "未命名聊天"
 export class ChatAPI extends APIAbc<Chat> {
     protected tableName: string = 'chat';
 
-    async newChat() {
+    async newChat(): Promise<string | undefined> {
         const models = await API.model.queryAllActiveModel();
         const defaultModel = models.find(it => it.type === "llm");
 
@@ -33,6 +33,8 @@ export class ChatAPI extends APIAbc<Chat> {
             kb_ids: [],
             chat_model_id: defaultModel?.id
         })
+
+        return id
     }
 }
 

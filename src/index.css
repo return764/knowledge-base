@@ -3,6 +3,24 @@
 @tailwind utilities;
 @plugin "@tailwindcss/typography";
 
+/*!* Light theme. *!*/
+:root {
+    --color-canvas-default: #ffffff;
+    --color-canvas-subtle: #f6f8fa;
+    --color-border-default: #d0d7de;
+    --color-border-muted: hsla(210, 18%, 87%, 1);
+}
+
+/* Dark theme. */
+@media (prefers-color-scheme: dark) {
+    :root {
+        --color-canvas-default: #0d1117;
+        --color-canvas-subtle: #161b22;
+        --color-border-default: #30363d;
+        --color-border-muted: #21262d;
+    }
+}
+
 :root {
     @apply select-none cursor-default
 }

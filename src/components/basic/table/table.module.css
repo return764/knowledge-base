@@ -1,0 +1,28 @@
+.tableWrapper table {
+    border-spacing: 0;
+    max-width: 100%;
+    overflow: auto;
+}
+
+.tableWrapper tr {
+    background-color: var(--color-canvas-default);
+    border-top: 1px solid var(--color-border-muted);
+}
+
+.tableWrapper tr:nth-child(2n) {
+    background-color: var(--color-canvas-subtle);
+}
+
+.tableWrapper td,
+th {
+    padding: 6px 13px;
+    border: 1px solid var(--color-border-default);
+}
+
+.tableWrapper th {
+    font-weight: 600;
+}
+
+.tableWrapper table img {
+    background-color: transparent;
+}
